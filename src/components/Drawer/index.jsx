@@ -1,9 +1,7 @@
 import * as React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { styled, useTheme } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
-import MuiDrawer from '@mui/material/Drawer'
-import MuiAppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import List from '@mui/material/List'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -17,77 +15,11 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import { AuthContext } from 'contexts/auth'
+import Brightness3Icon from '@mui/icons-material/Brightness3'
+import Brightness4Icon from '@mui/icons-material/Brightness4'
 import menuItems from './items'
-
-
-const openedMixin = (theme) => ({
-  width: 240,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-})
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-  [theme.breakpoints.down('sm')]: {
-    display: 'none',
-  },
-})
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}))
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: 240,
-    width: `calc(100% - ${240}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}))
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  width: 240,
-  flexShrink: 0,
-  whiteSpace: 'nowrap',
-  boxSizing: 'border-box',
-  ...(open && {
-    ...openedMixin(theme),
-    '& .MuiDrawer-paper': openedMixin(theme),
-  }),
-  ...(!open && {
-    ...closedMixin(theme),
-    '& .MuiDrawer-paper': closedMixin(theme),
-  }),
-}))
+import { AuthContext } from 'contexts/auth'
+import * as S from './style'
 
 const MiniDrawer = () => {
   const theme = useTheme()
@@ -99,6 +31,16 @@ const MiniDrawer = () => {
   const authContext = React.useContext(AuthContext)
   const company = authContext.company
 
+  const changeTheme = () => {
+    const currentTheme = localStorage.getItem('theme')
+    if (currentTheme === 'light') {
+      localStorage.setItem('theme', 'dark')
+    } else {
+      localStorage.setItem('theme', 'light')
+    }
+    document.location.reload()
+  }
+
   return (
     <Box
       sx={{
@@ -109,8 +51,8 @@ const MiniDrawer = () => {
       }}
     >
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
+      <S.AppBar position="fixed" open={open}>
+        <Toolbar sx={{ display: 'flex' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -123,13 +65,30 @@ const MiniDrawer = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            {company.fantasyName}
-          </Typography>
+
+          <S.WrapperIntro>
+            <S.Logo
+              src={company?.custom?.logo}
+              alt={`logo marca ${company.fantasyName}`}
+            />
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ textTransform: 'Capitalize' }}
+            >
+              {company.fantasyName}
+            </Typography>
+          </S.WrapperIntro>
+
+          {theme.palette.mode === 'light' ? (
+            <Brightness3Icon onClick={changeTheme} sx={{ cursor: 'pointer' }} />
+          ) : (
+            <Brightness4Icon onClick={changeTheme} sx={{ cursor: 'pointer' }} />
+          )}
         </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
+      </S.AppBar>
+      <S.Drawer variant="permanent" open={open}>
+        <S.DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? (
               <ChevronRightIcon />
@@ -137,7 +96,7 @@ const MiniDrawer = () => {
               <ChevronLeftIcon />
             )}
           </IconButton>
-        </DrawerHeader>
+        </S.DrawerHeader>
 
         {menuItems.map((group, menuIndex) => (
           <Box key={menuIndex}>
@@ -177,7 +136,7 @@ const MiniDrawer = () => {
             </List>
           </Box>
         ))}
-      </Drawer>
+      </S.Drawer>
     </Box>
   )
 }

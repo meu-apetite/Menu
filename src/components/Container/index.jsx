@@ -1,20 +1,21 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import themeDark from 'styles/theme/dark'
+import themeDark from 'theme/dark'
+import themeLight from 'theme/light'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import { Typography } from '@mui/material'
 import Drawer from 'components/Drawer'
+import LoadingPage from 'components/LoadingPage'
 
-const getTheme = (theme) => {
-  if (theme === 'dark') return createTheme(themeDark)
-  return createTheme(themeDark)
-}
+const getTheme = (theme = 'light') =>
+  theme === 'dark' ? createTheme(themeDark) : createTheme(themeLight)
 
 const Create = (props) => {
   const navigate = useNavigate()
-  const theme = getTheme('dark')
+  const currentTheme = localStorage.getItem('theme') || 'light'
+  const theme = getTheme(currentTheme)
 
   return (
     <ThemeProvider theme={theme}>
@@ -24,7 +25,11 @@ const Create = (props) => {
           component="main"
           sx={{ flexGrow: 1, p: { xs: 2, sm: 3, md: 4 }, mt: 4 }}
         >
-          <Box component={props.component} onSubmit={props.handleSubmit}>
+          <Box
+            component={props.component}
+            onSubmit={props.handleSubmit}
+            autoComplete="off"
+          >
             <Box
               component="header"
               sx={{
@@ -42,6 +47,8 @@ const Create = (props) => {
                   Salvar
                 </Button>
               )}
+
+              {props.Custom && <props.Custom />}
               {props.buttonLink && (
                 <Button
                   variant="contained"
@@ -55,6 +62,10 @@ const Create = (props) => {
           </Box>
         </Box>
       </Box>
+
+      {props.loading && (
+        <LoadingPage text={props.loading} active={props.loading}></LoadingPage>
+      )}
     </ThemeProvider>
   )
 }

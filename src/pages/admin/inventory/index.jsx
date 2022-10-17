@@ -92,7 +92,7 @@ export default function DataGridDemo() {
   const [categories, setCategories] = useState([])
 
   const getCategories = async () => {
-    const req = await fetchApi('get', 'category')
+    const req = await fetchApi('get', 'orders')
     const res =await req.json()
     setCategories(res)
   }
@@ -106,8 +106,8 @@ export default function DataGridDemo() {
   return (
     <Container
       component="main"
-      title="Categorias"
-      buttonLink={{ text: 'Nova categoria', route: '/admin/category/create' }}
+      title="Estoque"
+      buttonLink={{ text: 'Ver produtos', route: '/admin/products' }}
     >
       {' '}
       <Box sx={{ height: 430, width: '100%' }}>

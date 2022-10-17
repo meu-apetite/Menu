@@ -64,7 +64,7 @@ const Register = () => {
         return
       }
 
-      const response = await fetchApi('post', 'register', body)
+      const response = await fetchApi('post', 'register', body, false)
 
       if (!response.ok) {
         const result = await response.json()

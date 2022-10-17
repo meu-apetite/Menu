@@ -19,14 +19,8 @@ const items = [
     },
 
     {
-      text: 'Vendas',
-      link: '/admin/sale',
-      Icon: () => <LocalMallIcon />,
-    },
-
-    {
       text: 'Pedidos',
-      link: '/admin/product',
+      link: '/admin/orders',
       Icon: () => <LocalShippingIcon />,
     },
   ],
@@ -34,32 +28,32 @@ const items = [
   [
     {
       text: 'Produtos',
-      link: '/admin/product',
+      link: '/admin/products',
       Icon: () => <GridViewIcon />,
     },
 
     {
       text: 'Estoque',
-      link: '/admin/produto',
+      link: '/admin/inventory',
       Icon: () => <InventoryIcon />,
     },
 
     {
       text: 'Categorias',
-      link: '/admin/category',
+      link: '/admin/categories',
       Icon: () => <CategoryIcon />,
     },
 
     {
-      text: 'Formas de pagamento',
-      link: '/admin/produto',
-      Icon: () => <MonetizationOnIcon />,
+      text: 'Desconto',
+      link: '/admin/discounts',
+      Icon: () => <LocalOfferIcon />,
     },
 
     {
-      text: 'Promoções',
-      link: '/admin/produto',
-      Icon: () => <LocalOfferIcon />,
+      text: 'Formas de pagamento',
+      link: '/admin/payment-methods',
+      Icon: () => <MonetizationOnIcon />,
     },
   ],
 

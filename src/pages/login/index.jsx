@@ -13,7 +13,7 @@ import Grid from '@mui/material/Grid'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import ImageIntro from '../public/images/16548-min.jpg'
+import ImageIntro from '../../public/images/16548-min.jpg'
 import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import LoadingPage from 'components/LoadingPage'
@@ -66,7 +66,7 @@ export default function Login() {
 
       const data = new FormData(e.currentTarget)
       const body = { email: data.get('email'), password: data.get('password') }
-      let response = await fetchApi('post', 'login', body)
+      let response = await fetchApi('post', 'login', body, false)
 
       if (!response.ok) {
         const result = await response.json()
@@ -83,7 +83,8 @@ export default function Login() {
       localStorage.setItem('_id', JSON.stringify(response.company._id))
       localStorage.setItem('token', JSON.stringify(response.token))
 
-      return navigate('/admin')
+      navigate('/admin')
+      return document.location.reload()
     } catch (error) {
       console.log(error)
       setMessages([

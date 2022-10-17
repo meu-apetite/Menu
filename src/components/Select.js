@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { createTheme } from '@mui/material/styles'
-import themeDark from 'styles/theme/dark'
+import themeDark from 'theme/dark'
+import themeLight from 'theme/dark'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
@@ -10,10 +11,9 @@ import Chip from '@mui/material/Chip'
 import Box from '@mui/material/Box'
 
 const getTheme = (theme) => {
-  if (theme === 'dark') return createTheme(themeDark)
-  return createTheme(themeDark)
+  const select = theme === 'dark' ? themeDark : themeLight
+  createTheme(select)
 }
-
 const SelectCustom = (props) => {
   const theme = getTheme('dark')
   const getStyles = (name, personName, theme) => {

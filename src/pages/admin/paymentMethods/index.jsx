@@ -89,25 +89,25 @@ const rows = [
 ]
 
 export default function DataGridDemo() {
-  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
 
-  const getProducts = async () => {
-    const req = await fetchApi('get', 'product')
-    const res = await req.json()
-    setProducts(res)
+  const getCategories = async () => {
+    const req = await fetchApi('get', 'orders')
+    const res =await req.json()
+    setCategories(res)
   }
 
   useEffect(() => {
-    getProducts()
-  })
+    getCategories()
+  }, [])
 
-  const rowProduct = products.map((item) => (item.id = item._id))
+  const rowCategories = categories.map((item) => (item.id = item._id))
 
   return (
     <Container
       component="main"
-      title="Produtos"
-      buttonLink={{ text: 'Novo produto', route: '/admin/product/create' }}
+      title="Formas de pagamento"
+      buttonLink={{ text: 'Novo forma', route: '/admin/orders/create' }}
     >
       {' '}
       <Box sx={{ height: 430, width: '100%' }}>
