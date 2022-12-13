@@ -5,9 +5,9 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import ButtonUpload from 'components/ButtonUpload'
+import Header from 'components/Header'
 import Galery from 'components/Galery'
 import convertFile from 'utils/convertBase64'
-import Container from 'components/Container'
 import fetchApi from 'fetch'
 
 const Create = () => {
@@ -72,13 +72,15 @@ const Create = () => {
   }, [])
 
   return (
-    <Container
-      component="form"
-      title="Editar categoria"
-      handleSubmit={handleSubmit}
-      loading={loadingText}
-    >
+    <>
       <Box component="section" noValidate>
+        <Header
+          title="Editar categoria"
+          back={-1}
+          buttonText="Salvar"
+          buttonClick={handleSubmit}
+        />
+
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
             <TextField
@@ -97,7 +99,7 @@ const Create = () => {
             <label>Foto da categoria</label>
             {category.image ? (
               <Galery
-                itemData={[
+                data={[
                   {
                     id: category?.image?.id,
                     file: category?.image?.url,
@@ -109,7 +111,7 @@ const Create = () => {
             ) : (
               <>
                 <Galery
-                  itemData={image ? [image] : []}
+                  data={image ? [image] : []}
                   closeImage={() => setImage([])}
                 />
                 <ButtonUpload text="Carregar foto" loadFile={loadFile} />
@@ -119,7 +121,7 @@ const Create = () => {
         </Grid>
       </Box>
       <Toaster position="bottom-right" reverseOrder={false} />
-    </Container>
+    </>
   )
 }
 

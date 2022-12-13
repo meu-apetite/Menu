@@ -1,4 +1,4 @@
-const url = 'https://b34b-45-167-217-40.sa.ngrok.io'
+const url = 'https://d84b-45-167-217-144.sa.ngrok.io'
 let token = localStorage.getItem('token')
 let _id = localStorage.getItem('_id')
 if (token) token = JSON.parse(token)
@@ -25,12 +25,6 @@ const fetchApi = async (
 
   const response = await fetch(`${url}/${route}`, params)
 
-  if (auth) {
-    if (response.status === 401) {
-      alert('Ocorreu um erro na autenticação, faça o login para continuar!')
-      return (window.location.href = '/login')
-    }
-  }
 
   return response
 }

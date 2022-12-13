@@ -1,25 +1,29 @@
-import React, { createContext, useEffect, useState } from 'react'
-import fetchApi from 'fetch'
+import React, { createContext, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
+
+import Loading from 'components/Loading'
 
 export const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
   const [company, setCompany] = useState({})
   const [token, setToken] = useState('')
-
-  const update = async () => {
-    const id = JSON.parse(localStorage.getItem('_id'))
-    const response = await fetchApi('get', `company/${id}`)
-    const company = await response.json()
-    setCompany(company)
-  }
-
-  useEffect(() => {
-    update()
-  }, [])
+  const [loading, setLoading] = useState(false)
 
   return (
-    <AuthContext.Provider value={{ company, setCompany, token, setToken }}>
+    <AuthContext.Provider
+      value={{
+        company,
+        setCompany,
+        token,
+        setToken,
+        loading,
+        setLoading,
+        toast,
+      }}
+    >
+      {loading && <Loading text={loading} />}
+      <Toaster position="bottom-right" reverseOrder={false} />
       {props.children}
     </AuthContext.Provider>
   )

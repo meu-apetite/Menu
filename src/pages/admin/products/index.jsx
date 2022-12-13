@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import fetchApi from 'fetch'
 import Box from '@mui/material/Box'
 import { DataGrid, ptBR } from '@mui/x-data-grid'
-import Container from 'components/Container'
 
 const columns = [
   {
@@ -104,24 +103,17 @@ export default function DataGridDemo() {
   const rowProduct = products.map((item) => (item.id = item._id))
 
   return (
-    <Container
-      component="main"
-      title="Produtos"
-      buttonLink={{ text: 'Novo produto', route: '/admin/products/create' }}
-    >
-      {' '}
-      <Box sx={{ height: 430, width: '100%' }}>
-        <DataGrid
-          localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
-          rows={rows}
-          columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          checkboxSelection
-          disableSelectionOnClick
-          experimentalFeatures={{ newEditingApi: true }}
-        />
-      </Box>
-    </Container>
+    <Box sx={{ height: 430, width: '100%' }}>
+      <DataGrid
+        localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+        rows={rows}
+        columns={columns}
+        pageSize={5}
+        rowsPerPageOptions={[5]}
+        checkboxSelection
+        disableSelectionOnClick
+        experimentalFeatures={{ newEditingApi: true }}
+      />
+    </Box>
   )
 }

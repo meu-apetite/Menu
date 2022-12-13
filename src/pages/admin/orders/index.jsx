@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import fetchApi from 'fetch'
 import Box from '@mui/material/Box'
 import { DataGrid, ptBR } from '@mui/x-data-grid'
-import Container from 'components/Container'
 
 const columns = [
   {
@@ -104,11 +103,7 @@ export default function DataGridDemo() {
   const rowCategories = categories.map((item) => (item.id = item._id))
 
   return (
-    <Container
-      component="main"
-      title="Pedidos"
-      buttonLink={{ text: 'Novo pedido', route: '/admin/orders/create' }}
-    >
+    <>
       {' '}
       <Box sx={{ height: 430, width: '100%' }}>
         <DataGrid
@@ -122,6 +117,6 @@ export default function DataGridDemo() {
           experimentalFeatures={{ newEditingApi: true }}
         />
       </Box>
-    </Container>
+    </>
   )
 }

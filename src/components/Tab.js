@@ -35,7 +35,10 @@ function a11yProps(index) {
 
 const BasicTabs = (props) => {
   const [value, setValue] = React.useState(0)
-  const handleChange = (event, newValue) => setValue(newValue)
+  const handleChange = (event, newValue) => {
+    setValue(newValue)
+    props.handleChange();
+  }
 
   return (
     <Box>
@@ -54,7 +57,7 @@ const BasicTabs = (props) => {
       </Box>
 
       {props.tabs.map((item, i) => (
-        <TabPanel key={`body-${i}`} value={value} index={i}>
+        <TabPanel key={`body-${i}`} value={value} index={i} >
           {item.body}
         </TabPanel>
       ))}

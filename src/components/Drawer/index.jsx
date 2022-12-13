@@ -15,10 +15,7 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import Brightness3Icon from '@mui/icons-material/Brightness3'
-import Brightness4Icon from '@mui/icons-material/Brightness4'
 import menuItems from './items'
-import { AuthContext } from 'contexts/auth'
 import * as S from './style'
 
 const MiniDrawer = () => {
@@ -28,18 +25,6 @@ const MiniDrawer = () => {
   const handleDrawerOpen = () => setOpen(true)
   const handleDrawerClose = () => setOpen(false)
   const toLink = (link) => navigate(link)
-  const authContext = React.useContext(AuthContext)
-  const company = authContext.company
-
-  const changeTheme = () => {
-    const currentTheme = localStorage.getItem('theme')
-    if (currentTheme === 'light') {
-      localStorage.setItem('theme', 'dark')
-    } else {
-      localStorage.setItem('theme', 'light')
-    }
-    document.location.reload()
-  }
 
   return (
     <Box
@@ -52,14 +37,14 @@ const MiniDrawer = () => {
     >
       <CssBaseline />
       <S.AppBar position="fixed" open={open}>
-        <Toolbar sx={{ display: 'flex' }}>
+        <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
             sx={{
-              marginRight: 5,
+              marginRight: 2,
               ...(open && { display: 'none' }),
             }}
           >
@@ -67,24 +52,14 @@ const MiniDrawer = () => {
           </IconButton>
 
           <S.WrapperIntro>
-            <S.Logo
+            {/* <S.Logo
               src={company?.custom?.logo}
               alt={`logo marca ${company.fantasyName}`}
             />
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{ textTransform: 'Capitalize' }}
-            >
+            <Typography variant="h6" sx={{ textTransform: 'Capitalize' }}>
               {company.fantasyName}
-            </Typography>
+            </Typography> */}
           </S.WrapperIntro>
-
-          {theme.palette.mode === 'light' ? (
-            <Brightness3Icon onClick={changeTheme} sx={{ cursor: 'pointer' }} />
-          ) : (
-            <Brightness4Icon onClick={changeTheme} sx={{ cursor: 'pointer' }} />
-          )}
         </Toolbar>
       </S.AppBar>
       <S.Drawer variant="permanent" open={open}>

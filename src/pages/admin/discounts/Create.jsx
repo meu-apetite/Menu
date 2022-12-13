@@ -3,7 +3,6 @@ import fecthApi from 'fetch'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
-import Container from 'components/Container'
 
 const Create = () => {
 
@@ -13,10 +12,7 @@ const Create = () => {
   }
 
   return (
-    <Container
-      component="form"
-      title="Novo desconto"
-      handleSubmit={handleSubmit}
+    <
     >
       <Box component="section" noValidate>
         <Grid container spacing={2}>
@@ -66,7 +62,7 @@ const Create = () => {
 
         </Grid>
       </Box>
-    </Container>
+    </>
   )
 }
 

@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField'
 import ButtonUpload from 'components/ButtonUpload'
 import Galery from 'components/Galery'
 import convertFile from 'utils/convertBase64'
-import Container from 'components/Container'
 import Category from '@mui/icons-material/Category'
 
 const Create = () => {
@@ -33,11 +32,7 @@ const Create = () => {
     setImages((items) => items.filter((item) => item.id !== id))
 
   return (
-    <Container
-      component="form"
-      title="Nova categoria"
-      handleSubmit={handleSubmit}
-    >
+    <>
       <Box component="section" noValidate>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
@@ -57,7 +52,7 @@ const Create = () => {
           </Grid>
         </Grid>
       </Box>
-    </Container>
+    </>
   )
 }
 

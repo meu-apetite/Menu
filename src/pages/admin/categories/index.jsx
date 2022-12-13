@@ -1,40 +1,57 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
 import fetchApi from 'fetch'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import { DataGrid, ptBR } from '@mui/x-data-grid'
-import Container from 'components/Container'
+
+import { AuthContext } from 'contexts/auth'
+
 import Avatar from '@mui/material/Avatar'
 import Actions from 'components/Actions'
-import { Button } from '@mui/material'
+import Header from 'components/Header'
 
 const columns = [
   {
     field: 'id',
-    headerName: 'Cód.',
+    headerName: 'Cód',
+    valueGetter: (params) => `${params.id}`,
+    flex: 1,
+    minWidth: 150,
   },
+
   {
     field: 'title',
     headerName: 'Nome',
+    flex: 1,
+    minWidth: 150,
   },
+
   {
     field: 'image',
     headerName: 'Imagem',
     renderCell: (params) => (
       <Avatar alt="Remy Sharp" src={params?.value?.url} />
     ),
+    flex: 1,
+    minWidth: 150,
   },
+
   {
     field: 'actions',
     headerName: 'Ações',
     renderCell: (params) => <Actions id={params.value} />,
+    minWidth: 150,
+    flex: 1,
   },
 ]
 
 export default function DataGridDemo() {
   const [categories, setCategories] = useState([])
   const [itemsSelect, setItemsSelect] = useState([])
-  const [loadingText, setLoadingText] = useState(null)
+  const setLoading = useContext(AuthContext).setLoading
+  const navigate = useNavigate()
 
   const getCategories = async () => {
     const response = await fetchApi('get', 'categories')
@@ -43,16 +60,14 @@ export default function DataGridDemo() {
 
   const removeSelects = async (ids) => {
     try {
-      setLoadingText('Aguarde...')
-      const response = await fetchApi('delete', `categories/${itemsSelect}`)
-      const categoriesUpdate = await response.json();
-
-      setCategories(categoriesUpdate)
+      setLoading('Aguarde...')
+      await fetchApi('delete', `categories/${itemsSelect}`)
+      getCategories()
       toast.success('Itens selecionados, excluidos!')
     } catch (e) {
       toast.error('Não foi possível excuir os itens selecionados!')
     } finally {
-      setLoadingText(null)
+      setLoading(null)
     }
   }
 
@@ -70,12 +85,13 @@ export default function DataGridDemo() {
   })
 
   return (
-    <Container
-      component="main"
-      title="Categorias"
-      buttonLink={{ text: 'Nova categoria', route: '/admin/categories/create' }}
-      loading={loadingText}
-    >
+    <>
+      <Header
+        title="Categorias"
+        buttonText="Nova categoria"
+        buttonClick={() => navigate('create')}
+      />
+
       {itemsSelect.length > 0 && (
         <Button
           variant="contained"
@@ -83,7 +99,7 @@ export default function DataGridDemo() {
           sx={{ mb: 2 }}
           onClick={removeSelects}
         >
-          Delete
+          Remover
         </Button>
       )}
 
@@ -102,6 +118,6 @@ export default function DataGridDemo() {
       </Box>
 
       <Toaster position="bottom-right" reverseOrder={false} />
-    </Container>
+    </>
   )
 }

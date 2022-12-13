@@ -7,12 +7,12 @@ const LoadingPage = (props) => (
   <Box
     sx={{
       background: '#000000',
-      height: '100%',
-      width: '100%',
+      height: '100vh',
+      width: '100vw',
       position: 'fixed',
       top: 0,
       opacity: 0.9,
-      zIndex: 2,
+      zIndex: 9999,
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',

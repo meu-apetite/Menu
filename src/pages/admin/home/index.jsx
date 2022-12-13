@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import Container from 'components/Container'
 import fetchApi from 'fetch'
 
 const Home = (props) => {
@@ -17,9 +16,9 @@ const Home = (props) => {
   }, [])
 
   return (
-    <Container>
+    <>
       <h1>ok</h1>
-    </Container>
+    </>
   )
 }
 
