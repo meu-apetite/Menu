@@ -20,15 +20,19 @@ const Create = (props) => {
   const [loggedStatus, setLoggedStatus] = useState('pending')
 
   const update = async () => {
-    const id = JSON.parse(localStorage.getItem('_id'))
-    const response = await fetchApi('get', `company/${id}`, null, true)
-    const company = await response.json()
-    auth.setCompany(company)
+    try {
+      const id = JSON.parse(localStorage.getItem('_id'))
+      const response = await fetchApi('get', `company/${id}`, null, true)
+      const company = await response.json()
+      auth.setCompany(company)
 
-    if (!response.ok) {
-      setLoggedStatus('loggedOut')
-    } else {
-      setLoggedStatus('logged')
+      if (!response.ok) {
+        setLoggedStatus('loggedOut')
+      } else {
+        setLoggedStatus('logged')
+      }
+    } catch (e) {
+      setLoggedStatus('error')
     }
   }
 
@@ -37,7 +41,11 @@ const Create = (props) => {
   }, [])
 
   if (loggedStatus === 'pending') {
-    return <h1>okjffjff</h1>
+    return <h1>Aguarde...</h1>
+  }
+
+  if (loggedStatus === 'error') {
+    return <h1>Error no servidor...</h1>
   }
 
   if (loggedStatus === 'logged') {
