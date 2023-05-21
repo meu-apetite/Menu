@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import fetchApi from 'fetch'
 import Box from '@mui/material/Box'
 import { DataGrid, ptBR } from '@mui/x-data-grid'
+import Header from 'components/Header';
+import { useNavigate } from 'react-router-dom';
+
 
 const columns = [
   {
@@ -88,31 +91,36 @@ const rows = [
 ]
 
 export default function DataGridDemo() {
+  const navigate = useNavigate()
   const [products, setProducts] = useState([])
 
   const getProducts = async () => {
-    const req = await fetchApi('get', 'products')
-    const res = await req.json()
-    setProducts(res)
+    const response = await fetchApi('get', 'products')
+    console.log(await response.json())
+    setProducts(await response.json());
   }
 
   useEffect(() => {
     getProducts()
   }, [])
 
-  const rowProduct = products.map((item) => (item.id = item._id))
+  const rowProduct = products?.map((item) => (item.id = item._id))
 
   return (
     <Box sx={{ height: 430, width: '100%' }}>
+      <Header
+        title="Produtos"
+        buttonText="Novo produto"
+        buttonClick={() => navigate('create')}
+      />
       <DataGrid
         localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
         rows={rows}
         columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
+        pageSize={12}
+        rowsPerPageOptions={[12]}
         checkboxSelection
         disableSelectionOnClick
-        experimentalFeatures={{ newEditingApi: true }}
       />
     </Box>
   )

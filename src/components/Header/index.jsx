@@ -11,14 +11,9 @@ const Header = (props) => {
   return (
     <S.Header
       component="header"
-      sx={{
-        my: 3,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
+      sx={{ mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
     >
-      {!props.custom ? (
+      {!props.children ? (
         <>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {props.back && (

@@ -30,9 +30,7 @@ const MiniDrawer = () => {
     <Box
       sx={{
         display: 'flex',
-        [theme.breakpoints.down('sm')]: {
-          position: 'absolute',
-        },
+        [theme.breakpoints.down('sm')]: { position: 'absolute' },
       }}
     >
       <CssBaseline />

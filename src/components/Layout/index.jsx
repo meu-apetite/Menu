@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { Navigate, Outlet } from 'react-router-dom'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
-import themeDark from 'theme/dark'
-import themeLight from 'theme/light'
-import Box from '@mui/material/Box'
-import Drawer from 'components/Drawer'
-import LoadingPage from 'components/LoadingPage'
-import fetchApi from 'fetch'
-import { AuthContext } from 'contexts/auth'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useContext } from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import { AuthContext } from 'contexts/auth';
+import fetchApi from 'fetch';
+import themeDark from 'theme/dark';
+import themeLight from 'theme/light';
+import Drawer from 'components/Drawer';
+import LoadingPage from 'components/LoadingPage';
 
 const getTheme = (theme = 'light') =>
   theme === 'dark' ? createTheme(themeDark) : createTheme(themeLight)
@@ -22,8 +21,9 @@ const Create = (props) => {
   const update = async () => {
     try {
       const id = JSON.parse(localStorage.getItem('_id'))
-      const response = await fetchApi('get', `company/${id}`, null, true)
-      const company = await response.json()
+      const response = await fetchApi('get', `app/${id}`, null, true)
+      const company = await response.json();
+
       auth.setCompany(company)
 
       if (!response.ok) {
@@ -40,44 +40,27 @@ const Create = (props) => {
     update()
   }, [])
 
-  if (loggedStatus === 'pending') {
-    return <h1>Aguarde...</h1>
-  }
-
-  if (loggedStatus === 'error') {
-    return <h1>Error no servidor...</h1>
-  }
+  if (loggedStatus === 'pending') return <h1>Aguarde...</h1>;
+  if (loggedStatus === 'error') return <h1>Error no servidor...</h1>;
+  if (loggedStatus === 'loggedOut') return <Navigate to="/login" />;
 
   if (loggedStatus === 'logged') {
     return (
       <ThemeProvider theme={theme}>
         <Box sx={{ display: 'flex', maxWidth: '1300px', margin: 'auto' }}>
           <Drawer />
-          <Box
-            component="main"
-            sx={{ flexGrow: 1, p: { xs: 2, sm: 3, md: 4 }, mt: 4 }}
-          >
-            <Box
-              component={props.component}
-              onSubmit={props.handleSubmit}
-              autoComplete="off"
-            >
+          <Box component="main" sx={{ flexGrow: 1, p: 2, mt: '64px' }}>
+            <Box component={props.component} onSubmit={props.handleSubmit} autoComplete="off">
               <Outlet />
             </Box>
           </Box>
         </Box>
+
         {props.loading && (
-          <LoadingPage
-            text={props.loading}
-            active={props.loading}
-          ></LoadingPage>
+          <LoadingPage text={props.loading} active={props.loading}></LoadingPage>
         )}
       </ThemeProvider>
     )
-  }
-
-  if (loggedStatus === 'loggedOut') {
-    return <Navigate to="/login" />
   }
 }
 

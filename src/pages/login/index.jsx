@@ -64,9 +64,12 @@ export default function Login() {
       setMessages([])
       setFlashMessage(null)
 
+      console.log('aqui')
       const data = new FormData(e.currentTarget)
       const body = { email: data.get('email'), password: data.get('password') }
       let response = await fetchApi('post', 'login', body, false)
+
+      console.log(await response)
 
       if (!response.ok) {
         const result = await response.json()
@@ -80,7 +83,8 @@ export default function Login() {
       }
 
       response = await response.json()
-      localStorage.setItem('_id', JSON.stringify(response.company._id))
+      console.log(response)
+      localStorage.setItem('_id', JSON.stringify(response._id))
       localStorage.setItem('token', JSON.stringify(response.token))
 
       navigate('/admin')
@@ -128,42 +132,20 @@ export default function Login() {
         />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
+            sx={{ my: 8, mx: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
           >
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
-              Login
-            </Typography>
-            <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
-            >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="email"
-                label="Email"
-                autoComplete="email"
+            <Typography component="h1" variant="h5">Login</Typography>
+
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+              <TextField margin="normal" required fullWidth
+                name="email" label="Email" autoComplete="email"
                 autoFocus
               />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                label="Senha"
-                type="password"
-                name="password"
+              <TextField margin="normal" required fullWidth
+                label="Senha" type="password" name="password"
                 autoComplete="current-password"
               />
               <FormControlLabel
@@ -180,14 +162,10 @@ export default function Login() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Esqueceu a senha?
-                  </Link>
+                  <Link href="#" variant="body2">Esqueceu a senha?</Link>
                 </Grid>
                 <Grid item>
-                  <Link href="/register" variant="body2">
-                    Não tem uma conta? Cadastre-se
-                  </Link>
+                  <Link href="/register" variant="body2">Não tem uma conta? Cadastre-se</Link>
                 </Grid>
               </Grid>
               <Copyright sx={{ mt: 5 }} />

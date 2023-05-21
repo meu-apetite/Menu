@@ -7,7 +7,6 @@ import QrCode2Icon from '@mui/icons-material/QrCode2'
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
 import SettingsIcon from '@mui/icons-material/Settings'
 import FormatPaintIcon from '@mui/icons-material/FormatPaint'
-import LocalMallIcon from '@mui/icons-material/LocalMall'
 import GridViewIcon from '@mui/icons-material/GridView'
 
 const items = [
@@ -31,30 +30,6 @@ const items = [
       link: '/admin/products',
       Icon: () => <GridViewIcon />,
     },
-
-    {
-      text: 'Estoque',
-      link: '/admin/inventory',
-      Icon: () => <InventoryIcon />,
-    },
-
-    {
-      text: 'Categorias',
-      link: '/admin/categories',
-      Icon: () => <CategoryIcon />,
-    },
-
-    {
-      text: 'Desconto',
-      link: '/admin/discounts',
-      Icon: () => <LocalOfferIcon />,
-    },
-
-    {
-      text: 'Formas de pagamento',
-      link: '/admin/payment-methods',
-      Icon: () => <MonetizationOnIcon />,
-    },
   ],
 
   [
@@ -66,13 +41,13 @@ const items = [
 
     {
       text: 'Aparência da loja',
-      link: '/admin/',
+      link: '/admin/appearance',
       Icon: () => <FormatPaintIcon />,
     },
 
     {
       text: 'Configurações',
-      link: '/admin/produto',
+      link: '/admin/configuration',
       Icon: () => <SettingsIcon />,
     },
   ],
