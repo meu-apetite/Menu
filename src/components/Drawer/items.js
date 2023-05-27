@@ -30,6 +30,12 @@ const items = [
       link: '/admin/products',
       Icon: () => <GridViewIcon />,
     },
+
+    {
+      text: 'Categoria',
+      link: '/admin/categories',
+      Icon: () => <CategoryIcon />,
+    },
   ],
 
   [

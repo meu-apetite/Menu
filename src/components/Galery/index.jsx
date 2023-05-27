@@ -6,20 +6,18 @@ import IconButton from '@mui/material/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
 
 const TitlebarImageList = (props) => {
-
-  console.log(props)
-  if (!props.itemData) return
+  if (!props.data) return
 
   return (
     <ImageList sx={{ mt: 0.4, display: 'flex', flexWrap: 'wrap', gap: '2rem !important' }}>
-      {props.itemData?.map((item, index) => (
+      {props.data?.map((item, index) => (
         <ImageListItem
           key={`image-${index}`}
           sx={{  height: 200, borderRadius: 4, width: 'fit-content;' }}
         >
           <img
             style={{ borderRadius: 5, width: 200, height: 200, objectFit: 'contain', border: '1px solid #000' }}
-            src={`${item.src}`}
+            src={`${item.file}`}
             alt={item.title}
             loading="lazy"
           />
@@ -30,7 +28,7 @@ const TitlebarImageList = (props) => {
                 sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
                 aria-label={`info about ${item.title}`}
                 data-id={item.title}
-                onClick={() => props.closeImage(item.src)}
+                onClick={() => props.closeImage(item.file)}
               >
                 <DeleteIcon />
               </IconButton>

@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
-import toast, { Toaster } from 'react-hot-toast'
-import fetchApi from 'fetch'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import { DataGrid, ptBR } from '@mui/x-data-grid'
-
-import { AuthContext } from 'contexts/auth'
-
-import Avatar from '@mui/material/Avatar'
-import Actions from 'components/Actions'
-import Header from 'components/Header'
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+import fetchApi from 'fetch';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Avatar from '@mui/material/Avatar';
+import { DataGrid, ptBR } from '@mui/x-data-grid';
+import { AuthContext } from 'contexts/auth';
+import Actions from 'components/Actions';
+import Header from 'components/Header';
 
 const columns = [
   {
@@ -31,9 +29,9 @@ const columns = [
   {
     field: 'image',
     headerName: 'Imagem',
-    renderCell: (params) => (
-      <Avatar alt="Remy Sharp" src={params?.value?.url} />
-    ),
+    renderCell: (params) => {
+    <Avatar alt="Remy Sharp" src={params} />
+    },
     flex: 1,
     minWidth: 150,
   },
@@ -45,35 +43,36 @@ const columns = [
     minWidth: 150,
     flex: 1,
   },
-]
+];
 
 export default function DataGridDemo() {
-  const [categories, setCategories] = useState([])
-  const [itemsSelect, setItemsSelect] = useState([])
-  const setLoading = useContext(AuthContext).setLoading
-  const navigate = useNavigate()
+  const [categories, setCategories] = useState([]);
+  const [itemsSelect, setItemsSelect] = useState([]);
+  const setLoading = useContext(AuthContext).setLoading;
+  const navigate = useNavigate();
 
   const getCategories = async () => {
-    const response = await fetchApi('get', 'categories')
-    setCategories(await response.json())
-  }
+    const response = await fetchApi('get', 'category');
+    const { data } = await response.json();
+    setCategories(data);
+  };
 
   const removeSelects = async (ids) => {
     try {
-      setLoading('Aguarde...')
-      await fetchApi('delete', `categories/${itemsSelect}`)
-      getCategories()
-      toast.success('Itens selecionados, excluidos!')
+      setLoading('Aguarde...');
+      await fetchApi('delete', `categories/${itemsSelect}`);
+      getCategories();
+      toast.success('Itens selecionados, excluidos!');
     } catch (e) {
-      toast.error('Não foi possível excuir os itens selecionados!')
+      toast.error('Não foi possível excuir os itens selecionados!');
     } finally {
-      setLoading(null)
+      setLoading(null);
     }
-  }
+  };
 
   useEffect(() => {
-    getCategories()
-  }, [])
+    getCategories();
+  }, []);
 
   const row = categories.map((item) => {
     return {
@@ -81,8 +80,8 @@ export default function DataGridDemo() {
       title: item.title,
       image: item.image,
       actions: item._id,
-    }
-  })
+    };
+  });
 
   return (
     <>
@@ -93,12 +92,7 @@ export default function DataGridDemo() {
       />
 
       {itemsSelect.length > 0 && (
-        <Button
-          variant="contained"
-          color="error"
-          sx={{ mb: 2 }}
-          onClick={removeSelects}
-        >
+        <Button variant="contained" color="error" sx={{ mb: 2 }} onClick={removeSelects}>
           Remover
         </Button>
       )}
@@ -119,5 +113,5 @@ export default function DataGridDemo() {
 
       <Toaster position="bottom-right" reverseOrder={false} />
     </>
-  )
+  );
 }

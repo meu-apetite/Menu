@@ -10,7 +10,7 @@ const UploadButtons = (props) => {
     <Stack direction="row" alignItems="center" spacing={2}>
       <Button variant="contained" component="label">
         { props.text || "Nova imagem" }
-        <input hidden accept="image/*" onChange={props.loadFile} multiple="true" type="file" />
+        <input hidden accept="image/*" onChange={props.loadFile} multiple={true} type="file" />
       </Button>
       <IconButton color="primary" aria-label="upload picture" component="label">
         <input hidden accept="image/*" onChange={props.loadFile} type="file" />

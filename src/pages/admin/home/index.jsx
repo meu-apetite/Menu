@@ -19,11 +19,11 @@ const Home = (props) => {
 
   return (
     <>
-        <div class="dashboard">
+        <div className="dashboard">
           <style>
             
           </style>
-      <div class="section">
+      <div className="section">
         <h2>Produtos em destaque</h2>
         <ul>
           <li>Produto 1</li>
@@ -31,7 +31,7 @@ const Home = (props) => {
           <li>Produto 3</li>
         </ul>
       </div>
-      <div class="section">
+      <div className="section">
         <h2>Produtos mais vendidos</h2>
         <ol>
           <li>Produto 4</li>
@@ -39,7 +39,7 @@ const Home = (props) => {
           <li>Produto 6</li>
         </ol>
       </div>
-      <div class="section">
+      <div className="section">
         <h2>Produtos com estoque baixo</h2>
         <table>
           <tr>
@@ -60,12 +60,12 @@ const Home = (props) => {
           </tr>
         </table>
       </div>
-      <div class="section">
+      <div className="section">
         <h2>Localização</h2>
-        <div class="qr-code">
+        <div className="qr-code">
           {/* <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=lojaficticia.com.br"> */}
         </div>
-        <div class="map">
+        <div className="map">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3840.456515570109!2d-48.48179388519753!3d-1.445711836212218!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x92fbff8c7cf08e31%3A0xa810d66e8c7d31b!2sCentral%20do%20Bambu%20Manaus!5e0!3m2!1spt-BR!2sbr!4v1622797367347!5m2!1spt-BR!2sbr" title="Mapa da loja"></iframe>
           
         </div>

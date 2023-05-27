@@ -9,7 +9,6 @@ import Galery from 'components/Galery'
 import Select from 'components/Select'
 import convertFile from 'utils/convertBase64'
 import fetchApi from 'fetch'
-import Variations from 'components/Variations'
 import Header from 'components/Header'
 
 const propsTextFields = {
@@ -128,6 +127,11 @@ const Create = ({ navigation }) => {
               label="Categorias"
               change={(e) => setData({ ...data, categories: e.target.value })}
             />
+          </Grid>
+
+          <Grid item xs={12} sm={8}>
+            <Galery data={data.images} closeImage={closeImage} />
+            <ButtonUpload text="carregar fotos" loadFile={loadFile} />
           </Grid>
         </Grid>
       </Box>
