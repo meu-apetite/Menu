@@ -1,68 +1,34 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
-import fetchApi from 'fetch';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { AuthContext } from 'contexts/auth';
 import Actions from 'components/Actions';
 import Header from 'components/Header';
-
-const columns = [
-  {
-    field: 'id',
-    headerName: 'Cód',
-    valueGetter: (params) => `${params.id}`,
-    flex: 1,
-    minWidth: 150,
-  },
-
-  {
-    field: 'title',
-    headerName: 'Nome',
-    flex: 1,
-    minWidth: 150,
-  },
-
-  {
-    field: 'image',
-    headerName: 'Imagem',
-    renderCell: (params) => {
-    <Avatar alt="Remy Sharp" src={params} />
-    },
-    flex: 1,
-    minWidth: 150,
-  },
-
-  {
-    field: 'actions',
-    headerName: 'Ações',
-    renderCell: (params) => <Actions id={params.value} />,
-    minWidth: 150,
-    flex: 1,
-  },
-];
+import { ApiService } from 'services/api.service';
 
 export default function DataGridDemo() {
+  const navigate = useNavigate();
+  const apiService = new ApiService();
+
   const [categories, setCategories] = useState([]);
   const [itemsSelect, setItemsSelect] = useState([]);
-  const setLoading = useContext(AuthContext).setLoading;
-  const navigate = useNavigate();
+  const { setLoading, toast } = useContext(AuthContext);
 
   const getCategories = async () => {
-    const response = await fetchApi('get', 'category');
-    const { data } = await response.json();
-    setCategories(data);
+    const response = await apiService.get('/admin/category');
+    setCategories(response.data);
   };
 
-  const removeSelects = async (ids) => {
+  const removeSelect = async (ids) => {
     try {
       setLoading('Aguarde...');
-      await fetchApi('delete', `categories/${itemsSelect}`);
-      getCategories();
-      toast.success('Itens selecionados, excluidos!');
+
+      const response = await apiService.post(`/admin/category/delete-multiple`, { categories: itemsSelect });
+      setCategories(response.data);
+
+      toast.success('Categorias excluidas');
     } catch (e) {
       toast.error('Não foi possível excuir os itens selecionados!');
     } finally {
@@ -83,6 +49,53 @@ export default function DataGridDemo() {
     };
   });
 
+  const columns = [
+    {
+      field: 'title',
+      headerName: 'Nome',
+      flex: 1,
+      minWidth: 150,
+    },
+    {
+      field: 'image',
+      headerName: 'Foto da categoria',
+      renderCell: (params) => (
+        <img
+          src={params.value}
+          alt={params}
+          loading="lazy"
+          style={{ width: '30%',  minWidth: 90}}
+        />
+      ),
+      flex: 1,
+      minWidth: 150,
+    },
+    { 
+      field: 'actions',
+      headerName: 'Ações',
+      renderCell: (params) => (<Actions
+        viewFn={() => navigate({ pathname: 'view/', search: params.value })}
+        updateFn={() => navigate({ pathname: 'update/', search: params.value })}
+        deleteFn={async () => {
+          try {
+            setLoading('Excluindo...');
+
+            const response = await apiService.delete(`/admin/category/${params.value}`);
+            setCategories(response.data);
+            
+            toast.success('Categoria excluída');
+          } catch (error) {
+            toast.error('Algo deu errado ao tentar excluir a categoria');
+          } finally {
+            setLoading(null);
+          }
+        }}
+      />),
+      minWidth: 150,
+      flex: 1,
+    },
+  ];
+
   return (
     <>
       <Header
@@ -92,17 +105,17 @@ export default function DataGridDemo() {
       />
 
       {itemsSelect.length > 0 && (
-        <Button variant="contained" color="error" sx={{ mb: 2 }} onClick={removeSelects}>
+        <Button variant="contained" color="error" sx={{ mb: 2 }} onClick={removeSelect}>
           Remover
         </Button>
       )}
 
-      <Box sx={{ height: 430, width: '100%' }}>
+      <Box sx={{ height: '70vh', width: '100%' }}>
         <DataGrid
           localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
           rows={row}
           columns={columns}
-          pageSize={5}
+          pageSize={10}
           rowsPerPageOptions={[5]}
           checkboxSelection
           disableSelectionOnClick
@@ -110,8 +123,6 @@ export default function DataGridDemo() {
           onSelectionModelChange={(ids) => setItemsSelect(ids)}
         />
       </Box>
-
-      <Toaster position="bottom-right" reverseOrder={false} />
     </>
   );
 }

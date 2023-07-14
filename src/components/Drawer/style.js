@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles'
 import MuiDrawer from '@mui/material/Drawer'
 import MuiAppBar from '@mui/material/AppBar'
+import { createGlobalStyle } from 'styled-components';
 
 export const openedMixin = (theme) => ({
   width: 240,
@@ -78,6 +79,11 @@ export const Logo = styled('img')(({ theme }) => ({
 
 export const WrapperIntro = styled('div')(({ theme }) => ({
   display: 'flex',
-  gap: '1rem'
- 
+  gap: '1rem',
 }))
+
+export const GlobalStyle = createGlobalStyle`
+  .body {
+    display: none;
+  }
+`;

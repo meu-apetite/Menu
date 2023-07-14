@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import ButtonUpload from 'components/ButtonUpload'
-import Galery from 'components/Galery'
+import Gallery from 'components/Gallery'
 import convertFile from 'utils/convertBase64'
 import Category from '@mui/icons-material/Category'
 
@@ -48,7 +48,7 @@ const Create = () => {
 
           <Grid item xs={12} sm={12}>
             <ButtonUpload text="carregar foto" loadFile={loadFile} />
-            <Galery itemData={images} closeImage={closeImage} />
+            <Gallery itemData={images} closeImage={closeImage} />
           </Grid>
         </Grid>
       </Box>

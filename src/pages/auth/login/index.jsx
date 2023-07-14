@@ -1,22 +1,26 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import fetchApi from 'fetch';
-import { AuthContext } from 'contexts/auth';
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  createTheme,
+  ThemeProvider,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  Link,
+  Paper,
+  Box,
+  Grid,
+  Typography,
+} from '@mui/material';
 import ImageIntro from '../../../public/images/16548-min.jpg';
+import { ApiService } from 'services/api.service';
+import { AuthContext } from 'contexts/auth';
 
+const apiService = new ApiService(false);
 
 const themeDark = createTheme({
   palette: {
@@ -35,27 +39,30 @@ export default function Login() {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
+
       setLoading(true);
       
       const data = new FormData(e.currentTarget);
-      const body = { email: data.get('email'), password: data.get('password') };
 
       if (!data.get('email')) return toast.error('O Email não pode ficar em branco');
       if (!data.get('password')) return toast.error('A Senha não pode ficar em branco');
       
-      let response = await fetchApi('post', 'login', body, false);
-      response = await response.json();
+      const response = await apiService.post(
+        '/login', 
+        { email: data.get('email'), password: data.get('password') }
+      );
 
-      if (!response.success) return toast.error(response.message);      
+      if (!response.data.success) return toast.error(response.data.message);      
     
-      localStorage.setItem('_id', JSON.stringify(response._id));
-      localStorage.setItem('token', JSON.stringify(response.token));
+      localStorage.setItem('_id', JSON.stringify(response.data._id));
+      localStorage.setItem('token', JSON.stringify(response.data.token));
 
       navigate('/admin');
 
       return document.location.reload();
     } catch (error) {
-      return toast.error(error.message);
+      console.log(error)
+      return toast.error(error.response.data.message);
     } finally {
       setLoading(false);
       setTimeout(() => setLoading(false), 4000);

@@ -16,19 +16,10 @@ const Header = (props) => {
       {!props.children ? (
         <>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {props.back && (
-              <NavigateBeforeIcon
-                sx={{ cursor: 'pointer' }}
-                onClick={() => navigate(props.back)}
-              />
-            )}
+            {props.back && <NavigateBeforeIcon sx={{ cursor: 'pointer' }} onClick={() => navigate(props.back)} />}
             <Typography variant="h1">{props.title}</Typography>
           </Box>
-          <Button
-            variant="contained"
-            onClick={props.buttonClick}
-            disabled={props.buttonDisabled || false}
-          >
+          <Button variant="contained" onClick={props.buttonClick} disabled={props.buttonDisabled || false}>
             {props.buttonText}
           </Button>
         </>

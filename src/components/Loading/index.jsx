@@ -1,7 +1,7 @@
-import React from 'react'
-import Box from '@mui/material/Box'
-import CircularProgress from '@mui/material/CircularProgress'
-import Typography from '@mui/material/Typography'
+import React from 'react';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
 
 const LoadingPage = (props) => (
   <Box
@@ -11,7 +11,7 @@ const LoadingPage = (props) => (
       width: '100vw',
       position: 'fixed',
       top: 0,
-      opacity: 0.9,
+      opacity: 0.7,
       zIndex: 9999,
       overflow: 'hidden',
       display: 'flex',
@@ -20,10 +20,17 @@ const LoadingPage = (props) => (
       alignItems: 'center',
     }}
   >
-    <Box sx={{ display: 'grid', gap: 1 }}>{props.children}</Box>
+    <Box sx={{
+      color: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      flexDirection: 'column',
+      justifyContent: 'center',
+    }}>
     <CircularProgress disableShrink />
-    <Typography>{props.text}</Typography>
+    <p style={{ textAlign: 'center' }}>{props.text}</p>
   </Box>
+  </Box >
 )
 
-export default LoadingPage
+export default LoadingPage;

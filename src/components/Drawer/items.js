@@ -27,7 +27,7 @@ const items = [
   [
     {
       text: 'Produtos',
-      link: '/admin/products',
+      link: '/admin/product',
       Icon: () => <GridViewIcon />,
     },
 
@@ -41,7 +41,7 @@ const items = [
   [
     {
       text: 'QR Code da loja',
-      link: '/admin/',
+      link: '/admin/qr-code',
       Icon: () => <QrCode2Icon />,
     },
 
@@ -53,7 +53,7 @@ const items = [
 
     {
       text: 'Configurações',
-      link: '/admin/configuration',
+      link: '/admin/setting',
       Icon: () => <SettingsIcon />,
     },
   ],
