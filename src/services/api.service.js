@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export class ApiService {
-  #baseUrl = 'http://localhost:5000';
+  #baseUrl = 'http://192.168.0.112:5000';
   isAuth = false;
   #token;
   #_id;

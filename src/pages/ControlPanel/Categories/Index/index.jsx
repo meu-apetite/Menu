@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+  import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -8,7 +8,7 @@ import Actions from 'components/Actions';
 import Header from 'components/Header';
 import { ApiService } from 'services/api.service';
 
-export default function DataGridDemo() {
+export default function Categories() {
   const navigate = useNavigate();
   const apiService = new ApiService();
 

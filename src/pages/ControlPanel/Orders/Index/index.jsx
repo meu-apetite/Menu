@@ -87,7 +87,7 @@ const rows = [
   },
 ]
 
-export default function DataGridDemo() {
+export default function Index() {
   const [categories, setCategories] = useState([])
 
   const getCategories = async () => {

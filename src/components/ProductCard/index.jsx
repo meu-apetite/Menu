@@ -1,52 +1,60 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
+import ProductView from 'components/ProductView';
+import * as S from './style';
 
 /**
  * props: {
  *  product: {
+ *    id: string,
  *    name: string,
- *    price: number
+ *    price: number,
  *    description: string,
- *    image?: [] 
+ *    image?: []
  *  }
  *}
-*/
+ */
 
-export default function ProductCard(props) {
+const ProductCard = (props) => {
   const product = props.product;
   const images = product?.images;
 
-  console.log(images)
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpenModal = () => setOpenModal(true);
 
   return (
-    <Card sx={{ display: 'flex', justifyContent: 'space-between', gap: 1}}>
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <CardContent sx={{ flex: '1 0 auto', pt: 0 }}>
-          <Typography component="div" variant="h5" sx={{ fontSize: '1.4rem', fontWeight: 300 }}>
-            {product.name}
-          </Typography>
-          <Typography variant="subtitle1" color="text.secondary" component="div">
-            {product.description}
-          </Typography>
-        </CardContent>
+    <>
+      <S.CardCustom onClick={handleOpenModal}>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <S.CardContentCustom sx={{ flex: '1 0 auto', pt: 0 }}>
+            <S.CardInfo>
+              <div>
+                <S.TitleProduct>{product.name}</S.TitleProduct>
+                <S.Description>{product.description}</S.Description>
+              </div>
+              <S.Price>
+                {/* A partir de{' '} */}
+                {product.price.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
+              </S.Price>
+            </S.CardInfo>
+            <S.CardMediaCustom image={images.length ? images[0].url : 1} />
+          </S.CardContentCustom>
+        </Box>
+      </S.CardCustom>
 
-        <CardContent  sx={{ pt: 0, pb: '0 !important' }}>
-          <Typography component="span" variant="h6">
-            {product.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-          </Typography>
-        </CardContent>
-      </Box>
-
-      <CardMedia 
-        component="img" 
-        sx={{ minWidth: 110, maxWidth: 110, height: 110, objectFit: 'cover' }} 
-        image={images.length ? images[0].url : 1} 
-        alt={`Image do produto: ${props.name}`}
-      />
-    </Card>
+      {openModal && (
+        <S.ModalContainer>
+          <S.ModalContent>
+            <ProductView product={product} />
+          </S.ModalContent>
+        </S.ModalContainer>
+      )}
+    </>
   );
-}
+};
+
+export default ProductCard;

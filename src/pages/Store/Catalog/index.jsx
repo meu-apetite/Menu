@@ -11,15 +11,10 @@ import {
   CardMedia,
   Typography,
 } from '@mui/material';
-import { styled } from '@mui/system';
 import TabsCustom from 'components/Tabs';
 import { ApiService } from 'services/api.service';
 import AccordionProduct from 'components/AccordionProduct';
-
-const Container = styled('div')(({ theme }) => ({
-  margin: 'auto',
-  maxWidth: '1140px',
-}));
+import * as S from './style';
 
 const Store = () => {
   const apiService = new ApiService(false);
@@ -35,7 +30,7 @@ const Store = () => {
   const [heightSearchBar, setHeightSearchBar] = useState(0);
 
   const getProducts = async () => {
-    const response = await apiService.get('/store/products');
+    const response = await apiService.get('/store/products/' + id);
     const products = response.data;
     const categories = [];
     const categoriesTitle = [];
@@ -48,7 +43,7 @@ const Store = () => {
       if (index >= 0) return categories[index].products.push(item);
 
       categories.push({ title: categoryTitle, products: [item] });
-      categoriesTitle.push(categoryTitle)
+      categoriesTitle.push(categoryTitle);
     });
 
     setCollections(categories);
@@ -68,48 +63,31 @@ const Store = () => {
     <Box sx={{ background: '#f5f7fa' }}>
       <header ref={headerRef}>
         <SearchAppBar />
-        <Box
-          sx={{
-            height: '340px',
-            background:
-              'url(https://files.menudino.com/cardapios/9621/capa.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: '50%',
-            backgroundColor: '#f4f8f9',
-            backgroundRepeat: 'no-repeat',
-          }}
-        >
+        <S.Intro>
           <div>
             <Typography variant="h1" sx={{ fontSize: 30, fontWeight: 'bold' }}>
               BELLA PETIT
             </Typography>
           </div>
-        </Box>
+        </S.Intro>
       </header>
 
-      <Box
-        sx={{
-          position: 'sticky',
-          top: heightSearchBar,
-          background: '#fff',
-          pt: 0.4,
-          pb: 0.4,
-          zIndex: 999,
-        }}
-      >
-        <Container>
-          <TabsCustom />
-        </Container>
-      </Box>
+      <S.WrapperTabs top={heightSearchBar}>
+        <S.Container><TabsCustom /></S.Container>
+      </S.WrapperTabs>
 
       <Box component="main" sx={{ mt: 4 }}>
-        <Container>
+        <S.Container>
           <Box component="section" sx={{ ml: 2, mr: 2, mt: 2 }}>
             {collections.map((item, i) => (
-              <AccordionProduct key={i} categoryTitle={item.title} products={item.products} />
+              <AccordionProduct
+                key={i}
+                categoryTitle={item.title}
+                products={item.products}
+              />
             ))}
           </Box>
-        </Container>
+        </S.Container>
       </Box>
     </Box>
   );
