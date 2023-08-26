@@ -1,19 +1,42 @@
-import React, { createContext, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-
-import Loading from 'components/Loading';
+import React, { createContext, useEffect, useState } from 'react';
 
 export const StoreContext = createContext();
 
-export const AuthProvider = (props) => {
-  const [company, setCompany] = useState({});
-  const [cart, setCart] = useState('');
-  const [loading, setLoading] = useState(false);
+export const StoreProvider = (props) => {
+  const [total, setTotal] = useState(0);
+  const [bag, setBag] = useState(null);
+
+  const saveProduct = async (product) => {
+    const productsSaved = await localStorage.getItem('products');
+    if (productsSaved) {
+      const products = JSON.parse(productsSaved);
+      localStorage.setItem('products', JSON.stringify([product, ...products]));
+      setTotal([...products].reduce((acc, item) =>  acc += item.total, 0));
+    } else {
+      localStorage.setItem('products', JSON.stringify([product]));
+    };
+  };
+
+  const getPriceTotal = async (product) => {
+    const productsSaved = await localStorage.getItem('products');
+    if (productsSaved) {
+      const products = JSON.parse(productsSaved);
+      setBag(products);
+      setTotal([...products].reduce((acc, item) =>  acc += item.total, 0));
+    }
+  };
+
+  const getBag = async () => {
+    const productsSaved = await localStorage.getItem('products');
+    return productsSaved ? JSON.parse(productsSaved) : [];
+  };
+
+  useEffect(() => {
+    getPriceTotal();
+  }, [])
 
   return (
-    <StoreContext.Provider value={{ company, setCompany, cart, setCart, loading, setLoading, toast }}>
-      {loading && <Loading text={loading} />}
-      <Toaster position="bottom-right" reverseOrder={false} />
+    <StoreContext.Provider value={{ saveProduct, total, getBag }}>
       {props.children}
     </StoreContext.Provider>
   );

@@ -1,20 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import ButtonUpload from 'components/ButtonUpload';
-import Gallery from 'components/Gallery';
+import { Box, Button, Grid, TextField } from '@mui/material';
 import Header from 'components/Header';
 import { ApiService } from 'services/api.service';
-import { Button } from '@mui/material';
 import { AuthContext } from 'contexts/auth';
+import FindAddress from 'components/FindAddress';
+import { propsTextField } from 'utils/form';
 
 const Setting = () => {
   const apiService = new ApiService();
-
   const { toast, setLoading } = useContext(AuthContext);
-
   const [data, setData] = useState();
+  const [openEditorAddress, setOpenEditorAddress] = useState(false);
 
   const formSubmit = async (e) => {
     e.preventDefault();
@@ -28,11 +24,29 @@ const Setting = () => {
     } finally {
       setLoading(null);
     }
-  }
+  };
 
   const getData = async (id) => {
     const response = await apiService.get('/admin/company/');
     setData(response.data);
+  };
+
+  const updateAddress = async (address) => {
+    // address: { street: string, number: number, zipCode: string, district: string, city: string }
+    try {
+      setLoading('Atualizando endereço');
+      const response = await apiService.post('/admin/company/updateAddress', address);
+      setData(response.data);
+      toast.success('Endereço atualizado');
+    } catch (error) {
+      console.log(error);
+      toast.success(
+        'Não foi possível atualizar o endereço. caso não esteja consiguindo, entre em contato conosco.'
+      );
+    } finally {
+      setOpenEditorAddress(false);
+      setLoading(null);
+    }
   };
 
   useEffect(() => {
@@ -41,24 +55,7 @@ const Setting = () => {
 
   return (
     <>
-      <Header
-        title="Configuração"
-        back={-1}
-        buttonText="Salvar"
-        buttonClick={formSubmit}
-      />
-
-{/* urlName: { type: String }, ~
-  whatsapp: String, ~
-  active: { type: Boolean, default: true },
- 
-  login: {
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-  },
-  address: {
- 
-  }, */}
+      <Header title="Configuração" back={-1} buttonText="Salvar" buttonClick={formSubmit} />
 
       <Box component="section" noValidate>
         <Grid container spacing={2}>
@@ -73,7 +70,7 @@ const Setting = () => {
               required
             />
           </Grid>
-    
+
           <Grid item xs={12} sm={12}>
             <TextField
               label="WhatsApp (para direcionar os clientes)"
@@ -87,62 +84,69 @@ const Setting = () => {
           </Grid>
         </Grid>
 
-        <Grid container spacing={2}>     
+        <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
             <h3>Endereço</h3>
             <TextField
+              disabled
               label="Cep"
               value={data?.address?.zipCode}
-              onChange={(e) => setData({ ...data, zipCode: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-              margin="dense"
-              type="number"
-              fullWidth
-              required
+              {...propsTextField}
             />
           </Grid>
 
           <Grid item xs={12} sm={12}>
             <TextField
+              disabled
               label="Cidade"
               value={data?.address?.city}
-              onChange={(e) => setData({ ...data, city: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-              margin="dense"
-              fullWidth
-              required
+              {...propsTextField}
             />
           </Grid>
 
           <Grid item xs={12} sm={12}>
             <TextField
+              disabled
               label="Bairro"
               value={data?.address?.district}
-              onChange={(e) => setData({ ...data, district: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-              margin="dense"
-              fullWidth
-              required
+              {...propsTextField}
+            />
+          </Grid>
+
+          <Grid item xs={9} sm={9}>
+            <TextField
+              disabled
+              label="Rua"
+              value={data?.address?.street}
+              {...propsTextField}
+            />
+          </Grid>
+
+          <Grid item xs={3} sm={3}>
+            <TextField
+              disabled
+              label="Número"
+              value={data?.address?.number}
+              {...propsTextField}
             />
           </Grid>
 
           <Grid item xs={12} sm={12}>
-            <TextField
-              label="Rua (Ex: Rua Lima, 251)"
-              value={data?.lastName}
-              onChange={(e) => setData({ ...data, lastName: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-              margin="dense"
-              fullWidth
-              required
-            />
+            <Button
+              variant="outlined"
+              onClick={() => setOpenEditorAddress(!openEditorAddress)}
+            >
+              Atualizar endereço
+            </Button>
           </Grid>
+
+          {openEditorAddress && <FindAddress getAddress={(address) => updateAddress(address)} />}
         </Grid>
 
-        <Grid container spacing={2}>     
+        <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
-          <h3>Informações comerciais</h3>
-          <TextField
+            <h3>Informações comerciais</h3>
+            <TextField
               label="Email (Email da sua loja)"
               value={data?.login?.email}
               onChange={(e) => setData({ ...data, login: { ...data.login, email: e.target.value } })}
@@ -154,13 +158,13 @@ const Setting = () => {
             />
           </Grid>
         </Grid>
-  
-        <Grid container spacing={2}>     
+
+        <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
-            <h3>Informações pessoais</h3>
+            <h3>Proprietário</h3>
             <TextField
               label="Nome"
-              value={data?.name}
+              value={data?.owner.name}
               onChange={(e) => setData({ ...data, name: e.target.value })}
               InputLabelProps={{ shrink: true }}
               margin="dense"
@@ -172,7 +176,7 @@ const Setting = () => {
           <Grid item xs={12} sm={12}>
             <TextField
               label="Sobrenome"
-              value={data?.lastName}
+              value={data?.owner.lastName}
               onChange={(e) => setData({ ...data, lastName: e.target.value })}
               InputLabelProps={{ shrink: true }}
               margin="dense"

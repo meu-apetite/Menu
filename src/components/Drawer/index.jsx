@@ -31,10 +31,8 @@ const MiniDrawer = () => {
 
   const { company } = useContext(AuthContext);
 
-
   const useBreakpoints = () => {
     const isXs = useMediaQuery((theme) => theme.breakpoints.down('xs'));
-  
     return { isXs };
   };
   

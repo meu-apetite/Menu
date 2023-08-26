@@ -81,6 +81,7 @@ export const Description = styled('p')({
   wordWrap: 'break-word',
   overflow: 'hidden',
   whiteSpace: 'pre-line',
+  visibility: 'visible',
   display: '-webkit-box',
   '-webkit-line-clamp': '2',
   '-webkit-box-orient': 'vertical',

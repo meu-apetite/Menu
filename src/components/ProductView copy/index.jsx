@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { TextField } from '@mui/material';
-import { StoreContext } from 'contexts/store';
 import * as S from './style';
 
 const ProductView = (props) => {
   const { state } = useLocation();
-  const { saveProduct } = useContext(StoreContext);
-  
+
   const [product, setProduct] = useState({
     name: '',
     description: '',
@@ -15,6 +13,7 @@ const ProductView = (props) => {
     complements: [],
     images: [],
   });
+
   const [counterValue, setCounterValue] = useState(1);
   const [price, setPrice] = useState(0);
   const [complements, setComplements] = useState([]);
@@ -87,12 +86,7 @@ const ProductView = (props) => {
   };
 
   const addToCart = () => {
-    saveProduct({
-      productId: product._id,
-      complements: selectedComplements,
-      total: price,
-      quantity: counterValue
-    });
+    console.log({ productId: product._id, complements: selectedComplements, total: price })
   };
 
   useEffect(() => {
