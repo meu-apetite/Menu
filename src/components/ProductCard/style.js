@@ -36,10 +36,10 @@ export const ModalContent = styled('div')({
 export const CardCustom = styled(Card)({
   backgroundColor: ' #ffffff',
   border: '1px solid transparent',
-  boxShadow: '0 1px 1px rgba(0, 0, 0, 0.09)',
+  boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.09)',
   borderRadius: 4,
   '@media (min-width: 768px)': {
-    boxShadow: '0 1px 1px rgba(0, 0, 0, 0.09)'
+    boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.09)'
   },
 });
 

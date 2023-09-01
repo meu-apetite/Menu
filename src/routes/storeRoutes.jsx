@@ -5,8 +5,8 @@ const storeRoutes = [
   {
     path: '/',
     children: [
-      { path: 'cardapio', element: <Catalog /> },
-      { path: 'pedido', element: <BagShopping /> },
+      { path: ':id/cardapio', element: <Catalog /> },
+      { path: ':id/pedido', element: <BagShopping /> },
     ]
   },
 ];

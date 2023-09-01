@@ -156,7 +156,7 @@ const CartPage = () => {
 
   return (
     <Container maxWidth="md" style={{ marginTop: '40px' }}>
-      <Typography variant="h4" gutterBottom>Finalize o seu pedido</Typography>
+      <h2 variant="h4">Finalize o seu pedido</h2>
 
       <List>
         {bagItems.map((item) => (

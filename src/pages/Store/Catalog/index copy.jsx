@@ -52,15 +52,7 @@ const Store = () => {
 
   return (
     <Box sx={{ background: '#f5f7fa' }}>
-      <S.WrapperNav>
-        <NavMenu 
-          title={store?.fantasyName} 
-          logoUrl={store?.custom?.logo?.url} 
-          quantityProdcut={total} 
-          priceTotal={total} 
-          toBag={`/${id}/pedido`}
-        />
-      </S.WrapperNav>
+      <NavMenu title={store?.fantasyName} logoUrl={store?.custom?.logo?.url} />
 
       <header>
         <S.Intro>

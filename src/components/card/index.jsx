@@ -11,7 +11,7 @@ const CardTable = ({text, title, image}) => {
       <CardActionArea>
         <CardMedia component="img" height="140" image={image} alt="green iguana" />
         <CardContent>
-          <Typography gutterBottom variant="h6" component="div">{title}</Typography>
+          <Typography variant="h6" component="div">{title}</Typography>
           <Typography variant="body2" color="text.secondary">{text}</Typography>
         </CardContent>
       </CardActionArea>

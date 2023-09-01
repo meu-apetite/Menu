@@ -3,9 +3,10 @@ import Button from '@mui/material/Button';
 
 export const Header = styled('header')({
   position: 'relative',
-  height: 80,
-  border: '1px solid #dcdcdc'
-
+  border: '1px solid #dcdcdc',
+  display: 'flex',
+  justifyContent: 'center',
+  padding: '0.6rem 0'
   // '&::before': { 
   //   content: '""',
   //   width: '100%',
@@ -14,6 +15,10 @@ export const Header = styled('header')({
   //   margin: '75px 0',
   //   left: 0,
   // },
+});
+
+export const Title = styled('h2')({
+  marginTop: '1rem'
 });
 
 export const WrapperTabs = styled('div')(({ theme, top }) => ({
@@ -42,4 +47,13 @@ export const ButtonAddress = styled(Button)({
   // alignItems: 'center',
   // padding: 0,
   // background: 'transparent'
+});
+
+export const Logo = styled('img')({
+  width: 60,
+  height: 60
+});
+
+export const WrapperAddress = styled('div')({
+  padding: '1rem 0'
 });

@@ -7,7 +7,7 @@ import * as S from './style';
 const ProductView = (props) => {
   const { state } = useLocation();
   const { saveProduct } = useContext(StoreContext);
-  
+
   const [product, setProduct] = useState({
     name: '',
     description: '',
@@ -93,6 +93,8 @@ const ProductView = (props) => {
       total: price,
       quantity: counterValue
     });
+
+    props.closeProduct(true);
   };
 
   useEffect(() => {
@@ -123,9 +125,7 @@ const ProductView = (props) => {
   return (
     <S.Main>
       <S.Header>
-        <S.Container>
-          <h1>{product.name}</h1>
-        </S.Container>
+        <S.Container><h1>{product.name}</h1></S.Container>
       </S.Header>
 
       <S.ContainerProduct>
@@ -135,7 +135,9 @@ const ProductView = (props) => {
           <h2 className="subtitle">{product.name}</h2>
           <div className="description">
             <p>{product.description}</p>
-            <p>{product.price}</p>
+            <p style={{ fontSize: '1.4rem', margin: '0.2rem 0 1.4rem', color: '#008000' }}>
+              {product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </p>
           </div>
         </S.Container>
 
@@ -153,8 +155,8 @@ const ProductView = (props) => {
                     </span>
                   </div>
                   <div className="required">
-                    <span>{`${complementOption.count}/${item.max}`}</span>
-                    <span>{item.isRequired ? 'Obrigatório' : 'Opcional'}</span>
+                    <div>{`${complementOption.count}/${item.max}`}</div>
+                    <div>{item.isRequired ? 'Obrigatório' : 'Opcional'}</div>
                   </div>
                 </S.ComplementHeader>
 
@@ -222,9 +224,7 @@ const ProductView = (props) => {
 
         <S.ButtonAdd onClick={addToCart}>
           <span>Adicionar</span>
-          <span>
-            {price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </span>
+          <span>{price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
         </S.ButtonAdd>
       </S.ContainerAction>
     </S.Main>

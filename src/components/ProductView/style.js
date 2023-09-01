@@ -1,6 +1,5 @@
 import { styled } from '@mui/system';
 
-
 export const Container = styled('div')({
   padding: '0 1rem',
   maxWidth: '1170px'
@@ -18,46 +17,44 @@ export const Main = styled('main')({
 
 export const Header = styled('header')({
   gridArea: 'header',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   width: '100%',
-  background: '#fff'
-
-  // h1 {
-  //   margin: 0;
-  //   font-size: .75rem;
-  //   fontWeight: 500;
-  //   left: 0;
-  //   position: absolute;
-  //   text-align: center;
-  //   text-transform: uppercase;
-  //   width: 100%;   
-  //   height: auto;
-  // }
+  height: '30px',
+  background: '#fff',
+  'h1': {
+    margin: 0,
+    fontSize: '.9rem',
+    fontWeight: 500,
+    textTransform: 'uppercase',
+  }
 });
 
 export const ContainerProduct = styled('div')({
   gridArea: 'product',
   overflow: 'auto',
-  // img {
-  //   width: 100%;
-  //   height: 40vh;
-  //   object-fit: cover;
-  // }
-  // .subtitle {
-  //   margin: 10px 0 0;
-  //   font-size: 1rem;
-  //   fontWeight: 500;
-  //   color: #3e3e3e;
-  // }
-  // .description p {
-  //   font-size: .875rem;
-  //   padding-top: 10px;
-  //   margin: 0;
-  //   fontWeight: 300;
-  //   line-height: 1.22;
-  //   color: #717171;
-  //   white-space: pre-line;
-  //   word-break: break-all;
-  // }
+  'img': {
+    width: '100%',
+    height: '40vh',
+    objectFit: 'cover',
+  },
+  '.subtitle': {
+    margin:' 10px 0 0',
+    fontSize: '1rem',
+    fontWeight: 500,
+    color: '#3e3e3e',
+  },
+  '.description p': {
+    fontSize: '.875rem',
+    padding: '5px 0 10px 0',
+    margin: 0,
+    fontWeight: 300,
+    lineHeight: 1.22,
+    color: '#717171',
+    whiteSpace: 'pre-line',
+    wordBreak: 'break-all',
+  }
 })
 
 export const optionItem = styled('div')({
@@ -69,15 +66,14 @@ export const optionItem = styled('div')({
   backgroundSize: 'cover',
 });
 
-export const BackgroundImg = styled('div')({
-  backgroundImage: `url(${props => props.bgImg})`,
+export const BackgroundImg = styled('div')(({ bgImg }) => ({
+  backgroundImage: `url(${bgImg})`,
   height: '35vh',
   width: '100%',
   backgroundPosition: '50%',
   backgroundRepeat: 'no-repeat',
   backgroundSize: 'cover',
-});
-
+}));
 
 export const ComplementHeader = styled('div')({
   background: '#f2f2f2',
@@ -89,23 +85,29 @@ export const ComplementHeader = styled('div')({
   zIndex: 20,
   position: 'sticky',
   top: 0,
-  // .required {
-  //   background-color: #717171,
-  //   color: #f5f0eb,
-  //   border: 'none',
-  //   padding: 6px 6px 4px,
-  //   borderRadius: '3px',
-  //   text-transform: uppercase,
-  //   font-size: 0.6rem,
-  //   height: fit-content,
-  //   margin: auto 0,
-  // }
-  // .infoCount {
-  //   fontWeight: 400,
-  //   font-size: .8rem,
-  //   display: block,
-  //   color: #717171,
-  // }
+  '.required': {
+    color:' #f5f0eb',
+    border: 'none',
+    padding: '6px 6px 4px',
+    borderRadius: '3px',
+    textTransform: 'uppercase',
+    fontSize: '0.7rem',
+    height: 'fit-content',
+    margin: 'auto 0',
+    display: 'flex',
+    gap: '4px',
+    'div': {
+      padding: '0.1rem 0.3rem',
+      backgroundColor: '#717171',
+      borderRadius: 4
+    }
+  },
+  '.infoCount': {
+    fontWeight: 400,
+    fontSize: '.8rem',
+    display: 'block',
+    color: '#717171',
+  }
 });
 
 export const ComplementOption = styled('label')({
@@ -114,17 +116,17 @@ export const ComplementOption = styled('label')({
   justifyContent: 'space-between',
   padding: '1.1rem 0',
   borderBottom: '1px solid #3f3e3e12',
-  // .title {
-  //   margin: 0;
-  //   font-size: 1rem;
-  //   line-height: 1.27;
-  //   color: #3f3e3e;
-  //   fontWeight: 300;
-  // }
-  // .price {
-  //   font-size: 0.9rem;
-  //   color: #717171;
-  // }
+  '.title': {
+    margin: 0,
+    fontSize:' 1rem',
+    lineHeight: 1.27,
+    color: '#3f3e3e',
+    fontWeight: 300,
+  },
+  '.price': {
+    fontSize: '0.9rem',
+    color: '#717171',
+  }
 });
 
 export const ContainerAction = styled('div')({
@@ -159,24 +161,24 @@ export const ButtonAdd = styled('button')({
 
 export const CountItem = styled('div')({
   height: '50px',
-  padding:'0 0.6rem',
+  padding: '0 0.6rem',
   display: 'flex',
   alignItems: 'center',
   gap: '1.6rem',
   border: '1px solid #dcdcdc',
   borderRadius: '4px',
-  // i {
-  //   color: #ea1d2c;
-  // }
+  'i': {
+    color:' #ea1d2c'
+  }
 });
 
 export const Comment = styled('div')({
   marginTop: '1rem',
-  padding: '1.2rem 0'
-  // .label {
-  //   margin: 0;
-  //   fontWeight: 500;
-  //   font-size: 1rem;
-  //   color: #717171;
-  // }
+  padding: '1.2rem 0',
+  '.label': {
+    margin: 0,
+    fontWeight: 500,
+    fontSize: '1rem',
+    color: '#717171',
+  }
 });

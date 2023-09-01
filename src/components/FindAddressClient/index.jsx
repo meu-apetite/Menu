@@ -12,7 +12,7 @@ import axios from 'axios';
 import { ApiService } from 'services/api.service';
 import * as S from './style';
 
-const FindAddressClient = () => {
+const FindAddressClient = (props /* { getAddress() } */) => {
   const apiService = new ApiService(false);
 
   const [address, setAddress] = useState({
@@ -27,6 +27,7 @@ const FindAddressClient = () => {
   });
   const [cep, setCep] = useState(null);
   const [iscondominium, setIsCondominium] = useState(false);
+  const [openModalCep, setOpenModalCep] = useState(true);
   const [openModalAddress, setOpenModalAddress] = useState(false);
   const [openModalInfoExtra, setOpenModalInfoExtra] = useState(false);
 
@@ -52,30 +53,38 @@ const FindAddressClient = () => {
   const getLocalization = async () => {
     try {
       const response = await apiService.post('/store/calculateFreight', { address });
-      console.log(response.data)
-
+      console.log(response.data);
     } catch (error) {
       console.error('Error fetching address:', error);
     }
   };
 
   return (
-    <div>
-      <p>Preencha com o seu CEP corretamente!</p>
-      <TextField
-        placeholder="Escreva seu CEP"
-        variant="outlined"
-        fullWidth
-        size="small"
-        onChange={(e) => setCep(e.target.value)}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="start" onClick={findCep}>
-              <GridSearchIcon />
-            </InputAdornment>
-          ),
-        }}
-      />
+    <>
+      {openModalCep && (
+        <S.ModalContainer>
+          <S.ModalContent>
+            <S.WrapperForm>
+              <S.TitleModal>Insira seu CEP corretamente</S.TitleModal>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    placeholder="Escreva seu CEP"
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    onChange={(e) => setCep(e.target.value)}
+                    InputProps={{
+                      endAdornment: (<InputAdornment position="start" onClick={findCep}><GridSearchIcon /></InputAdornment>)
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              <Button variant="contained" onClick={findCep}>Continuar</Button>
+            </S.WrapperForm>
+          </S.ModalContent>
+        </S.ModalContainer>
+      )}
 
       {openModalAddress && (
         <S.ModalContainer>
@@ -97,20 +106,18 @@ const FindAddressClient = () => {
                   <TextField fullWidth label="Cidade" value={address.city} disabled />
                 </Grid>
                 <Grid item xs={4}>
-                  <TextField fullWidth label="Estado" value={address.state} disabled/>
+                  <TextField fullWidth label="Estado" value={address.state} disabled />
                 </Grid>
               </Grid>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.8 }}>
-                <Button 
-                  variant="contained" 
+                <Button
+                  variant="contained"
                   onClick={() => {
                     setOpenModalAddress(false);
                     setOpenModalInfoExtra(true);
                   }}
-                >
-                  Continuar
-                </Button>
+                >Continuar</Button>
                 <Button variant="outlined" color="error">Endereço errado</Button>
               </Box>
             </S.WrapperForm>
@@ -133,16 +140,15 @@ const FindAddressClient = () => {
                   />
                 </Grid>
                 {iscondominium && (
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Condomínio"
-                        value={address.condominium}
-                        onChange={(e) => setAddress({ ...address, condominium: e.target.value })}
-                        />
-                    </Grid>
-                  )
-                }
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Condomínio e bloco"
+                      value={address.condominium}
+                      onChange={(e) => setAddress({ ...address, condominium: e.target.value })}
+                    />
+                  </Grid>
+                )}
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
@@ -161,12 +167,12 @@ const FindAddressClient = () => {
                 </Grid>
               </Grid>
 
-              <Button variant="contained" onClick={getLocalization}>Continuar</Button>
+              <Button variant="contained" onClick={() => props.getAddress(address)}>Salvar</Button>
             </S.WrapperForm>
           </S.ModalContent>
         </S.ModalContainer>
       )}
-    </div>
+    </>
   );
 };
 

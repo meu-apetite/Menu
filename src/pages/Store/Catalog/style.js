@@ -8,16 +8,11 @@ export const Container = styled('div')({
   maxWidth: '1170px'
 });
 
-export const Nav = styled('nav')({
-  background: '#564aa3',
+export const WrapperNav = styled('nav')({
   position: 'fixed',
-  left: 0,
   top: 0,
   width: '100%',
-  height: headerNavHeight,
-  zIndex: 999,
-  display: 'flex',
-  alignItems: 'center'
+  zIndex: 1000
 });
 
 export const ButtonCart = styled('button')({

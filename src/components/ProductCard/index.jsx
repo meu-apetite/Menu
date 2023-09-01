@@ -49,7 +49,7 @@ const ProductCard = (props) => {
       {openModal && (
         <S.ModalContainer>
           <S.ModalContent>
-            <ProductView product={product} />
+            <ProductView product={product} closeProduct={data => setOpenModal(!data)} />
           </S.ModalContent>
         </S.ModalContainer>
       )}
