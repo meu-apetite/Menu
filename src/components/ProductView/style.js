@@ -88,19 +88,13 @@ export const ComplementHeader = styled('div')({
   '.required': {
     color:' #f5f0eb',
     border: 'none',
-    padding: '6px 6px 4px',
+    padding: '4px 6px 4px',
     borderRadius: '3px',
     textTransform: 'uppercase',
     fontSize: '0.7rem',
-    height: 'fit-content',
     margin: 'auto 0',
     display: 'flex',
     gap: '4px',
-    'div': {
-      padding: '0.1rem 0.3rem',
-      backgroundColor: '#717171',
-      borderRadius: 4
-    }
   },
   '.infoCount': {
     fontWeight: 400,
@@ -109,6 +103,12 @@ export const ComplementHeader = styled('div')({
     color: '#717171',
   }
 });
+
+export const WrapperInfo = styled('div')({ 
+  padding: '0.1rem 0.3rem',
+  backgroundColor: '#717171',
+  borderRadius: 4
+})
 
 export const ComplementOption = styled('label')({
   display: 'flex',

@@ -40,11 +40,20 @@ export const TitleModal = styled('h4')({
   fontSize: '1.1rem'
 });
 
-
 export const WrapperForm = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
   gap: '2rem',
   height: '100%'
+});
+
+export const WrapperAnimation = styled('div')({
+  display: 'flex',
+  justifyContent: 'center'
+});
+
+export const ButtonModalClose = styled('button')({
+  position: 'absolute',
+  top: -2
 });

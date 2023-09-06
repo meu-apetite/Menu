@@ -63,13 +63,10 @@ const NavMenu = ({ title, logoUrl, quantityProdcut, priceTotal, toBag }) => {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box sx={{ display: { md: 'flex' } }}>
+          <Box sx={{ background: '#' }}>
             <IconButton size="large" color="inherit" onClick={() => navigate(toBag)}>
-              <Typography variant="h6" noWrap>
-                {priceTotal.toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })}
+              <Typography sx={{ fontSize: '0.8rem' }}>
+                {priceTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </Typography>
               <ShoppingBag />
             </IconButton>

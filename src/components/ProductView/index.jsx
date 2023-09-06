@@ -155,8 +155,16 @@ const ProductView = (props) => {
                     </span>
                   </div>
                   <div className="required">
-                    <div>{`${complementOption.count}/${item.max}`}</div>
-                    <div>{item.isRequired ? 'Obrigatório' : 'Opcional'}</div>
+                    <div>
+                      {
+                        complementOption.count !== item.max 
+                        ? <S.WrapperInfo>
+                            <span>{`${complementOption.count}/${item.max}`}</span>
+                          </S.WrapperInfo>
+                        : <span class="fa fa-check" style={{ fontSize: '1rem', color: '#00ff00' }}></span>
+                      }
+                    </div>
+                    <S.WrapperInfo>{item.isRequired ? 'Obrigatório' : 'Opcional'}</S.WrapperInfo>
                   </div>
                 </S.ComplementHeader>
 

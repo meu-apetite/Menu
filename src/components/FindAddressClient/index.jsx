@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
 import {
   Box,
   Button,
@@ -8,13 +9,12 @@ import {
   TextField,
 } from '@mui/material';
 import { GridSearchIcon } from '@mui/x-data-grid';
-import axios from 'axios';
-import { ApiService } from 'services/api.service';
+import toast from 'react-hot-toast';
+import LoadingAnimation from 'components/LoadingAnimation';
 import * as S from './style';
 
 const FindAddressClient = (props /* { getAddress() } */) => {
-  const apiService = new ApiService(false);
-
+  const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState({
     zipCode: null,
     city: null,
@@ -33,29 +33,25 @@ const FindAddressClient = (props /* { getAddress() } */) => {
 
   const findCep = async () => {
     try {
+      setLoading(true);
+
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-      const data = response.data;
+     
+        if(response.data?.erro) return toast.error('Cep incorreto', { duration: 5000, position: 'top-center' });
 
       setAddress({
-        zipCode: data.cep,
-        city: data.localidade,
-        state: data.uf,
-        district: data.bairro,
-        street: data.logradouro,
+        zipCode: response.data.cep,
+        city: response.data.localidade,
+        state: response.data.uf,
+        district: response.data.bairro,
+        street: response.data.logradouro,
       });
 
       setOpenModalAddress(true);
     } catch (error) {
-      console.error('Error fetching address:', error);
-    }
-  };
-
-  const getLocalization = async () => {
-    try {
-      const response = await apiService.post('/store/calculateFreight', { address });
-      console.log(response.data);
-    } catch (error) {
-      console.error('Error fetching address:', error);
+      toast.error('Não foi possível encontrar o cep', { duration: 5000, position: 'top-center' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,6 +60,10 @@ const FindAddressClient = (props /* { getAddress() } */) => {
       {openModalCep && (
         <S.ModalContainer>
           <S.ModalContent>
+          <S.ButtonModalClose>
+            <span className='fa fa-times'></span>
+          </S.ButtonModalClose>
+
             <S.WrapperForm>
               <S.TitleModal>Insira seu CEP corretamente</S.TitleModal>
               <Grid container spacing={2}>
@@ -80,7 +80,17 @@ const FindAddressClient = (props /* { getAddress() } */) => {
                   />
                 </Grid>
               </Grid>
-              <Button variant="contained" onClick={findCep}>Continuar</Button>
+
+              {
+                !loading ? (
+                  <Button variant="contained" onClick={findCep}>Continuar</Button>
+                ) : (
+                  <S.WrapperAnimation>
+                    <LoadingAnimation />
+                  </S.WrapperAnimation>
+                ) 
+              }
+              
             </S.WrapperForm>
           </S.ModalContent>
         </S.ModalContainer>

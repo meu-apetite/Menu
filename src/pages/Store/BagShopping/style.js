@@ -21,6 +21,11 @@ export const Title = styled('h2')({
   marginTop: '1rem'
 });
 
+export const SubTitle = styled('h4')({
+  marginTop: '1rem',
+  fontSize: '1rem'
+});
+
 export const WrapperTabs = styled('div')(({ theme, top }) => ({
   position: 'sticky',
   top: top,
@@ -47,6 +52,23 @@ export const ButtonAddress = styled(Button)({
   // alignItems: 'center',
   // padding: 0,
   // background: 'transparent'
+});
+
+export const ButtonNext = styled(Button)({
+  position: 'fixed',
+  bottom: 8, 
+  fontSize: '1rem',
+  gap: '16px',
+  width: '95%',
+  margin: 'auto',
+  height: '48px',
+  marginTop: '16px',
+  left: '50%', 
+  transform: 'translateX(-50%)',
+  '@media (min-width: 600px)':  {
+    width: '40%',
+    maxWidth: '400px',
+  }
 });
 
 export const Logo = styled('img')({
