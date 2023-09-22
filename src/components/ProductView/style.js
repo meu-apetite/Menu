@@ -72,7 +72,7 @@ export const BackgroundImg = styled('div')(({ bgImg }) => ({
   width: '100%',
   backgroundPosition: '50%',
   backgroundRepeat: 'no-repeat',
-  backgroundSize: 'cover',
+  backgroundSize: 'cotain',
 }));
 
 export const ComplementHeader = styled('div')({
@@ -141,11 +141,11 @@ export const ContainerAction = styled('div')({
   borderTop: '2px solid #f5f0eb'
 });
 
-export const ButtonAdd = styled('button')({
+export const ButtonAdd = styled('button')(({ theme }) => ({
   width: '100%',
   maxWidth: '250px',
   height: '50px',
-  background: '#ea1d2c',
+  background: theme.palette.primary.main,
   color: '#fff',
   border: 'none',
   padding: '0 20px',
@@ -157,7 +157,12 @@ export const ButtonAdd = styled('button')({
   alignItems: 'center',
   justifyContent: 'space-between',
   padding: '0 1.2rem',
-});
+  '&:disabled': {
+    background: '#ccc',
+    color: '#999',
+    cursor: 'not-allowed',
+  },
+}));
 
 export const CountItem = styled('div')({
   height: '50px',

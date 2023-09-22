@@ -69,15 +69,9 @@ const Create = () => {
               margin="dense"
               required
               fullWidth
-              label="Nome"
+              label="Título"
               autoFocus
             />
-          </Grid>
-
-          <Grid item xs={12} sm={12}>
-            <label>Foto da categoria</label>
-            <Gallery data={gallery} closeImage={() => setGallery([])} />
-            <ButtonUpload text={!gallery.length ? 'carregar foto' : 'Mudar foto'} loadFile={loadFile} />
           </Grid>
         </Grid>
       </Box>

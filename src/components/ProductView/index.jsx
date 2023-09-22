@@ -19,6 +19,8 @@ const ProductView = (props) => {
   const [price, setPrice] = useState(0);
   const [complements, setComplements] = useState([]);
   const [selectedComplements, setSelectedComplements] = useState([]);
+  const [requiredComplements, setRequiredComplements] = useState([]);
+  const [confirm, setConfirm] = useState(false);
 
   const productCalculation = () => {
     const totalComplement = selectedComplements.reduce((acc, current) => acc + (current.price * current.quantity), 0);
@@ -42,10 +44,11 @@ const ProductView = (props) => {
   const setOption = (id, parent, remove = false) => {
     setComplements((prev) => {
       const updateValue = JSON.parse(JSON.stringify(prev));
-
+      const complementComplent = [];
+      
       prev.forEach((item, index) => {
         if (item.count >= item.max && !remove) return;
-
+ 
         const indexOption = item.options.findIndex(o => o.id === id);
         if (indexOption < 0) return prev;
 
@@ -81,12 +84,21 @@ const ProductView = (props) => {
         updateValue[index]['options'][indexOption] = option;
         updateValue[index]['count'] = updateValue[index]['options']
           .reduce((acc, value) => acc + value?.quantity, 0);
+
+        updateValue.forEach(c => {
+          if (!c.isRequired) return;
+          c.count >= c.min ? complementComplent.push(true) : complementComplent.push(false);
+        });
+
+        setConfirm(complementComplent.every(c => c === true))
       });
       return updateValue;
     });
   };
 
   const addToCart = () => {
+    if (!confirm) return;
+
     saveProduct({
       productId: product._id,
       complements: selectedComplements,
@@ -102,16 +114,29 @@ const ProductView = (props) => {
   }, [complements, counterValue]);
 
   useEffect(() => {
+    requiredComplements.length === 0 ? setConfirm(true) : setConfirm(false);
+  }, [requiredComplements]);
+
+  useEffect(() => {
     const product = props?.product || state.product;
     setProduct(product);
     setPrice(Number(product.price));
 
+    console.log('okkk')
+
     const complementsAll = [];
+    
     product.complements.forEach((item) => {
+      if (item.isRequired) {
+        setRequiredComplements((old) => [...old, item._id]);
+      }
+
+      console.log(item)
       complementsAll.push({
         parent: item._id,
         min: item.min,
         max: item.max,
+        isRequired: item.isRequired,
         count: 0,
         options: item.options.map(option =>
           ({ id: option._id, quantity: 0, price: option.price })
@@ -151,17 +176,17 @@ const ProductView = (props) => {
                   <div>
                     <span className="title">{item.name}</span>
                     <span className="infoCount">
-                      Escolha {item.isRequired ? item.max : `até ${item.max}`} opções
+                      Escolha {item.isRequired ? `pelo menos ${item.min} ${item.min === 1 ? 'opção' : 'opcões'}` : `até ${item.max} opções`}
                     </span>
                   </div>
                   <div className="required">
                     <div>
                       {
-                        complementOption.count !== item.max 
-                        ? <S.WrapperInfo>
+                        complementOption.count >= item.min
+                          ? <span className="fa fa-check" style={{ fontSize: '1rem', color: '#00ff00' }}></span>
+                          : <S.WrapperInfo>
                             <span>{`${complementOption.count}/${item.max}`}</span>
                           </S.WrapperInfo>
-                        : <span class="fa fa-check" style={{ fontSize: '1rem', color: '#00ff00' }}></span>
                       }
                     </div>
                     <S.WrapperInfo>{item.isRequired ? 'Obrigatório' : 'Opcional'}</S.WrapperInfo>
@@ -175,10 +200,7 @@ const ProductView = (props) => {
                     <S.Container key={option.name}>
                       <S.ComplementOption>
                         <span>
-                          <span className="title">
-                            {option.name.replace('+', '')}
-                          </span>
-                          <br />
+                          <span className="title">{option.name.replace('+', '')}</span> <br />
                           <span className="price">
                             {option.price > 0 &&
                               '+ ' +
@@ -213,10 +235,10 @@ const ProductView = (props) => {
           <S.Comment>
             <label className="label">Algum comentário?</label>
             <TextField
-              label="Ex: tirar a cebola, maionese à parte etc."
               multiline
               rows={3}
               fullWidth={true}
+              placeholder="Ex: tirar a cebola, maionese à parte etc."
             // onChange={(e) => setData({ ...data, description: e.target.value })}
             />
           </S.Comment>
@@ -230,7 +252,7 @@ const ProductView = (props) => {
           <span className="fa-solid fa-plus" onClick={setProductItem}></span>
         </S.CountItem>
 
-        <S.ButtonAdd onClick={addToCart}>
+        <S.ButtonAdd onClick={addToCart} disabled={!confirm}>
           <span>Adicionar</span>
           <span>{price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
         </S.ButtonAdd>

@@ -7,14 +7,6 @@ export const Header = styled('header')({
   display: 'flex',
   justifyContent: 'center',
   padding: '0.6rem 0'
-  // '&::before': { 
-  //   content: '""',
-  //   width: '100%',
-  //   boxShadow: 'inset 0 -1px 0 #dcdcdc',
-  //   height: '1px',
-  //   margin: '75px 0',
-  //   left: 0,
-  // },
 });
 
 export const Title = styled('h2')({
@@ -41,17 +33,14 @@ export const WrapperTotal = styled('div')({
   justifyContent: 'end'
 });
 
-export const ButtonAddress = styled(Button)({
+export const ButtonDefault = styled(Button)({
   fontSize: '1rem',
   gap: '16px',
   height: '48px',
   textTransform: 'capitalize',
-  marginTop: '16px'
-  // display: 'flex',
-  // justifyContent: 'space-between',
-  // alignItems: 'center',
-  // padding: 0,
-  // background: 'transparent'
+  marginTop: '16px',
+  width: '100%',
+  margin: 'auto',
 });
 
 export const ButtonNext = styled(Button)({
@@ -65,10 +54,20 @@ export const ButtonNext = styled(Button)({
   marginTop: '16px',
   left: '50%', 
   transform: 'translateX(-50%)',
-  '@media (min-width: 600px)':  {
-    width: '40%',
-    maxWidth: '400px',
-  }
+  '@media (min-width: 600px)':  { width: '40%', maxWidth: '400px' }
+});
+
+export const ButtonCustom = styled(Button)({
+  bottom: 8, 
+  fontSize: '1rem',
+  gap: '16px',
+  width: '100%',
+  margin: 'auto',
+  height: '48px',
+  marginTop: '16px',
+  left: '50%', 
+  transform: 'translateX(-50%)',
+  '@media (min-width: 600px)':  { width: '40%', maxWidth: '400px' }
 });
 
 export const Logo = styled('img')({
@@ -78,4 +77,19 @@ export const Logo = styled('img')({
 
 export const WrapperAddress = styled('div')({
   padding: '1rem 0'
+});
+
+export const WrapperButtons = styled('div')({
+  display: 'flex',
+  flexWrap: 'wrap',
+  width: '100%',
+  gap: '16px',
+  '@media (min-width: 600px)':  { flexWrap: 'nowrap' }
+});
+
+export const Icon = styled('img')({
+  width: '24px',
+  position: 'relative',
+  top: '-1px',
+  marginRight: '14px'
 });

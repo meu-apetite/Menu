@@ -9,10 +9,7 @@ const Header = (props) => {
   const navigate = useNavigate()
 
   return (
-    <S.Header
-      component="header"
-      sx={{ mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-    >
+    <S.Header>
       {!props.children ? (
         <>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>

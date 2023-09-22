@@ -1,51 +1,44 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
-import TextField from '@mui/material/TextField'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import Link from '@mui/material/Link'
-import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import Typography from '@mui/material/Typography'
-import Container from '@mui/material/Container'
-import Alert from '@mui/material/Alert'
-import AlertTitle from '@mui/material/AlertTitle'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import LoadingPage from 'components/LoadingPage'
-import fetchApi from 'fetch'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, Button, TextField, Link, Grid, Box } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import LoadingPage from 'components/LoadingPage';
+import { ApiService } from 'services/api.service';
 
 const themeDark = createTheme({
   palette: {
     mode: 'dark',
-    primary: {
-      main: '#1bac4b',
-    },
-    secondary: {
-      main: '#1bac4b',
-    },
+    primary: { main: '#1bac4b' },
+    secondary: { main: '#1bac4b' },
     contrastThreshold: 3,
     tonalOffset: 0.2,
   },
-})
+});
 
 const Register = () => {
-  const [loading, setLoading] = useState(false)
-  const [messages, setMessages] = useState([])
-  const [flashMessage, setFlashMessage] = useState(null)
-  const navigate = useNavigate()
+  const apiService = new ApiService(false);
+
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [flashMessage, setFlashMessage] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     try {
-      e.preventDefault()
-      setLoading(true)
-      setMessages([])
-      setFlashMessage(null)
+      e.preventDefault();
+      setLoading(true);
+      setMessages([]);
+      setFlashMessage(null);
 
-      const data = new FormData(e.currentTarget)
+      const data = new FormData(e.currentTarget);
       const body = {
         email: data.get('email'),
         password: data.get('password'),
@@ -53,62 +46,48 @@ const Register = () => {
         fantasyName: data.get('fantasyName'),
         ownerName: data.get('ownerName'),
         whatsapp: data.get('whatsapp'),
-      }
+      };
 
       if (data.get('password') !== data.get('passwordRepeat')) {
-        setFlashMessage({
-          text: 'Senhas diferentes!',
-          type: 'error',
-        })
-
-        return
+        return setFlashMessage({ text: 'Senhas diferentes!', type: 'error' });
       }
 
-      const response = await fetchApi('post', 'register', body, false)
+      const response = await apiService.post('/register', body);
 
-      if (!response.ok) {
-        const result = await response.json()
-        result.messages?.forEach((item) => {
-          setMessages((old) => [
-            ...old,
-            { type: 'error', title: 'Erro!', text: item.text },
-          ])
-        })
+      console.log(response);
 
-        return
+      if (!response.data.ok) {
+        const result = await response.json();
+        return result.messages?.forEach((item) => {
+          setMessages((old) => [...old, { type: 'error', title: 'Erro!', text: item.text }]);
+        });
       }
 
-      setMessages([
-        {
-          type: 'success',
-          title: 'Cadastro feito!',
-          text: 'Faça o login para continuar.',
-        },
-      ])
+      setMessages([{
+        type: 'success',
+        title: 'Cadastro feito!',
+        text: 'Faça o login para continuar.'
+      }]);
 
-      setTimeout(() => {
-        setLoading(false)
-        return navigate('/login')
-      }, 5000)
+      setTimeout(() => navigate('/login'), 4000);
     } catch (error) {
-      setMessages([
-        {
-          type: 'error',
-          title: 'Erro ao fazer o cadastro!',
-          text: 'Houve um erro de comunicação na rede.',
-        },
-      ])
+      console.log(error)
+      setMessages([{
+        type: 'error',
+        title: 'Erro ao fazer o cadastro!',
+        text: 'Houve um erro de comunicação na rede.'
+      }]);
     } finally {
-      setTimeout(() => setLoading(false), 4000)
+      setTimeout(() => setLoading(false), 4000);
     }
-  }
+  };
 
   const AlertMessage = ({ type, title, children }) => (
     <Alert severity={type}>
       <AlertTitle>{title}</AlertTitle>
       {children}
     </Alert>
-  )
+  );
 
   return (
     <ThemeProvider theme={themeDark}>
@@ -126,9 +105,7 @@ const Register = () => {
             <LockOutlinedIcon />
           </Avatar>
 
-          <Typography component="h1" variant="h5">
-            Nova conta
-          </Typography>
+          <Typography component="h1" variant="h5">Nova conta</Typography>
 
           <Box
             component="form"
@@ -246,7 +223,7 @@ const Register = () => {
         </LoadingPage>
       )}
     </ThemeProvider>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

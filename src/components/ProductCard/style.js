@@ -76,7 +76,7 @@ export const TitleProduct = styled('h3')({
 
 export const Description = styled('p')({
   textOverflow: 'ellipsis',
-  fontSize: '.75rem',
+  fontSize: '.9rem',
   lineHeight: '1.25rem',
   wordWrap: 'break-word',
   overflow: 'hidden',

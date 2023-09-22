@@ -2,11 +2,11 @@
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { AuthContext } from 'contexts/auth';
 import Actions from 'components/Actions';
 import Header from 'components/Header';
 import { ApiService } from 'services/api.service';
+import * as S from './style'; 
 
 export default function Categories() {
   const navigate = useNavigate();
@@ -52,21 +52,7 @@ export default function Categories() {
   const columns = [
     {
       field: 'title',
-      headerName: 'Nome',
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      field: 'image',
-      headerName: 'Foto da categoria',
-      renderCell: (params) => (
-        <img
-          src={params.value}
-          alt={params}
-          loading="lazy"
-          style={{ width: '30%',  minWidth: 90}}
-        />
-      ),
+      headerName: 'Título',
       flex: 1,
       minWidth: 150,
     },
@@ -104,25 +90,26 @@ export default function Categories() {
         buttonClick={() => navigate('create')}
       />
 
+      <S.ContainerCategories>
+        {
+          categories.map((item) => (
+            <S.ContainerCategory>
+              <S.HeaderCategory>
+                {item.title}
+              </S.HeaderCategory>
+              <S.BodyCategory>
+                <Button sx={{ textTransform: 'none' }}>+ Adicionar produto nesta categoria</Button>
+              </S.BodyCategory>
+            </S.ContainerCategory>
+          ))
+        }
+      </S.ContainerCategories>
+
       {itemsSelect.length > 0 && (
         <Button variant="contained" color="error" sx={{ mb: 2 }} onClick={removeSelect}>
           Remover
         </Button>
       )}
-
-      <Box sx={{ height: '70vh', width: '100%' }}>
-        <DataGrid
-          localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
-          rows={row}
-          columns={columns}
-          pageSize={10}
-          rowsPerPageOptions={[5]}
-          checkboxSelection
-          disableSelectionOnClick
-          experimentalFeatures={{ newEditingApi: true }}
-          onSelectionModelChange={(ids) => setItemsSelect(ids)}
-        />
-      </Box>
     </>
   );
 }

@@ -53,7 +53,13 @@ export const WrapperAnimation = styled('div')({
   justifyContent: 'center'
 });
 
-export const ButtonModalClose = styled('button')({
+export const ButtonModalClose = styled('span')({
   position: 'absolute',
-  top: -2
+  width: '30px',
+  height: '30px',
+  borderRadius: '50px',
+  fontSize: 21,
+  cursor: 'pointer',
+  top: 8,
+  left: 8
 });

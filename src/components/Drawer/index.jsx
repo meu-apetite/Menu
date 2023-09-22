@@ -48,15 +48,12 @@ const MiniDrawer = () => {
     <Box
       sx={{
         display: 'flex',
+        
         [theme.breakpoints.down('sm')]: { position: 'absolute' },
       }}
     >
       <CssBaseline />
-      <S.AppBar 
-        open={open} 
-        position="fixed" 
-        sx={{ height: "65px"}}
-      >
+      <S.AppBar open={open} position="fixed" sx={{ height: "65px"}}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <IconButton
             color="inherit"
@@ -71,7 +68,7 @@ const MiniDrawer = () => {
           <S.WrapperIntro>
             <CustomCardHeader
               sx={{ flexDirection: "row-reverse", gap: 1, pr: 0, m: 0 }}
-            avatar={<Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">{company.fantasyName[0]}</Avatar>}
+              avatar={<Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">{company.fantasyName[0]}</Avatar>}
               title={company.fantasyName}
             />
           </S.WrapperIntro>

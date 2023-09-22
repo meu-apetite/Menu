@@ -1,26 +1,15 @@
-import CategoryIcon from '@mui/icons-material/Category'
-import HomeIcon from '@mui/icons-material/Home'
-import InventoryIcon from '@mui/icons-material/Inventory'
-import LocalOfferIcon from '@mui/icons-material/LocalOffer'
-import LocalShippingIcon from '@mui/icons-material/LocalShipping'
-import QrCode2Icon from '@mui/icons-material/QrCode2'
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
-import SettingsIcon from '@mui/icons-material/Settings'
-import FormatPaintIcon from '@mui/icons-material/FormatPaint'
-import GridViewIcon from '@mui/icons-material/GridView'
-
 const items = [
   [
     {
       text: 'Início',
       link: '/admin',
-      Icon: () => <HomeIcon />,
+      Icon: () => <i class="fas fa-home"></i>,
     },
 
     {
       text: 'Pedidos',
       link: '/admin/orders',
-      Icon: () => <LocalShippingIcon />,
+      Icon: () => <i class="fas fa-shopping-cart"></i>,
     },
   ],
 
@@ -28,33 +17,39 @@ const items = [
     {
       text: 'Produtos',
       link: '/admin/product',
-      Icon: () => <GridViewIcon />,
+      Icon: () => <i class="fas fa-cube"></i>,
     },
 
     {
       text: 'Categoria',
       link: '/admin/categories',
-      Icon: () => <CategoryIcon />,
+      Icon: () => <i class="fas fa-tags"></i>,
     },
+
+    {
+      text: 'Formas de pagamento',
+      link: '/admin/setting',
+      Icon: () => <i class="fas fa-money-bill"></i>
+    }
   ],
 
   [
     {
-      text: 'QR Code da loja',
+      text: 'QR Code',
       link: '/admin/qr-code',
-      Icon: () => <QrCode2Icon />,
+      Icon: () => <i class="fas fa-qrcode"></i>,
     },
 
     {
       text: 'Aparência da loja',
       link: '/admin/appearance',
-      Icon: () => <FormatPaintIcon />,
+      Icon: () => <i class="fas fa-paint-brush"></i>,
     },
 
     {
       text: 'Configurações',
       link: '/admin/setting',
-      Icon: () => <SettingsIcon />,
+      Icon: () => <i class="fas fa-cog"></i>,
     },
   ],
 ]

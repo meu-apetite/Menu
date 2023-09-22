@@ -1,22 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { AuthContext } from 'contexts/auth';
-import themeDark from 'theme/dark';
-import themeLight from 'theme/light';
+import { ApiService } from 'services/api.service';
 import Drawer from 'components/Drawer';
 import LoadingPage from 'components/LoadingPage';
-import { ApiService } from 'services/api.service';
 
-const getTheme = (theme = 'dark') =>
-  theme === 'dark' ? createTheme(themeDark) : createTheme(themeLight);
 
 const Create = (props) => {
   const apiService = new ApiService();
-
-  const currentTheme = localStorage.getItem('theme') || 'light';
-  const theme = getTheme(currentTheme);
 
   const { setCompany } = useContext(AuthContext);
 
@@ -49,7 +41,7 @@ const Create = (props) => {
 
   if (authenticationStatus === 'logged') {
     return (
-      <ThemeProvider theme={theme}>
+      <>
         <Box sx={{ display: 'flex', maxWidth: '1300px', margin: 'auto' }}>
           <Drawer />
 
@@ -61,7 +53,7 @@ const Create = (props) => {
         </Box>
 
         {props.loading && <LoadingPage text={props.loading} active={props.loading} />}
-      </ThemeProvider>
+      </>
     );
   }
 };

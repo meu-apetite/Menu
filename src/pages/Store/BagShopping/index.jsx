@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import {
@@ -25,12 +25,13 @@ import { ApiService } from 'services/api.service';
 import FindAddressClient from 'components/FindAddressClient';
 import iconMaps from '../../../public/icons/maps.svg';
 import * as S from './style';
+import FormularioPagamento from './methodPayment';
 
 initMercadoPago('TEST-1d8377ed-2c56-47ed-a3bb-1b3a27c71835');
 
 const CartPage = () => {
   const apiService = new ApiService(false);
-  const {setLoading, toast } = useContext(AuthContext);
+  const { setLoading, toast } = useContext(AuthContext);
 
   const { id } = useParams();
   const { getBag } = useContext(StoreContext);
@@ -41,8 +42,9 @@ const CartPage = () => {
   const [deliveryType, setDeliveryType] = useState('delivery'); //delivery | pickup
   const [order, setOrder] = useState({});
   const [store, setStore] = useState();
-  const [step, setStep] = useState('address'); //revision | address | payment
+  const [step, setStep] = useState('payment'); //revision | address | payment
   const [addressCurrent, setAddressCurrent] = useState(null);
+  const buttonMercadoPago = useRef(null);
 
   const getStore = async () => {
     const response = await apiService.get('/store/' + id);
@@ -71,6 +73,7 @@ const CartPage = () => {
             id: item._id,
             name: item.productName,
             price: item.priceTotal,
+            quantity: item.quantity,
             imageUrl: item.imageUrl,
           },
         ]);
@@ -82,7 +85,7 @@ const CartPage = () => {
 
   const pedidoComFrete = async (data) => {
     try {
-      setLoading(true)
+      setLoading(true);
       setAddressCurrent(data);
 
       const bag = await getBag();
@@ -96,8 +99,26 @@ const CartPage = () => {
 
       setOrder({ ...order, ...response.data });
       setAddressOpen(false);
-      console.log({ ...order, ...response.data });
-    } catch (error) { 
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const pagamento = async (data) => {
+    try {
+      setLoading(true);
+
+      const response = await apiService.get('/store/payment/generateStripeSession');
+
+      // setOrder({...order, payment: { ...order.payment, mercadoPagoId: response.data.id}});
+      // order?.payment.mercadoPagoId
+      console.log(response.data)
+      // document.querySelector('button').click();
+
+      // walletBrick_container
+    } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
@@ -132,12 +153,9 @@ const CartPage = () => {
                     <ListItemAvatar>
                       <Avatar alt={item.name} src={item.imageUrl} />
                     </ListItemAvatar>
-                    <ListItemText primary={item.name} secondary={`Preço: ${formatPrice(item.price)}`} />
+                    <ListItemText primary={item.name} secondary={`Quant.: ${item.quantity} | Preço: ${formatPrice(item.price)}`} />
                     <ListItemSecondaryAction>
-                      <IconButton
-                        edge="end"
-                        aria-label="delete" // onClick={() => handleRemoveItem(item.id)}
-                      >
+                      <IconButton edge="end" aria-label="delete">
                         <DeleteIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -166,16 +184,13 @@ const CartPage = () => {
               </S.WrapperTotal>
             </section>
 
-            <S.ButtonNext variant="contained" onClick={() => setStep('address')}>
-              Continuar
-            </S.ButtonNext>
+            <S.ButtonDefault variant="contained" onClick={() => setStep('address')}>Continuar</S.ButtonDefault>
           </>
         )}
 
         {step === 'address' && (
           <section style={{ marginBottom: 2 }}>
             <S.Title>Informações de endereço</S.Title>
-
             <Tabs
               value={deliveryType}
               onChange={(e, value) => setDeliveryType(value)}
@@ -192,31 +207,47 @@ const CartPage = () => {
                     <Card sx={{ display: 'grid', gridTemplateColumns: '9fr 3fr', mt: 1.2 }}>
                       <CardContent sx={{ flex: '1 0 auto' }}>
                         <Typography variant="subtitle1" color="text.secondary">
-                          Cep: {`${addressCurrent.zipCode}`} <br />
-                          Endereço: {`${addressCurrent.street}, ${addressCurrent.district}`} <br />
-                          {addressCurrent?.number ? `Nº ${addressCurrent.number}` : ''}
+                          Cep: <strong>{`${addressCurrent.zipCode}`}</strong> <br />
+                          Bairro: <strong>{`${addressCurrent.district}`}</strong><br />
+                          Endereço: <strong>{`${addressCurrent.street.trim()}${(addressCurrent?.number) ? ', Nº ' + addressCurrent.number : ''}`}</strong>
                         </Typography>
                         <Typography variant="subtitle1" color="text.secondary">
-                          Taxa de entrega: {formatPrice(order?.delivery?.price)} <br />
-                          {Number(order?.delivery?.distance).toFixed(2)} KM
+                          Taxa de entrega:
+                          <strong>{formatPrice(order?.delivery?.price)} - {Number(order?.delivery?.distance).toFixed(2)} KM</strong>
                         </Typography>
                       </CardContent>
                       <CardMedia image={iconMaps} alt="Icone mapa" />
                     </Card>
-                    <S.ButtonAddress variant="outlined" onClick={() => setAddressOpen(!addressOpen)}>
-                      Mudar endereço
-                    </S.ButtonAddress>
+                    <S.WrapperButtons>
+                      <S.ButtonDefault variant="outlined" onClick={() => setAddressOpen(!addressOpen)}>
+                        Mudar endereço
+                      </S.ButtonDefault>
+                    </S.WrapperButtons>
                   </>
                 ) : (
-                  <S.ButtonAddress 
-                    variant="outlined" 
-                    onClick={() => setAddressOpen(!addressOpen)}
-                  >
-                    Adicionar endereço
-                  </S.ButtonAddress>
+                  <>
+                    <p>
+                      Fazendo sua primeira compra? Clique em "Adicionar endereço"
+                      para salvar o seu novo endereço. Se já comprou antes, selecione
+                      "sou cliente" e informe seu número.
+                    </p>
+                    <S.WrapperButtons>
+                      <S.ButtonDefault variant="outlined" onClick={() => setAddressOpen(!addressOpen)}>
+                        Adicionar endereço
+                      </S.ButtonDefault>
+                      <S.ButtonDefault variant="contained" onClick={() => setAddressOpen(!addressOpen)}>
+                        Sou Cliente
+                      </S.ButtonDefault>
+                    </S.WrapperButtons>
+                  </>
                 )}
 
-                {addressOpen && <FindAddressClient getAddress={(data) => pedidoComFrete(data)} />}
+                {addressOpen && (
+                  <FindAddressClient
+                    closeModal={() => setAddressOpen(false)}
+                    getAddress={(data) => pedidoComFrete(data)}
+                  />
+                )}
               </div>
             )}
 
@@ -237,16 +268,21 @@ const CartPage = () => {
               </Card>
             )}
 
-            <S.ButtonNext 
-              variant="contained" 
-              onClick={() => {
-                order.status === 'in-cart' 
-                  ? setStep('payment') 
-                  : toast.error('Adicione o seu endereço para continuar', { position: 'top-center' });
-              }}
-            >
-              Continuar
-            </S.ButtonNext>
+            {
+              (order?.delivery?.price || deliveryType === 'pickup') && (
+                <S.ButtonNext
+                  variant="contained"
+                  onClick={() => {
+                   (order.status === 'in-cart' || deliveryType === 'pickup')
+                      ? setStep('payment')
+                      : toast.error('Adicione o seu endereço para continuar',
+                        { position: 'top-center' });
+                  }}
+                >
+                  Continuar
+                </S.ButtonNext>
+              )
+            }
           </section>
         )}
 
@@ -262,8 +298,24 @@ const CartPage = () => {
             </Tabs>
 
             {payment.type === 'onlinePayment' ? (
-              <Wallet initialization={{ preferenceId: order?.payment?.mercadoPagoId }} />
-            ) : (<></>)}
+              <>
+                <p>
+                  Após clicar em "PROSSEGUIR COM O PAGAMENTO", 
+                  você terá acesso a diversas opções de pagamento, 
+                  incluindo <strong>Pix,</strong> <strong>cartão de débito,</strong> 
+                  e <strong>cartão de crédito</strong>.
+                </p>
+                <S.ButtonDefault 
+                  sx={{ marginTop: '8px', textTransform: 'uppercase' }}
+                  variant="contained" 
+                  onClick={pagamento}
+                >
+                  PROSSEGUIR COM O PAGAMENTO
+                </S.ButtonDefault>
+              </>
+            ) : (<>
+              <FormularioPagamento />
+            </>)}
           </section>
         )}
       </Container>

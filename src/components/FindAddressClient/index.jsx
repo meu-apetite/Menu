@@ -60,9 +60,7 @@ const FindAddressClient = (props /* { getAddress() } */) => {
       {openModalCep && (
         <S.ModalContainer>
           <S.ModalContent>
-          <S.ButtonModalClose>
-            <span className='fa fa-times'></span>
-          </S.ButtonModalClose>
+            <S.ButtonModalClose onClick={props.closeModal} className='fa fa-times' />
 
             <S.WrapperForm>
               <S.TitleModal>Insira seu CEP corretamente</S.TitleModal>
