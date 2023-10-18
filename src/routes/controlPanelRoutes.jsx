@@ -1,5 +1,6 @@
-import ProductCreate from '../pages/ControlPanel/Products/Create';
 import Product from '../pages/ControlPanel/Products/Index';
+import ProductCreate from '../pages/ControlPanel/Products/Create';
+import ProductUpdate from '../pages/ControlPanel/Products/Update';
 import Category from '../pages/ControlPanel/Categories/Index';
 import CategoryCreate from '../pages/ControlPanel/Categories/Create';
 import CategoryUpdate from '../pages/ControlPanel/Categories/Update';
@@ -18,13 +19,13 @@ const controlPanelRoutes = [
     path: '/admin',
     element: <Layout />,
     children: [
-      { path: 'product', element: <Product /> },
-      { path: 'product/create', element: <ProductCreate /> },
-      { path: 'product/update', element: <ProductCreate /> },
-      { path: 'product/view', element: <ProductCreate /> },
+      { path: 'products', element: <Product /> },
+      { path: 'products/create', element: <ProductCreate /> },
+      { path: 'products/update/:id', element: <ProductUpdate /> },
+      { path: 'products/view', element: <ProductCreate /> },
       { path: 'categories', element: <Category /> },
       { path: 'categories/create', element: <CategoryCreate /> },
-      { path: 'categories/update', element: <CategoryUpdate /> },
+      { path: 'categories/update/:id', element: <CategoryUpdate /> },
       { path: 'orders', element: <Orders /> },
       { path: 'orders/create', element: <OrdersCreate /> },
       { path: 'orders/update', element: <OrdersUpdate /> },

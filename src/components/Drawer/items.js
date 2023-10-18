@@ -3,33 +3,33 @@ const items = [
     {
       text: 'Início',
       link: '/admin',
-      Icon: () => <i class="fas fa-home"></i>,
+      Icon: () => <i className="fas fa-home"></i>,
     },
 
     {
       text: 'Pedidos',
       link: '/admin/orders',
-      Icon: () => <i class="fas fa-shopping-cart"></i>,
+      Icon: () => <i className="fas fa-shopping-cart"></i>,
     },
   ],
 
   [
     {
       text: 'Produtos',
-      link: '/admin/product',
-      Icon: () => <i class="fas fa-cube"></i>,
+      link: '/admin/products',
+      Icon: () => <i className="fas fa-cube"></i>,
     },
 
     {
       text: 'Categoria',
       link: '/admin/categories',
-      Icon: () => <i class="fas fa-tags"></i>,
+      Icon: () => <i className="fas fa-tags"></i>,
     },
 
     {
       text: 'Formas de pagamento',
       link: '/admin/setting',
-      Icon: () => <i class="fas fa-money-bill"></i>
+      Icon: () => <i className="fas fa-money-bill"></i>
     }
   ],
 
@@ -37,19 +37,19 @@ const items = [
     {
       text: 'QR Code',
       link: '/admin/qr-code',
-      Icon: () => <i class="fas fa-qrcode"></i>,
+      Icon: () => <i className="fas fa-qrcode"></i>,
     },
 
     {
       text: 'Aparência da loja',
       link: '/admin/appearance',
-      Icon: () => <i class="fas fa-paint-brush"></i>,
+      Icon: () => <i className="fas fa-paint-brush"></i>,
     },
 
     {
       text: 'Configurações',
       link: '/admin/setting',
-      Icon: () => <i class="fas fa-cog"></i>,
+      Icon: () => <i className="fas fa-cog"></i>,
     },
   ],
 ]

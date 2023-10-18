@@ -1,50 +1,57 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DataGrid, ptBR } from '@mui/x-data-grid';
-import Box from '@mui/material/Box';
-import Header from 'components/Header';
+import { Button, Pagination, Box } from '@mui/material';
 import { ApiService } from 'services/api.service';
 import { AuthContext } from 'contexts/auth';
-import { Button, Checkbox } from '@mui/material';
-
-const columns = [
-  { field: 'name', headerName: 'Nome', flex: 1 },
-  { field: 'category', headerName: 'Categoria', flex: 1 },
-  { 
-    field: 'price', 
-    headerName: 'Preço', 
-    renderCell: (params) => params.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), 
-    flex: 1 
-  },
-  { 
-    field: 'isActive', 
-    headerName: 'Ativo',    
-    renderCell: (params) => params.value ? 'Sim' : 'Não', 
-    flex: 1 
-  }
-];
+import Header from 'components/Header';
+import * as S from './style';
 
 export default function DataGridDemo() {
-  const navigate = useNavigate();
   const apiService = new ApiService();
-
-  const [rows, setRows] = useState([]);
-  const [itemsSelect, setItemsSelect] = useState([]);
+  const navigate = useNavigate();
   const { setLoading, toast } = useContext(AuthContext);
+
+  const [itemsSelect, setItemsSelect] = useState([]);
   const [products, setProducts] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(0);
 
   const getProducts = async () => {
-    const response = await apiService.get('/admin/product');
-    setProducts(response.data);
+    const { data } = await apiService.get(`/admin/products?page=1`);
+
+    setProducts(data.products);
+    setTotalPages(data.totalPages);
+    setPage(data.page);
+  };
+
+  const changePage = async (e, value) => {
+    try {
+      setLoading('Carregando...')
+      const { data } = await apiService.get(`/admin/products?page=${value}`);
+
+      setProducts(data.products);
+      setTotalPages(data.totalPages);
+      setPage(data.page);
+
+      window.scrollTo(0, 0);
+    } catch (error) {
+      console.log(error)
+      toast.error('Não foi possível mudar de página')
+    } finally {
+      setLoading(null);
+    }
   };
 
   const removeSelect = async () => {
     try {
       setLoading('Aguarde...');
 
-      const response = await apiService.post(`/admin/product/delete-multiple`, {
-        productIds: itemsSelect,
-      });
+      const response = await apiService.post(
+        `/admin/products/delete-multiple`,
+        {
+          productIds: itemsSelect,
+        },
+      );
       setProducts(response.data);
 
       toast.success('Categorias excluidas');
@@ -55,22 +62,9 @@ export default function DataGridDemo() {
     }
   };
 
-  useEffect(() => {
-    setRows(
-      products.map((item) => {
-        return {
-          id: item._id,
-          name: item.name,
-          price: item.price,
-          isActive: item.isActive,
-          description: item.description,
-          category: item.category?.title,
-          image: item.images?.[0],
-          actions: item._id,
-        };
-      }),
-    );
-  }, [products]);
+  const toUpdate = (id) => {
+    navigate('/admin/products/update/' + id);
+  }
 
   useEffect(() => {
     getProducts();
@@ -94,16 +88,62 @@ export default function DataGridDemo() {
         </Button>
       )}
 
-      <DataGrid
-        localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
-        rows={rows}
-        columns={columns}
-        pageSize={12}
-        rowsPerPageOptions={[12]}
-        onSelectionModelChange={(ids) => setItemsSelect(ids)}
-        checkboxSelection
-        disableSelectionOnClick
-      />
+      <S.ContainerProducts>
+        {products.map((item) => {
+          return (
+            <S.CardCustom onClick={() => { }}>
+                <S.WrapperActions>
+                <div 
+                  className='action' 
+                  onClick={() => toUpdate(item._id)}
+                >
+                  <span className='fa fa-pen'></span>
+                  Editar
+                </div>
+                <div className='action'>
+                  <span className='fa fa-copy'></span>
+                  Duplicar
+                </div>
+                <div className='action'>
+                  <span className='fa fa-trash'></span>
+                  Excluir
+                </div>
+              </S.WrapperActions>
+
+              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <S.CardContentCustom sx={{ flex: '1 0 auto', pt: 0 }}>
+                  <S.CardInfo>
+                    <span>
+                      <strong>Nome:</strong> {item.name}
+                    </span>
+                    <span>
+                      <strong>Preço: </strong>
+                      {item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </span>
+                    <span>
+                      <strong>Categoria: </strong>
+                      {item.category.title}
+                    </span>
+                    <span>
+                      <strong>Status:</strong> {item.isActive ? 'Ativo' : 'Desativo'}
+                    </span>
+
+                  </S.CardInfo>
+                  <S.CardMediaCustom image={item.images.length ? item.images[0].url : 1} />
+                </S.CardContentCustom>
+              </Box>
+            </S.CardCustom>
+          );
+        })}
+      </S.ContainerProducts>
+
+      <Pagination 
+        sx={{ display: 'flex', justifyContent: 'center', p: '32px' }} 
+        color="primary" 
+        count={totalPages} 
+        page={page} 
+        onChange={changePage}
+      />    
     </Box>
   );
 }

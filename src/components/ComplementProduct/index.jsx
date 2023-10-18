@@ -112,20 +112,20 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
                         checked={complements[index]['isRequired'] === false}
                       />
                     }
-                    label="Opcional, o cliente pode ou não selecionar os itens"
+                    label="Opcional, o cliente pode ou não selecionar os itens."
                   />
 
                   <br />
 
                   <FormControlLabel
-                    sx={{ mt: 0.2 }}
+                    sx={{ mt: 1 }}
                     control={
                       <Checkbox
                         onChange={() => setValue(index, 'isRequired', true)}
                         checked={complements[index]['isRequired'] === true}
                       />
                     }
-                    label="Obrigatório, o cliente deve selecionar  1 ou mais itens para adicionar o pedido no carrinho"
+                    label="Obrigatório, o cliente deve selecionar  1 ou mais itens para adicionar o pedido no carrinho."
                   />
                 </Grid>
 
@@ -154,9 +154,7 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <Typography>
-                    <strong>Opções</strong>
-                  </Typography>
+                  <Typography><strong>Opções</strong></Typography>
                 </Grid>
 
                 {options.map((option, indexOption) => (

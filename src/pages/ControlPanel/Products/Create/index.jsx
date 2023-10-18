@@ -58,7 +58,7 @@ const Create = ({ navigation }) => {
   };
 
   const getCategories = async () => {
-    const response = await apiService.get('/admin/category');
+    const response = await apiService.get('/admin/categories');
     const data = response.data;
     setCategories(data.map((item) => ({ text: item.title, value: item._id })));
   };
@@ -90,8 +90,10 @@ const Create = ({ navigation }) => {
       let price = data.price + '';
       price = price?.replaceAll('.', '').replace(',', '.')?.replace('R$', '');
       price = Number(price);
+
+      console.log('aqui  '+price)
       
-      setData({ ...data, price });
+      setData({ ...data, price: price });
     }
 
     if (!data.price) {
@@ -122,7 +124,7 @@ const Create = ({ navigation }) => {
 
   const handleSubmit = async () => {
     if (!validateData()) return;
-    // setLoading('Criando produto...');
+    setLoading('Criando produto...');
     
     let complementInsertIds;
     
@@ -159,16 +161,17 @@ const Create = ({ navigation }) => {
         formData.append('images', data.images[i]);
       }
 
-      await apiService.post('/admin/product', formData, true);
+      await apiService.post('/admin/products', formData, true);
 
       toast.success('Produto cadastrado');
 
       setTimeout(() => {
-        // navigate({ pathname: '/admin/product' });
-        setLoading(false);
+        // navigate({ pathname: '/admin/products' });
       }, 2000);
-    } catch {
+    } catch(error) {
+      if(error?.response?.data?.message) return toast.error(error?.response?.data?.message);
       toast.error('Erro ao cadastrar produto');
+    } finally {
       setLoading(false);
     }
   };

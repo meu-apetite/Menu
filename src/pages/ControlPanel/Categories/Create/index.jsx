@@ -4,8 +4,6 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Header from 'components/Header';
-import ButtonUpload from 'components/ButtonUpload';
-import Gallery from 'components/Gallery';
 import { AuthContext } from 'contexts/auth';
 import { ApiService } from 'services/api.service';
 
@@ -13,8 +11,7 @@ const Create = () => {
   const apiService = new ApiService();
 
   const navigate = useNavigate();
-  const [data, setData] = useState({ title: '', image: null });
-  const [gallery, setGallery] = useState([]);
+  const [data, setData] = useState({ title: '' });
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const {setLoading, toast } = useContext(AuthContext);
 
@@ -24,12 +21,8 @@ const Create = () => {
     try {
       if (!data.title.trim().length ) return toast('Preencha o campo "Nome"', { icon: 'ℹ️' });
       setLoading('Criando categoria...');
-
-      const formData = new FormData();
-      formData.append('title', data.title);
-      formData.append('image', data.image);
       
-      const response = await apiService.post('/admin/category', formData, true);
+      const response = await apiService.post('/admin/categories', data);
       const category = response.data;
 
       setButtonDisabled(true);
@@ -46,11 +39,6 @@ const Create = () => {
     }
   };
 
-  const loadFile = async (e) => {
-    setData({ ...data, image: e.target.files[0] });
-    setGallery([{ name: e.target.files[0].name, src: URL.createObjectURL(e.target.files[0])}]);
-  }
-   
   return (
     <>
       <Header

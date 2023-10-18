@@ -56,9 +56,8 @@ const Register = () => {
 
       console.log(response);
 
-      if (!response.data.ok) {
-        const result = await response.json();
-        return result.messages?.forEach((item) => {
+      if (!response.data.success) {
+        return response.data.messages?.forEach((item) => {
           setMessages((old) => [...old, { type: 'error', title: 'Erro!', text: item.text }]);
         });
       }
