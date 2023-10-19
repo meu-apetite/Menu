@@ -1,20 +1,20 @@
-import Product from '../pages/ControlPanel/Products/Index';
-import ProductCreate from '../pages/ControlPanel/Products/Create';
-import ProductUpdate from '../pages/ControlPanel/Products/Update';
-import Category from '../pages/ControlPanel/Categories/Index';
-import CategoryCreate from '../pages/ControlPanel/Categories/Create';
-import CategoryUpdate from '../pages/ControlPanel/Categories/Update';
-import Orders from '../pages/ControlPanel/Orders/Index';
-import OrdersCreate from '../pages/ControlPanel/Orders/Create';
-import OrdersUpdate from '../pages/ControlPanel/Orders/Update';
-import OrdersView from '../pages/ControlPanel/Orders/View';
-import Appearance from '../pages/ControlPanel/Appearance/Index';
-import Setting from '../pages/ControlPanel/Setting/Index';
-import QrCode from '../pages/ControlPanel/QrCode/Index';
-import Home from '../pages/ControlPanel/Home';
+import Product from '../pages/Admin/Products/Index';
+import ProductCreate from '../pages/Admin/Products/Create';
+import ProductUpdate from '../pages/Admin/Products/Update';
+import Category from '../pages/Admin/Categories/Index';
+import CategoryCreate from '../pages/Admin/Categories/Create';
+import CategoryUpdate from '../pages/Admin/Categories/Update';
+import Orders from '../pages/Admin/Orders/Index';
+import OrdersCreate from '../pages/Admin/Orders/Create';
+import OrdersUpdate from '../pages/Admin/Orders/Update';
+import OrdersView from '../pages/Admin/Orders/View';
+import Appearance from '../pages/Admin/Appearance/Index';
+import Setting from '../pages/Admin/Setting/Index';
+import QrCode from '../pages/Admin/QrCode/Index';
+import Home from '../pages/Admin/Home';
 import Layout from '../components/Layout';
 
-const controlPanelRoutes = [
+const adminRoutes = [
   {
     path: '/admin',
     element: <Layout />,
@@ -38,4 +38,4 @@ const controlPanelRoutes = [
   },
 ];
 
-export default controlPanelRoutes;
+export default adminRoutes;

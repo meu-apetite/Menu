@@ -11,9 +11,8 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { propsTextField } from 'utils/form';
-
+import * as S from './style';
 
 const ComplementProduct = ({ complementsValue, getValue }) => {
   const initComplement = { name: '', max: 1, min: 0, isRequired: null, options: [{ name: '', price: 0 }] };
@@ -46,7 +45,7 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
 
     complements.forEach((item, index) => {
       if (!item.name.trim().length) {
-        errors.push(`O nome do ${index+1}º complemento está em branco.`);
+        errors.push(`O nome do ${index + 1}º complemento está em branco.`);
         return errors;
       }
 
@@ -74,7 +73,7 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
 
   useEffect(() => {
     if (!complementsValue.length) return setComplements([initComplement]);
-    console.log('ook')
+    console.log('ook');
   }, []);
 
   return (
@@ -129,7 +128,7 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
                   />
                 </Grid>
 
-                <Grid item xs={5} sm={5}>
+                <Grid item xs={5} sm={2}>
                   <TextField
                     {...propsTextField}
                     size="small"
@@ -141,7 +140,7 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
                   />
                 </Grid>
 
-                <Grid item xs={5} sm={5}>
+                <Grid item xs={5} sm={2}>
                   <TextField
                     {...propsTextField}
                     size="small"
@@ -158,35 +157,26 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
                 </Grid>
 
                 {options.map((option, indexOption) => (
-                  <>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        {...propsTextField}
-                        margin="none"
-                        size="small"
-                        label="Nome"
-                        value={complements[index]['options'][indexOption]['name']}
-                        onChange={(e) => setValueOption(index, indexOption, 'name', e.target.value)}
-                      />
-                    </Grid>
+                  <S.WrapperOption>
+                    <div className='info'>
+                      <div>Opção {(indexOption + 1)}</div>
+                    </div>
 
-                    <Grid item xs={12} sm={4}>
-                      <TextField
-                        {...propsTextField}
-                        margin="none"
-                        size="small"
-                        label="Valor adicional (R$)"
-                        value={complements[index]['options'][indexOption]['price']}
-                        onChange={(e) => setValueOption(index, indexOption, 'price', e.target.value)}
-                      />
-                    </Grid>
-
-                    {/* <Grid item xs={0.5} sm={2}>
-                      <Button variant="outlined" sx={{ margin: 'auto' }} onClick={() => addComplement(index)}>
-                        <DeleteIcon />
-                      </Button>
-                    </Grid> */}
-                  </>
+                    <TextField
+                      {...propsTextField}
+                      margin="none"
+                      label="Nome"
+                      value={complements[index]['options'][indexOption]['name']}
+                      onChange={(e) => setValueOption(index, indexOption, 'name', e.target.value)}
+                    />
+                    <TextField
+                      {...propsTextField}
+                      margin="none"
+                      label="Valor adicional (R$)"
+                      value={complements[index]['options'][indexOption]['price']}
+                      onChange={(e) => setValueOption(index, indexOption, 'price', e.target.value)}
+                    />
+                  </S.WrapperOption>
                 ))}
 
                 <Grid item xs={12}>
@@ -200,19 +190,11 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
         );
       })}
 
-      <Grid
-        item
-        xs={12}
-        sx={{ display: 'flex', justifyContent: 'end', flexWrap: 'wrap', mt: 2, gap: 1 }}
-      >
+      <S.WrapperBtnNewGroup>
         <Button variant="contained" onClick={addComplementGroup}>
           Novo grupo de complemento
         </Button>
-
-        <Button variant="contained" onClick={addComplementGroup}>
-          Importar grupo
-        </Button>
-      </Grid>
+      </S.WrapperBtnNewGroup>
     </Grid>
   );
 };

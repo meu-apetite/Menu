@@ -1,22 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Tab, Tabs, Grid, Box, TextField } from '@mui/material';
-import { NumericFormat } from 'react-number-format';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { AuthContext } from 'contexts/auth';
 import { ApiService } from 'services/api.service';
-import Gallery from 'components/Gallery';
+import { propsTextField } from 'utils/form';
+import { units } from 'utils/units';
 import Select from 'components/Select';
 import Header from 'components/Header';
-import ButtonUpload from 'components/ButtonUpload';
-import { propsInputReal, propsTextField } from 'utils/form';
-import { units } from 'utils/units';
+import * as S from './style';
+import ComplementProduct from 'components/ComplementProduct';
 
 
 const Create = ({ navigation }) => {
   const apiService = new ApiService();
   const { id } = useParams();
-
-  const navigate = useNavigate();
 
   const { setLoading, toast } = useContext(AuthContext);
 
@@ -35,6 +32,8 @@ const Create = ({ navigation }) => {
     unit: '',
     images: [],
   });
+  const [complements, setComplements] = useState([]);
+  const [complementsErrors, setComplementsErrors] = useState([]);
   const [helperText, setHelperText] = useState({});
 
 
@@ -66,20 +65,21 @@ const Create = ({ navigation }) => {
   const getProduct = async () => {
     try {
       setLoading('Buscando produto...');
+
       const { data } = await apiService.get('/admin/products/' + id);
+
       setData({
         name: data.name,
         description: data.description,
-        code: '',
+        code: data.code,
         price: data.price,
-        discountPrice: null,
+        discountPrice: data.discountPrice || '',
         status: data.isActive,
         category: data.category._id,
         unit: '',
-        images: [],
+        images: data.images,
       });
-
-      console.log(data);
+      setComplements(data.complements)
     } catch (error) {
       console.log(error);
     } finally {
@@ -194,16 +194,32 @@ const Create = ({ navigation }) => {
       <Box component="section">
         {tabCurrent === 0 && (
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                label="Nome"
-                helperText={helperText?.name}
-                required={true}
-                value={data.name}
-                onChange={(e) => setData({ ...data, name: e.target.value })}
-                {...propsTextField}
-              />
-            </Grid>
+            <S.wrapperIntro>
+              <S.ImageProduct src={data.images[0]?.url} />
+              <Grid
+                item
+                sm={12}
+                sx={{ display: 'grid', flexDirection: 'column', gap: '1rem', mt: 0.6 }}
+              >
+                <TextField
+                  label="Nome"
+                  helperText={helperText?.name}
+                  required={true}
+                  value={data.name}
+                  onChange={(e) => setData({ ...data, name: e.target.value })}
+                  {...propsTextField}
+                />
+                <TextField
+                  helperText={helperText?.description}
+                  label="Descrição"
+                  multiline
+                  rows={3}
+                  value={data.description}
+                  onChange={(e) => setData({ ...data, description: e.target.value })}
+                  {...propsTextField}
+                />
+              </Grid>
+            </S.wrapperIntro>
 
             <Grid item xs={6} sm={6}>
               <TextField
@@ -247,18 +263,6 @@ const Create = ({ navigation }) => {
               />
             </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                helperText={helperText?.description}
-                label="Descrição"
-                multiline
-                rows={3}
-                value={data.description}
-                onChange={(e) => setData({ ...data, description: e.target.value })}
-                {...propsTextField}
-              />
-            </Grid>
-
             <Grid item xs={12} sx={{ mt: 1.1 }}>
               <Select
                 value={data.unit}
@@ -276,15 +280,17 @@ const Create = ({ navigation }) => {
                 onChange={(e) => setData({ ...data, category: e.target.value })}
               />
             </Grid>
-
-            <Grid item xs={12}>
-              <ButtonUpload
-                text={gallery ? 'Adicionar imagem' : 'Adicionar nova image'}
-                loadFile={loadImage}
-              />
-              <Gallery data={gallery} closeImage={removeImage} />
-            </Grid>
           </Grid>
+        )}
+
+        {tabCurrent === 1 && (
+          <ComplementProduct
+            complementsValue={complements}
+            getValue={(value, errors) => {
+              setComplements(value);
+              setComplementsErrors(errors);
+            }}
+          />
         )}
       </Box>
     </>
