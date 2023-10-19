@@ -12,7 +12,7 @@ const FindAddress = (props /* { getAddress() } */) => {
     street: null,
     district: null,
     number: null,
-    complement: null,
+    reference: null,
   });
   const [cep, setCep] = useState(null);
   const [openModalCep, setOpenModalCep] = useState(true);
@@ -129,8 +129,8 @@ const FindAddress = (props /* { getAddress() } */) => {
                   <TextField
                     fullWidth
                     label="Ponto de referência/complemento"
-                    value={address.complement}
-                    onChange={(e) => setAddress({ ...address, complement: e.target.value })}
+                    value={address.reference}
+                    onChange={(e) => setAddress({ ...address, reference: e.target.value })}
                   />
                 </Grid>
               </Grid>

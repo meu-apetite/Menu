@@ -184,18 +184,7 @@ const Create = () => {
               required
             />
           </Grid>
-
-          <Grid item xs={12} sm={12}>
-            <TextField
-              label="Link da localização da loja"
-              value={data.custom.googleMapUrl}
-              onChange={(e) => setData({ ...data, custom: { ...data.custom, googleMapUrl: e.target.value } })}
-              InputLabelProps={{ shrink: true }}
-              margin="dense"
-              fullWidth
-            />
-          </Grid>
-
+          
           <Grid item xs={12} sm={12}>
             <label>Logomarca</label>
             <Gallery data={logo ? [logo] : []} closeImage={removeLogo} />

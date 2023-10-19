@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import fetchApi from 'fetch'
 import Box from '@mui/material/Box'
 import { DataGrid, ptBR } from '@mui/x-data-grid'
+import Header from 'components/Header';
 
 const columns = [
   {
@@ -104,7 +105,14 @@ export default function Index() {
 
   return (
     <>
-      {' '}
+      <Header
+        title="Pedidos"
+        back={-1}
+        buttonText="Atualizar"
+        // buttonClick={handleSubmit}
+        // buttonDisabled={isSubmitDisabled}
+      />
+
       <Box sx={{ height: 430, width: '100%' }}>
         <DataGrid
           localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}

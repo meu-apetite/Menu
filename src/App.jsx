@@ -30,7 +30,7 @@ const App = () => {
           <StoreRoutes />
         </StoreProvider>
         <AuthRoutes />
-        <adminRoutes />
+        <AdminRoutes />
       </AuthProvider>
     </ThemeProvider>
   );

@@ -1,30 +1,37 @@
-import * as S from './style'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import { Box, Button, Typography } from '@mui/material';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import * as S from './style';
 
 const Header = (props) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <S.Header>
       {!props.children ? (
         <>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {props.back && <NavigateBeforeIcon sx={{ cursor: 'pointer' }} onClick={() => navigate(props.back)} />}
+            {props.back && (
+              <NavigateBeforeIcon sx={{ cursor: 'pointer' }} onClick={() => navigate(props.back)} />
+            )}
             <Typography variant="h1">{props.title}</Typography>
           </Box>
-          <Button variant="contained" onClick={props.buttonClick} disabled={props.buttonDisabled || false}>
-            {props.buttonText}
-          </Button>
+
+          {props?.buttonText && (
+            <Button
+              variant="contained"
+              onClick={props.buttonClick}
+              disabled={props.buttonDisabled || false}
+            >
+              {props.buttonText}
+            </Button>
+          )}
         </>
       ) : (
         props.children
       )}
     </S.Header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

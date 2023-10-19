@@ -31,18 +31,11 @@ const MiniDrawer = () => {
 
   const { company } = useContext(AuthContext);
 
-  const useBreakpoints = () => {
-    const isXs = useMediaQuery((theme) => theme.breakpoints.down('xs'));
-    return { isXs };
-  };
-  
-  const breakpoints = useBreakpoints();
-
   const CustomCardHeader = styled(CardHeader)`
-  && .css-1ssile9-MuiCardHeader-avatar {
-    margin: 0
-  }
-`;
+    && .css-1ssile9-MuiCardHeader-avatar {
+      margin: 0
+    }
+  `;
 
   return (
     <Box
