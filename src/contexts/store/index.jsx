@@ -9,21 +9,25 @@ export const StoreProvider = (props) => {
   const [bag, setBag] = useState(null);
 
   const saveProduct = async (product) => {
-    const productsSaved = await localStorage.getItem('products');
-    if (productsSaved) {
-      const products = JSON.parse(productsSaved);
-      localStorage.setItem('products', JSON.stringify([product, ...products]));
+    let bagSaved = await localStorage.getItem('bag');
+    bagSaved = JSON.parse(bagSaved)
+    if (bagSaved?.products.length) {
+      const products = bagSaved.products;
+      localStorage.setItem('bag', JSON.stringify({ products: [...products, product] }));
     } else {
-      localStorage.setItem('products', JSON.stringify([product]));
+      localStorage.setItem('bag', JSON.stringify({ products: [product] }));
     };
     
     getTotal();
   };
 
   const getTotal = async () => {
-    const productsSaved = await localStorage.getItem('products');
-    if (productsSaved) {
-      const products = JSON.parse(productsSaved);
+    let bag = await localStorage.getItem('bag');
+    bag = JSON.parse(bag);
+    
+    const products = bag?.products || [];
+
+    if (products.length) {
       setBag(products);
       setTotal([...products].reduce((acc, item) =>  acc += item.total, 0));
       setQuantityTotal([...products].reduce((acc, item) =>  acc += item.quantity, 0));
@@ -31,8 +35,9 @@ export const StoreProvider = (props) => {
   };
 
   const getBag = async () => {
-    const productsSaved = await localStorage.getItem('products');
-    return productsSaved ? JSON.parse(productsSaved) : [];
+    let bag = await localStorage.getItem('bag');
+    bag = JSON.parse(bag);
+    return bag || {};
   };
 
   useEffect(() => {

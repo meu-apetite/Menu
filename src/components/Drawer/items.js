@@ -7,11 +7,11 @@ const items = [
     },
 
     {
-      text: 'Pedidos',
-      link: '/admin/orders',
-      Icon: () => <i className="fas fa-motorcycle"></i>,
+      text: 'Categoria',
+      link: '/admin/categories',
+      Icon: () => <i className="fas fa-tags"></i>,
     },
- 
+
     {
       text: 'Produtos',
       link: '/admin/products',
@@ -19,21 +19,21 @@ const items = [
     },
 
     {
-      text: 'Categoria',
-      link: '/admin/categories',
-      Icon: () => <i className="fas fa-tags"></i>,
+      text: 'Pedidos',
+      link: '/admin/orders',
+      Icon: () => <i className="fas fa-shopping-cart"></i>,
+    },
+
+    {
+      text: 'Formas de pagamento',
+      link: '/admin/payment-method',
+      Icon: () => <i className="fas fa-money-bill"></i>
     },
 
     {
       text: 'Endereço',
       link: '/admin/address',
       Icon: () => <i className="fas fa-map-location"></i>,
-    },
-
-    {
-      text: 'Formas de pagamento',
-      link: '/admin/setting',
-      Icon: () => <i className="fas fa-money-bill"></i>
     },
 
     {
@@ -48,6 +48,6 @@ const items = [
       Icon: () => <i className="fas fa-user"></i>,
     },
   ],
-]
+];
 
-export default items
+export default items;

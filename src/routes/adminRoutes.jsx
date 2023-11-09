@@ -1,16 +1,17 @@
-import Address from '../pages/Admin/Address/Index';
-import Product from '../pages/Admin/Products/Index';
-import ProductCreate from '../pages/Admin/Products/Create';
-import ProductUpdate from '../pages/Admin/Products/Update';
-import Category from '../pages/Admin/Categories/Index';
-import CategoryCreate from '../pages/Admin/Categories/Create';
-import CategoryUpdate from '../pages/Admin/Categories/Update';
-import Orders from '../pages/Admin/Orders/Index';
-import OrdersView from '../pages/Admin/Orders/View';
-import Appearance from '../pages/Admin/Appearance/Index';
-import InfoAdmin from '../pages/Admin/InfoAdmin';
-import Home from '../pages/Admin/Home';
-import Layout from '../components/Layout';
+import Layout from 'components/Layout';
+import Address from 'pages/Admin/Address/Index';
+import Product from 'pages/Admin/Products/Index';
+import ProductCreate from 'pages/Admin/Products/Create';
+import ProductUpdate from 'pages/Admin/Products/Update';
+import Category from 'pages/Admin/Categories/Index';
+import CategoryCreate from 'pages/Admin/Categories/Create';
+import CategoryUpdate from 'pages/Admin/Categories/Update';
+import Orders from 'pages/Admin/Orders/Index';
+import OrdersView from 'pages/Admin/Orders/View';
+import Appearance from 'pages/Admin/Appearance/Index';
+import InfoAdmin from 'pages/Admin/InfoAdmin';
+import Home from 'pages/Admin/Home';
+import PaymentMethod from 'pages/Admin/PaymentMethod/Index';
 
 const adminRoutes = [
   {
@@ -29,6 +30,7 @@ const adminRoutes = [
       { path: 'orders/view', element: <OrdersView /> },
       { path: 'appearance', element: <Appearance /> },
       { path: 'info-admin', element: <InfoAdmin /> },
+      { path: 'payment-method', element: <PaymentMethod /> },
       { path: '', element: <Home /> },
     ],
   },

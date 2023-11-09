@@ -35,7 +35,7 @@ const Setting = () => {
 
   return (
     <>
-      <Header title="Informações do Administrador" back={-1} buttonText="Salvar" buttonClick={formSubmit} />
+      <Header title="Informações do Administrador" back={-1} />
 
       <Box component="section" noValidate>
         <Grid container spacing={2}>

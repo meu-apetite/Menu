@@ -37,7 +37,7 @@ const FindAddressClient = (props /* { getAddress() } */) => {
 
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
      
-        if(response.data?.erro) return toast.error('Cep incorreto', { duration: 5000, position: 'top-center' });
+      if(response.data?.erro) return toast.error('Cep incorreto', { duration: 5000, position: 'top-center' });
 
       setAddress({
         zipCode: response.data.cep,

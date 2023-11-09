@@ -1,0 +1,262 @@
+import { useState, useEffect, useContext } from 'react';
+import { Button, FormControlLabel, Grid, Switch, Tab, Tabs, TextField } from '@mui/material';
+import { AuthContext } from 'contexts/auth';
+import { ApiService } from 'services/api.service';
+import Header from 'components/Header';
+import * as S from './style';
+
+const PaymentMethod = () => {
+  const apiService = new ApiService();
+  const { setLoading, toast } = useContext(AuthContext);
+
+  const [listPaymentMethods, setListPaymentMethods] = useState([]);
+  const [paymentsmethods, setPaymentsmethods] = useState([]);
+  const [tabValue, setTabValue] = useState('delivery');
+  const [hasUpdate, setHasUpdate] = useState(false);
+  const [dataMecardoPago, setDataMercardoPago] = useState({
+    accessToken: '',
+    publicKey: '',
+  });
+  const [hasUpdateDataMP, sethasUpdateDataMP] = useState(false);
+
+  const getPaymentsmethods = async () => {
+    try {
+      setLoading('Carregando...');
+
+      const { data: AllPayments } = await apiService.get('/admin/paymentsmethods',);
+      const { data: payments } = await apiService.get('/admin/company/payments');
+
+      setIsActive(AllPayments, payments.paymentsMethods);
+      setListPaymentMethods([...AllPayments]);
+
+      setDataMercardoPago({
+        accessToken: payments?.paymentOnline?.credentialsMP?.accessToken
+          ? '*******************************************'
+          : '',
+        publicKey: payments?.paymentOnline?.credentialsMP?.publicKey
+          ? '*******************************************'
+          : '',
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const setIsActive = (AllPayments, ActivePayments) => {
+    const paymentsMethods = AllPayments.map((item) => {
+      return {
+        titleCategory: item.titleCategory,
+        methods: item.methods.map((m) => {
+          ActivePayments.findIndex((pay) => pay.id === m.id) >= 0
+            ? (m.isActive = true)
+            : (m.isActive = false);
+
+          return m;
+        })
+      };
+    });
+
+    setPaymentsmethods(paymentsMethods);
+  };
+
+  const toggleItem = (index, id) => {
+    const payments = [...paymentsmethods];
+    const changeIndex = payments[index]['methods'].findIndex((item) => item.id === id);
+
+    payments[index]['methods'][changeIndex]['isActive'] = !payments[index]
+      .methods[changeIndex]['isActive'];
+
+    setPaymentsmethods(payments);
+    setHasUpdate(true);
+  };
+
+  const handleChange = (e, value) => {
+    setTabValue(value);
+    toast.remove();
+
+    if (value !== 'online' || dataMecardoPago.publicKey.length >= 1) return;
+
+    toast(
+      <div>
+        Caso precise de ajuda com a integração com o Mercado Pago, entre em
+        contato com o nosso suporte.
+        <S.ButtonSuport variant="outlined" color="success">
+          <i className="fa-brands fa-whatsapp" style={{ fontSize: '1.2rem' }}></i>
+          <span>Chamar suporte</span>
+        </S.ButtonSuport>
+      </div>,
+      { duration: 20000 }
+    );
+  };
+
+  const savePayment = async () => {
+    try {
+      setLoading('Atualizando...');
+
+      const data = [];
+      const paymentsMethods = [...paymentsmethods];
+
+      paymentsMethods.forEach((item) => {
+        item.methods.forEach((m) => {
+          if (!m.isActive) return;
+          const modifiedMethod = JSON.parse(JSON.stringify(m));
+          delete modifiedMethod.isActive;
+          data.push(modifiedMethod);
+        });
+      });
+
+      const response = await apiService.put('/admin/company/payments', data);
+
+      setIsActive(listPaymentMethods, response.data);
+      setHasUpdate(false);
+      toast.success('Opções de pagamento atualizadas');
+    } catch (error) {
+      toast.error('Erro ao atualizar as opções de pagamento');
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const saveCredentialsMP = async () => {
+    try {
+      setLoading('Atualizando...');
+
+      const data = { credentials: {} };
+
+      if (dataMecardoPago.accessToken.length > 1) {
+        data.credentials.accessToken = dataMecardoPago.accessToken;
+      }
+
+      if (dataMecardoPago.publicKey.length > 1) {
+        data.credentials.publicKey = dataMecardoPago.publicKey;
+      }
+
+      await apiService.put('/admin/company/paymentonline/mp', data);
+
+      setHasUpdate(false);
+      toast.success('Opções de pagamento atualizadas');
+    } catch (error) {
+      toast.error('Erro ao atualizar as opções de pagamento');
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  useEffect(() => {
+    getPaymentsmethods();
+  }, []);
+
+  return (
+    <section>
+      <Header title="Formas de pagamento" back={-1} />
+
+      <Tabs value={tabValue} onChange={handleChange}>
+        <Tab value="delivery" label="Pagamento na entrega" />
+        <Tab value="online" label="Pagamento online" />
+      </Tabs>
+
+      {tabValue === 'delivery' && (
+        <S.Wrapper>
+          <S.Title>
+            Por favor, indique quais métodos de pagamento são aceitos no seu
+            estabelecimento no momento da entrega.
+          </S.Title>
+          {paymentsmethods.map((item, index) => {
+            return (
+              <S.CategoryPayment key={item.titleCategory}>
+                <S.SubTitle>{item.titleCategory}</S.SubTitle>
+                <div className="methods">
+                  {item.methods.map((m) => (
+                    <FormControlLabel
+                      key={m.id}
+                      sx={{ my: 0.5, display: 'block' }}
+                      control={
+                        <Switch
+                          checked={m.isActive}
+                          onChange={() => toggleItem(index, m.id)}
+                        />
+                      }
+                      label={m.title}
+                    />
+                  ))}
+                </div>
+              </S.CategoryPayment>
+            );
+          })}
+
+          <S.WrapperButtonSaved>
+            <Button
+              variant="contained"
+              disabled={!hasUpdate}
+              onClick={savePayment}
+            >
+              Salvar
+            </Button>
+          </S.WrapperButtonSaved>
+        </S.Wrapper>
+      )}
+
+      {tabValue === 'online' && (
+        <S.Wrapper>
+          <S.Title>
+            Oferecemos pagamento online pelo Mercado Pago, com várias opções de
+            pagamento para os seus clientes, incluindo PIX e cartões de crédito,
+            sem exigir que tenham uma conta Mercado Pago.
+          </S.Title>{' '}
+          <br />
+          <Grid container spacing={2}>
+            <Grid item sm={12}>
+              <strong>
+                Vá para a sua conta Mercado Pago, copie as credenciais e cole
+                nos campos abaixo.
+              </strong>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                label="Public Key"
+                type="password"
+                fullWidth={true}
+                InputLabelProps={{ shrink: dataMecardoPago.publicKey !== '' }}
+                value={dataMecardoPago.publicKey}
+                onChange={(e) => {
+                  setDataMercardoPago({ ...dataMecardoPago, publicKey: e.target.value });
+                  sethasUpdateDataMP(true);
+                  toast.remove();
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                label="Access accessToken"
+                type="password"
+                fullWidth={true}
+                InputLabelProps={{ shrink: dataMecardoPago.accessToken !== '' }}
+                value={dataMecardoPago.accessToken}
+                onChange={(e) => {
+                  setDataMercardoPago({ ...dataMecardoPago, accessToken: e.target.value });
+                  sethasUpdateDataMP(true);
+                  toast.remove();
+                }}
+              />
+            </Grid>
+          </Grid>
+          <S.WrapperButtonSaved>
+            <Button
+              onClick={saveCredentialsMP}
+              variant="contained"
+              disabled={!hasUpdateDataMP}
+            >
+              Salvar
+            </Button>
+          </S.WrapperButtonSaved>
+        </S.Wrapper>
+      )}
+    </section>
+  );
+};
+
+export default PaymentMethod;

@@ -1,5 +1,5 @@
 import { styled } from '@mui/system';
-import Button from '@mui/material/Button';
+import { Button } from '@mui/material';
 
 export const Header = styled('header')({
   position: 'relative',
@@ -9,14 +9,16 @@ export const Header = styled('header')({
   padding: '0.6rem 0'
 });
 
-export const Title = styled('h2')({
-  marginTop: '1rem'
+export const Logo = styled('img')({
+  width: 60,
+  height: 60
 });
 
-export const WrapperTotal = styled('div')({
-  display: 'flex',
-  gap: '0.4rem',
-  justifyContent: 'end'
+export const Icon = styled('img')({
+  width: '24px',
+  position: 'relative',
+  top: '-1px',
+  marginRight: '14px'
 });
 
 export const ButtonDefault = styled(Button)({
@@ -29,7 +31,6 @@ export const ButtonDefault = styled(Button)({
   marginTop: '16px'
 });
 
-export const Logo = styled('img')({
-  width: 60,
-  height: 60
+export const Title = styled('h2')({
+  marginTop: '1rem'
 });

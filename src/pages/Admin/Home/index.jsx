@@ -36,7 +36,7 @@ export default function Home() {
        <QRCode
         size={200}
         style={{ height: 'auto', maxWidth: '500px', width: '20%' }}
-        value={'text'}
+        value={'http://192.168.0.135:3000/644d03bb1169fea569ff4348/cardapio'}
         viewBox={`0 0 256 256`}
       />
     </section>

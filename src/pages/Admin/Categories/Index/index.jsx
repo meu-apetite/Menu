@@ -208,11 +208,11 @@ export default function Categories() {
               <div className="actions">
                 <div className="move">
                   <span
-                    className="fa fa-arrow-down btnDown"
+                    className="fa fa-angle-down btnDown"
                     onClick={() => changeCategoriesPosition(indexCat, 'down')}
                   />
                   <span
-                    className="fa fa-arrow-up btnUp"
+                    className="fa fa-angle-up btnUp"
                     onClick={() => changeCategoriesPosition(indexCat, 'up')}
                   />
                   <Switch
@@ -243,11 +243,11 @@ export default function Categories() {
                   <div className="action">
                     <div>
                       <span
-                        className="fa fa-arrow-down btnDown"
+                        className="fa fa-angle-down btnDown"
                         onClick={() => changeProductPosition(indexCat, indexProduct, 'down')}
                       />
                       <span
-                        className="fa fa-arrow-up btnUp"
+                        className="fa fa-angle-up btnUp"
                         onClick={() => changeProductPosition(indexCat, indexProduct, 'up')}
                       />
                     </div>

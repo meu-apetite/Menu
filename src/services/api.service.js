@@ -1,13 +1,12 @@
 import axios from 'axios';
 
 export class ApiService {
-  #baseUrl = 'http://192.168.0.133:5000';
+  #baseUrl = 'http://192.168.0.135:5000';
   isAuth = false;
   #token;
   #_id;
 
   constructor(routeAuth = true) {
-
     if(routeAuth) {
       this.isAuth = true;
       this.token = localStorage.getItem('token')?.toString();

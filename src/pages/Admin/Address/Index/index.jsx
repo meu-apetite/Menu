@@ -4,8 +4,8 @@ import { AuthContext } from 'contexts/auth';
 import { ApiService } from 'services/api.service';
 import Header from 'components/Header';
 import FindAddress from 'components/FindAddress';
-import './style.css';
 import { propsTextField } from 'utils/form';
+import * as S from './style.js';
 
 const Address = () => {
   const apiService = new ApiService();
@@ -108,12 +108,14 @@ const Address = () => {
           </Grid>
 
           <Grid item xs={12} sm={12}>
-            <Button
-              variant="contained"
-              onClick={() => setOpenEditorAddress(!openEditorAddress)}
-            >
-              Atualizar endereço
-            </Button>
+            <S.WrapperButtonSaved>
+              <Button 
+                variant='contained'
+                onClick={() => setOpenEditorAddress(!openEditorAddress)}
+              >
+                Atualizar endereço
+              </Button>
+            </S.WrapperButtonSaved>
           </Grid>
 
           {openEditorAddress && <FindAddress getAddress={(address) => updateAddress(address)} />}
