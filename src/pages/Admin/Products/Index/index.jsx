@@ -58,7 +58,7 @@ export default function DataGridDemo() {
     } catch (e) {
       toast.error('Não foi possível excuir os itens selecionados!');
     } finally {
-      setLoading(null);
+      setLoading(false);
     }
   };
 

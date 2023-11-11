@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react'
 import {
   Typography,
   Paper,
@@ -6,107 +6,82 @@ import {
   List,
   ListItem,
   ListItemText,
-} from '@mui/material';
-
-
-// const useStyles = makeStyles((theme) => ({
-//   paper: {
-//     padding: theme.spacing(3),
-//     margin: 'auto',
-//     maxWidth: 600,
-//   },
-//   header: {
-//     marginBottom: theme.spacing(2),
-//   },
-//   listItem: {
-//     borderBottom: '1px solid #ccc',
-//   },
-// }));
+} from '@mui/material'
+import { useLocation } from 'react-router-dom'
 
 const PedidoDetalhes = () => {
-  const pedido = {
-    numero: '12345',
-    cliente: {
-      nome: 'Maria Silva',
-      email: 'maria.silva@example.com',
-      telefone: '(11) 98765-4321',
-    },
-    enderecoEntrega: {
-      logradouro: 'Avenida Fictícia, 456',
-      cidade: 'Cidade Fictícia',
-      estado: 'UF',
-      cep: '54321-678',
-    },
-    produtos: [
-      {
-        nome: 'Produto A',
-        quantidade: 2,
-        preco: 25.99,
-      },
-      {
-        nome: 'Produto B',
-        quantidade: 1,
-        preco: 39.99,
-      },
-      {
-        nome: 'Produto C',
-        quantidade: 3,
-        preco: 12.99,
-      },
-    ],
-    total: 167.94,
-  };
+  const { state } = useLocation()
+  const [order, setOrder] = useState({
+    id: Number,
+    company: '',
+    client: { name: '', email: '', phoneNumber: '' },
+    status: '',
+    products: [],
+    paymentType: '',
+    deliveryType: '',
+    address: {},
+    total: Number,
+  });
+  const [store, setStore] = useState({});
+
+  useEffect(() => {
+    console.log(state)
+    setOrder(state.order);
+    setStore(state.store);
+  }, [])
 
   return (
-    <Paper style={{
-      padding: '20px',
-      margin: '20px auto',
-      maxWidth: '600px'
-    }}>
-      <Typography variant="h4" align="center" style={{ marginBottom: '16px'}}>
-        Detalhes do Pedido #{pedido.numero}
+    <Paper style={{ padding: '20px', margin: '20px auto', maxWidth: '600px' }}>
+      <Typography variant="h4" align="center" style={{ marginBottom: '16px' }}>
+        Detalhes do Pedido #{order.id}
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <Typography variant="h6">Informações do Cliente:</Typography>
           <Typography variant="body1">
-            Nome: {pedido.cliente.nome}
-            <br />
-            Email: {pedido.cliente.email}
-            <br />
-            Telefone: {pedido.cliente.telefone}
+            Nome: {order.client.name} <br />
+            Email: {order.client.email} <br />
+            Telefone: {order.client.phoneNumber}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <Typography variant="h6">Endereço de Entrega:</Typography>
-          <Typography variant="body1">
-            {pedido.enderecoEntrega.logradouro}
-            <br />
-            {pedido.enderecoEntrega.cidade}, {pedido.enderecoEntrega.estado},{' '}
-            {pedido.enderecoEntrega.cep}
-          </Typography>
+          {order?.address?.freeformAddress ? (
+            <>
+              <Typography variant="h6">Endereço de Entrega:</Typography>
+              <Typography variant="body1">
+                {order?.address?.street} <br />
+                {order?.address?.city}, {'BA'}, {'44400432'}
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography variant="h6">Endereço de Retirada:</Typography>
+              <Typography variant="body1">
+                {store?.address?.street} <br />
+                {store?.address?.city}, {store?.address?.state}, {'44400432'}
+              </Typography>
+            </>
+          )}
         </Grid>
       </Grid>
-      <Typography variant="h6" style={{ marginTop: 20 }}>
-        Produtos no Pedido:
-      </Typography>
+      <Typography variant="h6" style={{ marginTop: 20 }}>Produtos no Pedido:</Typography>
       <List>
-        {pedido.produtos.map((produto, index) => (
-          <ListItem key={index} style={{ borderBottom: '1px solid #ccc' }}>
+        {order.products?.map((item, i) => (
+          <ListItem key={i} style={{ borderBottom: '1px solid #ccc' }}>
             <ListItemText
-              primary={produto.nome}
-              secondary={`Quantidade: ${produto.quantidade} - R$ ${produto.preco.toFixed(
-                2
-              )}`}
+              primary={item.productName}
+              secondary={`Quantidade: ${
+                item.quantity
+              } - R$ ${item.priceTotal.toFixed(2)}`}
             />
           </ListItem>
         ))}
       </List>
       <Typography variant="h6" style={{ marginTop: 20 }}>
-        Total: R$ {pedido.total.toFixed(2)}
+        Total: R$ {22}
       </Typography>
     </Paper>
-  );
-};
+  )
+}
 
-export default PedidoDetalhes;
+export default PedidoDetalhes

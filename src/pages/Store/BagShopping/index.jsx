@@ -30,9 +30,7 @@ const CartPage = () => {
   const [bagItems, setBagItems] = useState([]);
   const [order, setOrder] = useState({});
   const [store, setStore] = useState();
-  const [clientInfo, setClientInfo] = useState({
-    name: '', tel: '', email: ''
-  });
+  const [clientInfo, setClientInfo] = useState({ name: '', phoneNumber: '', email: '' });
 
   const getStore = async () => {
     const { data } = await apiService.get('/store/' + id);
@@ -85,13 +83,15 @@ const CartPage = () => {
     return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
-  const toAddress = () =>  {
-    if (
-      clientInfo.email === '' || clientInfo.name === '' || clientInfo.tel === ''
-    ) {
-      toast.error('Você deve preencher todos os dados de contato')
-      return;
+  const toAddress = async () =>  {
+    if (clientInfo.email === '' || clientInfo.name === '' || clientInfo.phoneNumber === '') {
+      return toast.error('Você deve preencher todos os dados de contato');
     }
+    
+    const bag = await getBag();
+    const newBag = { ...bag, ...clientInfo };
+    await localStorage.setItem('bag', JSON.stringify(newBag));
+
     navigate('endereco');
   }
 
@@ -136,16 +136,30 @@ const CartPage = () => {
 
           <section>
             <h3>Informe seus dados de contato</h3>
-
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Nome" value={clientInfo.name} disabled />
+                  <TextField 
+                    fullWidth 
+                    label="Nome" 
+                    value={clientInfo.name}
+                    onChange={(e) => setClientInfo({ ...clientInfo, name: e.target.value })}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Telefone (whatsapp)" value={clientInfo.tel} disabled />
+                  <TextField 
+                    fullWidth 
+                    label="Telefone (whatsapp)" 
+                    value={clientInfo.phoneNumber}  
+                    onChange={(e) => setClientInfo({ ...clientInfo, phoneNumber: e.target.value })}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Email" value={clientInfo.email} disabled />
+                  <TextField 
+                    fullWidth 
+                    label="Email" 
+                    value={clientInfo.email}  
+                    onChange={(e) => setClientInfo({ ...clientInfo, email: e.target.value })}
+                  />
                 </Grid>
               </Grid>
           </section>

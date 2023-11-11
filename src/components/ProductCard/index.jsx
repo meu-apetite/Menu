@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import ProductView from 'components/ProductView';

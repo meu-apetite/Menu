@@ -47,6 +47,12 @@ const items = [
       link: '/admin/info-admin',
       Icon: () => <i className="fas fa-user"></i>,
     },
+
+    {
+      text: 'Configurações',
+      link: '/admin/info-admin',
+      Icon: () => <i className="fas fa-cog"></i>,
+    },
   ],
 ];
 

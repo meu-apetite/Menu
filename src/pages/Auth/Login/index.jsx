@@ -80,7 +80,7 @@ export default function Login() {
       e.preventDefault();
       const notificationSuport = checkSuport();
       await requestNotificationPermission();
-      const subscription = await registerServiceWorker() || null;
+      // const subscription = await registerServiceWorker() || null;
 
       const data = new FormData(e.target);
       
@@ -90,7 +90,7 @@ export default function Login() {
 
       const response = await apiService.post(
         '/login',
-        { email: data.get('email'), password: data.get('password'), subscription }
+        { email: data.get('email'), password: data.get('password'), subscription: {} }
       );
 
       if (!response.data.success) return toast.error(response.data.message);
@@ -108,6 +108,7 @@ export default function Login() {
       navigate('/admin');
       return document.location.reload();
     } catch (error) {
+      alert(error)
       console.log(error);
       return toast.error(error.response.data.message);
     } finally {

@@ -137,16 +137,24 @@ const Payment = ({ paymentOnline }) => {
   };
 
   const finishOrder = async () => {
-    const data = await getBag();
-    console.log(data)
-    delete data.products;
-    const { data: response } = await apiService.post(
-      '/store/finishOrder/' + company._id,
-      { ...data, paymentType: 'indelivery', paymentMethod },
-    );
-    
-    
-    console.log(response);
+    try {
+      setLoading(true)
+      const data = await getBag();
+      delete data.products;
+
+      const { data: response } = await apiService.post(
+        '/store/finishOrder/' + company._id,
+        { ...data, paymentType: 'indelivery', paymentMethod },
+      );
+      
+      console.log(response.order)
+
+      navigate(`/${response.store._id}/meupedido/${response.order.id}`, { state: { ...response } });
+    } catch(error) {
+      console.log(error)
+    }   finally {
+      setLoading(false)
+    }
   };
 
   useEffect(() => {
