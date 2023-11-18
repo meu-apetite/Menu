@@ -18,24 +18,18 @@ const Create = (props) => {
   const update = async () => {
     try {
       const response = await apiService.get(`/admin/company`);
-      console.log(response)
       const company = await response.data;
-
-      console.log(response)
-
       setCompany(company);
 
       if (response.status === 401) return setAuthenticationStatus('disconnected');
 
       setAuthenticationStatus('logged');
     } catch (e) {
-      console.log(e);
       setAuthenticationStatus('disconnected');
     }
   };
 
   useEffect(() => {
-    console.log('adhdhd')
     update();
   }, []);
 

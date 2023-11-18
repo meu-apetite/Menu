@@ -14,35 +14,19 @@ export default function Categories() {
   const { setLoading, toast } = useContext(AuthContext);
   const [categories, setCategories] = useState([]);
   const [categoryChanges, setCategoryChanges] = useState([]);
-  const [productChanges, setProductChanges] = useState([]);
+  const [productChangeCurrent, setProductChangeCurrent] = useState(-1);
 
   const getCategories = async () => {
     const response = await apiService.get('/admin/categoriesWithProducts');
+    setCategories([]);
     sortPosition(response.data);
   };
 
   const addCategorychanges = (indexs) => {
+    console.log(indexs)
     indexs.forEach((i) => {
-      if (categoryChanges.indexOf(i) === -1) setCategoryChanges((prev) => [...prev, i]);
-    });
-  };
-
-  // useEffect(() => {
-  //   console.log(productChanges.length)
-  // }, [productChanges])
-
-  const addProductChanges = (products) => {
-    products.forEach((p) => {
-      const productChangesCopy = productChanges;
-      const findItem = productChanges.findIndex((item) => item.id === p.id);
-      console.log('oiiii ', findItem)
-      
-      if (findItem >= 0) {
-        productChangesCopy[findItem] = p;
-        setProductChanges(productChangesCopy);
-      } else {
-        console.log('ok')
-        setProductChanges(prev => [...prev, p]);
+      if (categoryChanges?.indexOf(i) === -1) {
+        setCategoryChanges((prev) => [...prev, i])
       }
     });
   };
@@ -68,27 +52,18 @@ export default function Categories() {
       products[indexProduct]['displayPosition'] = products[indexProduct - 1]['displayPosition'];
       products[indexProduct - 1]['displayPosition'] = currentPosition;
       positions.push(indexProduct, (indexProduct - 1));
+      setProductChangeCurrent(indexProduct - 1);
     } else if (action === 'down') {
       products[indexProduct]['displayPosition'] = products[indexProduct + 1]['displayPosition'];
       products[indexProduct + 1]['displayPosition'] = currentPosition;
       positions.push(indexProduct, (indexProduct + 1));
+      setProductChangeCurrent(indexProduct + 1);
     }
 
     categoriesCurrent[indexCategory]['products'] = products;
+    addCategorychanges([indexCategory]);
     setCategories([]);
     sortPosition(categoriesCurrent);
-
-    positions.forEach((p) => {
-      addProductChanges([
-        {
-          id: products[positions[p]]['_id'],
-          isActive: products[positions[p]]['isActive'],
-          displayPosition: products[positions[p]]['displayPosition'],
-          categoryId: categoriesCurrent[indexCategory]['_id'],
-          categoryIndex: indexCategory,
-        }
-      ]);
-    });
   };
 
   const changeProductStatus = (indexCategory, indexProduct) => {
@@ -96,22 +71,12 @@ export default function Categories() {
     const updatedCategory = { ...updatedCategories[indexCategory] };
     const updatedProducts = [...updatedCategory.products];
     const updatedProduct = { ...updatedProducts[indexProduct] };
-  
     updatedProduct.isActive = !updatedProduct.isActive;  
     updatedProducts[indexProduct] = updatedProduct;
     updatedCategory.products = updatedProducts;  
     updatedCategories[indexCategory] = updatedCategory;
-  
     setCategories(updatedCategories);  
-    addProductChanges([
-      {
-        id: updatedProduct._id,
-        displayPosition: updatedProduct.displayPosition,
-        categoryId: updatedCategory._id,
-        categoryIndex: indexCategory,
-        isActive: updatedProduct.isActive
-      }
-    ]);
+    addCategorychanges([indexCategory]);
   };
   
   const changeCategoriesPosition = (index, action) => {
@@ -142,34 +107,24 @@ export default function Categories() {
     addCategorychanges([index]);
   };
 
-  const openCreateProduct = (id) => navigate('/admin/products/create?categoryId=' + id);
+  const openCreateProduct = (id) => navigate('/admin/products/create', { state: { categoryId: id } });
 
   const save = async () => {
     try {
       setLoading('Atualizando');
 
-      const categoryChanges = [];
-
-      console.log(productChanges)
-      categoryChanges.forEach((index, i) => {
-        categoryChanges.push({
-          id: categories[index]['_id'],
-          displayPosition: categories[index]['displayPosition'],
-          isActive: categories[index]['isActive'],
-          products: categories[index]['products'],
-        });
-      });
-
-      const response = await apiService.put('/admin/categories', {
-        productChanges, categoryChanges
-      });
+      const data = categories
+        .filter((item, i) => {
+          if (categoryChanges.indexOf(i) >= 0) return item;
+        })
+      const response = await apiService.put('/admin/categories', data);
 
       sortPosition(response.data);
       toast.success('Mudanças feitas com sucesso');
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(null);
+      setLoading(false);
     }
   };
 
@@ -183,15 +138,8 @@ export default function Categories() {
         title="Categorias"
         buttonText="Nova categoria"
         buttonClick={() => navigate('create')}
+        back={-1}
       />
-
-      <S.ContainerButtonSave>
-        {(categoryChanges.length >= 1 || productChanges.length >= 1)  && (
-          <Button variant="outlined" color="success" onClick={save}>
-            Salvar Alterações
-          </Button>
-        )}
-      </S.ContainerButtonSave>
 
       <S.ContainerCategories>
         {categories.map((item, indexCat) => (
@@ -231,11 +179,17 @@ export default function Categories() {
                 + Adicionar produto
               </Button>
               {item.products.map((item, indexProduct) => (
-                <S.CategoryItem key={indexProduct}>
+                <S.CategoryItem 
+                  key={indexProduct} 
+                  style={{ 
+                    background: productChangeCurrent === indexProduct ? 'rgba(52, 152, 219, 0.1)' : '' 
+                  }}
+                >
                   <div className="wrapperInfo">
+                    <strong>{item.displayPosition}º</strong>
                     <img
                       className="imageItem"
-                      src={item.images[0].url}
+                      src={item.images[0]?.url}
                       alt={`Imagem do produto ${item.name}`}
                     />
                     <p className="nameItem">{item.name}</p>

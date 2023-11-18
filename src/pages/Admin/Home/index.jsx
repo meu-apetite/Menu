@@ -11,8 +11,18 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import QRCode from 'react-qr-code';
-import Chart from 'chart.js/auto';
 import { Bar, Line, Pie } from 'react-chartjs-2';
+import Chart from 'chart.js/auto';
+import * as S from './style';
+
+const StyledCard = styled(Card)({
+  maxWidth: '100%',
+  marginBottom: '20px',
+});
+
+const ChartContainer = styled('div')({
+  width: '100%',
+});
 
 export default function Home() {
   const [expanded, setExpanded] = React.useState(false);
@@ -73,31 +83,35 @@ export default function Home() {
   };
 
   return (
-    <section>
-      {/* <QRCode
-        size={200}
-        style={{ height: 'auto', maxWidth: '500px', width: '20%' }}
-        value={'http://192.168.0.135:3000/644d03bb1169fea569ff4348/cardapio'}
-        viewBox={`0 0 256 256`}
-      /> */}
+    <div>
+      <S.SectionChart>
+        <StyledCard>
+          <CardHeader title="Pedidos" />
+          <CardContent>
+            <ChartContainer sx={{ width: '100%' }}>
+              <Bar data={barChartData} options={barChartOptions} />
+            </ChartContainer>
+          </CardContent>
+        </StyledCard>
 
-      <CardContent sx={{ display: 'grid', gridTemplateColumns: '50% 50%', maxWidth: '100%' }}>
-        <div>
-          <h2>Pedidos</h2>
-          <Bar data={barChartData} options={barChartOptions} />
-        </div>
-        <div>
-          <h2>Visualizações</h2>
-          <Line data={lineChartData} />
-        </div>
-        <div>
-          <h2>Pie Chart</h2>
-          <Pie data={pieChartData} />
-        </div>
-      </CardContent>
+        <StyledCard>
+          <CardHeader title="Visualizações" />
+          <CardContent>
+            <ChartContainer sx={{ width: '100%' }}>
+              <Line data={lineChartData} />
+            </ChartContainer>
+          </CardContent>
+        </StyledCard>
 
-
-
-    </section>
+        <StyledCard>
+          <CardHeader title="Pie Chart" />
+          <CardContent>
+            <ChartContainer sx={{ width: '100%' }}>
+              <Pie data={pieChartData} />
+            </ChartContainer>
+          </CardContent>
+        </StyledCard>
+      </S.SectionChart>
+    </div>
   );
 }

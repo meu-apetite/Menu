@@ -78,8 +78,8 @@ export default function Login() {
       setLoading(true);
       
       e.preventDefault();
-      const notificationSuport = checkSuport();
-      await requestNotificationPermission();
+      // const notificationSuport = checkSuport();
+      // await requestNotificationPermission();
       // const subscription = await registerServiceWorker() || null;
 
       const data = new FormData(e.target);
@@ -98,12 +98,12 @@ export default function Login() {
       localStorage.setItem('_id', JSON.stringify(response.data._id));
       localStorage.setItem('token', JSON.stringify(response.data.token));
 
-      if (!notificationSuport) {
-        toast(
-          'Seu navegador não suporta notificações em tempo real. Use o Google Chrome para acessar todas as funcionalidades do sistema.',
-          { icon: "⚠️" }
-        );
-      }
+      // if (!notificationSuport) {
+      //   toast(
+      //     'Seu navegador não suporta notificações em tempo real. Use o Google Chrome para acessar todas as funcionalidades do sistema.',
+      //     { icon: "⚠️" }
+      //   );
+      // }
 
       navigate('/admin');
       return document.location.reload();

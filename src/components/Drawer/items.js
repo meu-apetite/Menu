@@ -50,8 +50,13 @@ const items = [
 
     {
       text: 'Configurações',
-      link: '/admin/info-admin',
+      link: '/admin/settings',
       Icon: () => <i className="fas fa-cog"></i>,
+    },
+    {
+      text: 'Sair',
+      link: 'logout',
+      Icon: () => <i className="fas fa-sign-out-alt"></i>,
     },
   ],
 ];

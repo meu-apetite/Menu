@@ -15,11 +15,11 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import menuItems from './items';
-import * as S from './style';
-import { Avatar, CardHeader, styled, useMediaQuery } from '@mui/material';
+import { Avatar, CardHeader, styled } from '@mui/material';
 import { red } from '@mui/material/colors';
 import { useContext } from 'react';
 import { AuthContext } from 'contexts/auth';
+import * as S from './style';
 
 const MiniDrawer = () => {
   const theme = useTheme();
@@ -27,26 +27,29 @@ const MiniDrawer = () => {
   const [open, setOpen] = React.useState(false);
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
-  const toLink = (link) => navigate(link);
 
   const { company } = useContext(AuthContext);
 
-  const CustomCardHeader = styled(CardHeader)`
-    && .css-1ssile9-MuiCardHeader-avatar {
-      margin: 0
+  const toLink = (link) => {
+    if (link === 'logout') {
+      localStorage.removeItem('_id');
+      localStorage.removeItem('token');
+      return window.location.reload();      
     }
+    if (window.innerWidth <= 768) handleDrawerClose();
+    navigate(link);
+  };
+
+  const CustomCardHeader = styled(CardHeader)`
+    && .css-1ssile9-MuiCardHeader-avatar { margin: 0 }
   `;
 
   return (
     <Box
-      sx={{
-        display: 'flex',
-        
-        [theme.breakpoints.down('sm')]: { position: 'absolute' },
-      }}
+      sx={{ display: 'flex', [theme.breakpoints.down('sm')]: { position: 'absolute' } }}
     >
       <CssBaseline />
-      <S.AppBar open={open} position="fixed" sx={{ height: "65px"}}>
+      <S.AppBar open={open} position="fixed" sx={{ height: "65px" }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <IconButton
             color="inherit"
@@ -70,6 +73,7 @@ const MiniDrawer = () => {
 
       <S.Drawer variant="permanent" open={open}>
         <S.DrawerHeader>
+          <div className="on">online</div>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>

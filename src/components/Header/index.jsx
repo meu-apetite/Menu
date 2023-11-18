@@ -11,9 +11,7 @@ const Header = (props) => {
       {!props.children ? (
         <>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {props.back && (
-              <NavigateBeforeIcon sx={{ cursor: 'pointer' }} onClick={() => navigate(props.back)} />
-            )}
+            {props.back && <S.BtnBack className="fa-solid fa-angle-left" onClick={() => navigate(props.back)} />}
             <Typography variant="h1">{props.title}</Typography>
           </Box>
 

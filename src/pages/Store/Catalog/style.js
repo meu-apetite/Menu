@@ -13,7 +13,7 @@ export const WrapperNav = styled('nav')({
   position: 'fixed',
   top: 0,
   width: '100%',
-  zIndex: 1000
+  zIndex: 2
 });
 
 export const Search = styled('div')(({ theme }) => ({
@@ -73,7 +73,7 @@ export const WrapperTabs = styled('div')({
   background: '#fff',
   paddingTop: '0.4rem',
   paddingBottom: '0.4rem',
-  zIndex: 998,
+  zIndex: 3,
 });
 
 export const Logo = styled('img')({

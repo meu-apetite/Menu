@@ -11,7 +11,7 @@ export const ModalContainer = styled('div')({
   right: 0,
   bottom: 0,
   minHeight: '100%',
-  zIndex: 1100,
+  zIndex: 4,
 });
 
 export const ModalContent = styled('div')({

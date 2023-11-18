@@ -35,20 +35,20 @@ export const HeaderCategory = styled('div')(({ theme }) => ({
 
 export const BodyCategory = styled('div')(({ theme }) => ({
   borderTop: '1px solid #e0e1e0', 
-  padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
+  padding: `${theme.spacing(1)} ${theme.spacing(2)}`, 
 }));
 
 export const CategoryItem = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  flexWrap: 'wrap',
   gap: theme.spacing(3),
   borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
   padding: `${theme.spacing(2)} 0`,
   '.wrapperInfo': {
+    position: 'relative',
     display: 'grid',
-    gridTemplateColumns: 'auto 1fr',
+    gridTemplateColumns: '24px auto 1fr',
     alignItems: 'center',
     gap: theme.spacing(1),
   },
@@ -72,6 +72,7 @@ export const CategoryItem = styled('div')(({ theme }) => ({
   '.action': {
     display: 'flex',
     alignItems: 'center',
+    minWidth: '121px',
     '.move': {
       display: 'flex',
       gap: '8px'

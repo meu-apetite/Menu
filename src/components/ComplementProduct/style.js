@@ -1,10 +1,11 @@
 import { styled } from '@mui/material/styles'
 
 export const WrapperBtnNewGroup = styled('div')(({ theme }) => ({
+  width: '100%',
   display: 'flex', 
   justifyContent: 'end', 
   flexWrap: 'wrap', 
-  gap: 1
+  marginTop: '16px'
 }));
 
 export const WrapperOption = styled('div')(({ theme }) => ({
@@ -36,3 +37,8 @@ export const WrapperOption = styled('div')(({ theme }) => ({
     padding: '4px'
   }
 }));
+
+export const btnRemoveGroup = styled('span')(({ theme }) => ({
+  position: 'absolute',
+ 
+}))

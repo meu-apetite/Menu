@@ -33,12 +33,16 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
 
   const addComplement = (index) => {
     const complementsCurrent = [...complements];
-    complementsCurrent[index]['options'].push({ name: '', price: 0 });
+    complementsCurrent[index]['options'].push({ name: '', price: 0, priceFormat: 0 });
     setComplements(complementsCurrent);
   };
 
   const addComplementGroup = () => setComplements([...complements, initComplement]);
 
+  const removeComplementGroup = () => {
+    setComplements([...complements, initComplement]);
+  }
+  
   const validateData = () => {
     const errors = [];
     let hasOptionsEmpty = 0;
@@ -71,9 +75,14 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
     return errors;
   };
 
+  const maskFormat = (text) => {
+    const number = parseInt(text.replace(/\D/g, ''), 10);
+    if (isNaN(number)) return 'R$ 0.00';
+    return 'R$ ' + (number / 100).toFixed(2);
+  };
+
   useEffect(() => {
     if (!complementsValue.length) return setComplements([initComplement]);
-    console.log('ook');
   }, []);
 
   return (
@@ -89,6 +98,12 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
 
             <AccordionDetails>
               <Grid container spacing={2}>
+                <Grid item xs={12} sm={12} sx={{ justifiContent: 'end' }}>
+                  <Button variant="outlined" sx={{ display: 'flex', gap: 1 }}>
+                    <span className="fa fa-trash"></span> Remover grupo
+                  </Button>
+                </Grid>
+
                 <Grid item xs={12} sm={12}>
                   <TextField
                     {...propsTextField}
@@ -172,9 +187,12 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
                     <TextField
                       {...propsTextField}
                       margin="none"
-                      label="Valor adicional (R$)"
-                      value={complements[index]['options'][indexOption]['price']}
-                      onChange={(e) => setValueOption(index, indexOption, 'price', e.target.value)}
+                      label="Valor adicional"
+                      value={complements[index]['options'][indexOption]['priceFormat']}
+                      onChange={(e) => {
+                        setValueOption(index, indexOption, 'priceFormat', maskFormat(e.target.value))
+                        setValueOption(index, indexOption, 'price', Number(e.target.value.replace('R$ ', '')))
+                      }}
                     />
                   </S.WrapperOption>
                 ))}

@@ -10,5 +10,4 @@ export const propsInputReal =  {
 export const propsTextField = { 
   margin: 'dense', 
   fullWidth: true ,
-  InputLabelProps: { shrink: true }
 };

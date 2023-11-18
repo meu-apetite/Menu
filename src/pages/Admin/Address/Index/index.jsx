@@ -50,7 +50,7 @@ const Address = () => {
 
   return (
     <>
-      <Header title="Endereço do Estabelecimento" />
+      <Header title="Endereço do Estabelecimento" back={-1} />
       <Box component="section" noValidate>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>

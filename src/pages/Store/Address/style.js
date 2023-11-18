@@ -7,7 +7,7 @@ export const WrapperTabs = styled('div')(({ theme, top }) => ({
   background: '#fff',
   paddingTop: '0.4rem',
   paddingBottom: '0.4rem',
-  zIndex: 998,
+  zIndex: 3,
 }));
 
 export const WrapperTotal = styled('div')({
