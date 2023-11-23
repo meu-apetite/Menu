@@ -19,7 +19,7 @@ export default function DataGridDemo() {
   const getProducts = async () => {
     const { data } = await apiService.get(`/admin/products?page=1`);
 
-    setProducts(data.products);
+    setProducts(data.products?.reverse());
     setTotalPages(data.totalPages);
     setPage(data.page);
   };
@@ -29,7 +29,7 @@ export default function DataGridDemo() {
       setLoading('Carregando...')
       const { data } = await apiService.get(`/admin/products?page=${value}`);
 
-      setProducts(data.products);
+      setProducts(data.products?.reverse());
       setTotalPages(data.totalPages);
       setPage(data.page);
 
@@ -52,7 +52,7 @@ export default function DataGridDemo() {
           productIds: itemsSelect,
         },
       );
-      setProducts(response.data);
+      setProducts(response.data?.reverse());
 
       toast.success('Categorias excluidas');
     } catch (e) {
@@ -76,6 +76,7 @@ export default function DataGridDemo() {
         title="Produtos"
         buttonText="Novo produto"
         buttonClick={() => navigate('create')}
+        back={-1}
       />
       {itemsSelect.length > 0 && (
         <Button
@@ -100,10 +101,10 @@ export default function DataGridDemo() {
                   <span className='fa fa-pen'></span>
                   Editar
                 </div>
-                <div className='action'>
+                {/* <div className='action'>
                   <span className='fa fa-copy'></span>
                   Duplicar
-                </div>
+                </div> */}
                 <div className='action'>
                   <span className='fa fa-trash'></span>
                   Excluir

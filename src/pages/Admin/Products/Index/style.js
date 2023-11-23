@@ -103,10 +103,10 @@ export const WrapperActions = styled('div')(({ theme }) => ({
       background: theme.palette.main,
     },
     '&:nth-child(2)': {
-      background: '#c6c6c6',
+      background: theme.palette.error.main,
     },
     '&:nth-child(3)': {
-      background: theme.palette.error.main,
+      background: '#c6c6c6',
     },
     '&:hover': {
       filter: 'brightness(0.8)'

@@ -43,16 +43,11 @@ const items = [
     },
 
     {
-      text: 'Administrador',
-      link: '/admin/info-admin',
-      Icon: () => <i className="fas fa-user"></i>,
-    },
-
-    {
       text: 'Configurações',
       link: '/admin/settings',
       Icon: () => <i className="fas fa-cog"></i>,
     },
+    
     {
       text: 'Sair',
       link: 'logout',

@@ -3,19 +3,18 @@ import { Tab, Tabs, Grid, Box, TextField } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from 'contexts/auth';
 import { ApiService } from 'services/api.service';
+import { propsTextField } from 'utils/form';
+import { units } from 'utils/units';
 import Select from 'components/Select';
 import Header from 'components/Header';
 import ComplementProduct from 'components/ComplementProduct';
-import { propsTextField } from 'utils/form';
-import { units } from 'utils/units';
 import * as S from './style';
 
-const Create = ({ navigation }) => {
+const Create = () => {
   const apiService = new ApiService();
   const navigate = useNavigate();
   const { state } = useLocation();
   const { setLoading, toast } = useContext(AuthContext);
-
   const [categories, setCategories] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
@@ -126,8 +125,6 @@ const Create = ({ navigation }) => {
       }
 
       complementInsertIds = await createComplement();
-
-      console.log(complementInsertIds);
       if (complementInsertIds.success === false) {
         setLoading(false);
         return toast.error(complementInsertIds.message);
@@ -149,19 +146,15 @@ const Create = ({ navigation }) => {
         formData.append('images', data.images[i]);
       }
 
-      console.log(formData.get('images'));
       await apiService.post('/admin/products', formData, true);
 
       toast.success('Produto cadastrado');
-
-      // setTimeout(() => {navigate({ pathname: '/admin/products' }); }, 2000);
+      setTimeout(() => navigate({ pathname: '/admin/products' }), 1000);
     } catch (error) {
-      console.log(error);
+      setLoading(false);
       if (error?.response?.data?.message) return toast.error(error?.response?.data?.message);
       toast.error('Erro ao cadastrar produto');
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   const handleChange = (e, newValue) => setTabCurrent(newValue);
@@ -187,7 +180,7 @@ const Create = ({ navigation }) => {
       />
 
       <Tabs value={tabCurrent} onChange={handleChange} variant="scrollable" >
-        <Tab label="Detalhes" />
+        <Tab label="Detalhes" /> 
         <Tab label="Complementos" />
       </Tabs>
 
@@ -223,7 +216,6 @@ const Create = ({ navigation }) => {
                 />
               </Grid>
             </S.wrapperIntro>
-            
             <Grid item xs={6} sm={6}>
               <TextField
                 label="Código"
@@ -238,7 +230,7 @@ const Create = ({ navigation }) => {
                 data={[{ text: 'Ativo', value: true }, { text: 'Desativo', value: false }]}
                 label="Status"
                 value={data.status}
-                onChange={(e) => console.log(e.target.value)}
+                onChange={(e) => setData({ ...data, status: e.target.value })}
               />
             </Grid>
             <Grid item xs={6} sx={{ display: 'flex', alignItems: 'end', mb: '4px', mt: '10px' }}>

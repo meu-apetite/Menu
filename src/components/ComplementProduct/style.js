@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import { styled } from '@mui/material/styles'
 
 export const WrapperBtnNewGroup = styled('div')(({ theme }) => ({
@@ -13,7 +14,7 @@ export const WrapperOption = styled('div')(({ theme }) => ({
   marginLeft: '1rem',
   marginTop: '1rem',
   marginBottom: '1rem',
-  padding: '16px 12px',
+  padding: '16px 12px 24px',
   display: 'grid',
   gap: '16px',
   gridTemplateColumns: '1fr',    
@@ -37,6 +38,15 @@ export const WrapperOption = styled('div')(({ theme }) => ({
     padding: '4px'
   }
 }));
+
+export const ButtonRemoveOption = styled(Button)(({ theme }) => ({
+  position: 'absolute',
+  display: 'flex', 
+  gap: 0.4, 
+  fontSize: 12,
+  right: 12,
+  bottom: -6
+}))
 
 export const btnRemoveGroup = styled('span')(({ theme }) => ({
   position: 'absolute',

@@ -23,10 +23,10 @@ export default function Categories() {
   };
 
   const addCategorychanges = (indexs) => {
-    console.log(indexs)
+    console.log(indexs);
     indexs.forEach((i) => {
       if (categoryChanges?.indexOf(i) === -1) {
-        setCategoryChanges((prev) => [...prev, i])
+        setCategoryChanges((prev) => [...prev, i]);
       }
     });
   };
@@ -71,14 +71,14 @@ export default function Categories() {
     const updatedCategory = { ...updatedCategories[indexCategory] };
     const updatedProducts = [...updatedCategory.products];
     const updatedProduct = { ...updatedProducts[indexProduct] };
-    updatedProduct.isActive = !updatedProduct.isActive;  
+    updatedProduct.isActive = !updatedProduct.isActive;
     updatedProducts[indexProduct] = updatedProduct;
-    updatedCategory.products = updatedProducts;  
+    updatedCategory.products = updatedProducts;
     updatedCategories[indexCategory] = updatedCategory;
-    setCategories(updatedCategories);  
+    setCategories(updatedCategories);
     addCategorychanges([indexCategory]);
   };
-  
+
   const changeCategoriesPosition = (index, action) => {
     if (index === categories.length - 1 && action === 'down') return;
     if (index === 0 && action === 'up') return;
@@ -116,7 +116,7 @@ export default function Categories() {
       const data = categories
         .filter((item, i) => {
           if (categoryChanges.indexOf(i) >= 0) return item;
-        })
+        });
       const response = await apiService.put('/admin/categories', data);
 
       sortPosition(response.data);
@@ -179,10 +179,10 @@ export default function Categories() {
                 + Adicionar produto
               </Button>
               {item.products.map((item, indexProduct) => (
-                <S.CategoryItem 
-                  key={indexProduct} 
-                  style={{ 
-                    background: productChangeCurrent === indexProduct ? 'rgba(52, 152, 219, 0.1)' : '' 
+                <S.CategoryItem
+                  key={indexProduct}
+                  style={{
+                    background: productChangeCurrent === indexProduct ? 'rgba(52, 152, 219, 0.1)' : ''
                   }}
                 >
                   <div className="wrapperInfo">
@@ -216,6 +216,14 @@ export default function Categories() {
             </S.BodyCategory>
           </S.ContainerCategory>
         ))}
+
+        {categories.length && (
+          <S.WrapperButtonSaved>
+            <Button variant='contained' onClick={save} disabled={!categoryChanges.length}>
+              Salvar alterações
+            </Button>
+          </S.WrapperButtonSaved>
+        )}
       </S.ContainerCategories>
 
       {!categories.length && (

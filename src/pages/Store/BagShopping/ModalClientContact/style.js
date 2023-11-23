@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import { styled } from '@mui/system';
 
 export const ModalContainer = styled('div')({
@@ -46,4 +47,14 @@ export const WrapperForm = styled('div')({
   justifyContent: 'space-between',
   gap: '2rem',
   height: '100%'
+});
+
+export const ButtonDefault = styled(Button)({
+  fontSize: '1rem',
+  gap: '16px',
+  height: '48px',
+  textTransform: 'capitalize',
+  width: '100%',
+  margin: 'auto',
+  marginTop: '16px'
 });

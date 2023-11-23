@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import { CardMedia, CardContent, Typography, Card, Tabs, Tab, Container } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { StoreContext } from 'contexts/store';
 import { AuthContext } from 'contexts/auth';
 import { ApiService } from 'services/api.service';
 import FindAddressClient from 'components/FindAddressClient';
 import iconMaps from 'assets/icons/maps.svg';
 import * as S from './style';
-import { useNavigate } from 'react-router-dom';
 
 export const PickupComponent = (props) => {
   return (
@@ -36,23 +36,19 @@ export const DeliveryComponent = ({ address, onChangeAddress }) => {
           <Typography variant="subtitle1" color="text.secondary">
             Cep:<strong>&#160;{`${address.zipCode}`}</strong> <br />
             Bairro:<strong>&#160;{`${address.district}`}</strong> <br />
-            Endereço:
-            <strong>
-              {
-                ` ${address.street.trim()}${address?.number ? ', Nº ' + address.number : ''}`
-              }
-            </strong>
+            Endereço:{' '}
+            <strong>{` ${address.street.trim()}${address?.number ? ', Nº ' + address.number : ''
+              }`}</strong>
           </Typography>
           <Typography variant="subtitle1" color="text.secondary">
             Taxa de entrega:
             <strong>
               &#160;
-              {
-                address?.price.toLocaleString('pt-BR', {
-                  style: 'currency', currency: 'BRL'
-                })
-              } /
-              {Number(address?.distance).toFixed(2)} KM
+              {address?.price.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
+              /{Number(address?.distance).toFixed(2)} KM
             </strong>
           </Typography>
         </CardContent>
@@ -71,7 +67,7 @@ const Address = () => {
   const navigate = useNavigate();
   const apiService = new ApiService(false);
 
-  const { company, getBag } = useContext(StoreContext);
+  const { store: storeSaved, getBag } = useContext(StoreContext);
   const { setLoading, toast } = useContext(AuthContext);
 
   const [deliveryType, setDeliveryType] = useState('delivery'); //delivery | pickup
@@ -79,15 +75,16 @@ const Address = () => {
   const [addressToken, setAddressToken] = useState(null);
   const [store, setStore] = useState({});
   const [openFindAddress, setOpenFindAddress] = useState(false);
+  const [settings, setSettings] = useState({});
 
   const toggleFindAddress = () => setOpenFindAddress(!openFindAddress);
 
   const calculateFreight = async (data) => {
     try {
       setLoading(true);
-      const { data: response } = await apiService.post('/store/calculateFreight', { address: data });
+      const { data: response } = await apiService.post('/store/calculateFreight', { address: data, companyId: store._id  });
       setAddress(response.address);
-      setAddressToken(response.addressToken)
+      setAddressToken(response.addressToken);
       toggleFindAddress();
     } catch (error) {
       console.log(error);
@@ -97,19 +94,20 @@ const Address = () => {
   };
 
   const next = async () => {
-    if (!address && deliveryType === 'delivery')
-    return toast.error('Adicione o seu endereço para continuar', {
-      position: 'top-center',
-    })
+    if (!address && deliveryType === 'delivery') {
+      return toast.error('Adicione o seu endereço para continuar', {
+        position: 'top-center',
+      });
+    }
 
-    const bag = await localStorage.getItem('bag');
+    const bag = localStorage.getItem(`bag_${store._id}`);
 
     if (deliveryType === 'pickup') {
       const newBag = { ...JSON.parse(bag), deliveryType: 'pickup' };
-      await localStorage.setItem('bag', JSON.stringify(newBag));
+      localStorage.setItem(`bag_${store._id}`, JSON.stringify(newBag));
     } else if (deliveryType === 'delivery') {
       const newBag = { ...JSON.parse(bag), deliveryType: 'delivery', addressToken };
-      await localStorage.setItem('bag', JSON.stringify(newBag));
+      localStorage.setItem(`bag_${store._id}`, JSON.stringify(newBag));
     }
     navigate(`/${store._id}/pedido/pagamento`);
   };
@@ -117,43 +115,36 @@ const Address = () => {
   const changeDeliveryType = async (e, value) => setDeliveryType(value);
 
   useEffect(() => {
-    if (!company?._id) {
+    if (!storeSaved?._id) {
       navigate(`/${window.location.href.split('/').reverse()[2]}/pedido`);
     }
-    setStore(company);
+    setStore(storeSaved);
+    setSettings(storeSaved.settingsDelivery)
   }, []);
 
   return (
     <div>
       <S.Header>
-        <S.Logo src={store?.custom?.logo?.url} alt={`Logomarca de ${store?.name}`} />
+        <S.Logo src={store?.custom?.logo?.url} alt={`Logomarca de ${store.name}`} />
       </S.Header>
 
       <Container maxWidth="md">
         <section style={{ marginBottom: 2 }}>
           <S.Title>Informações de endereço</S.Title>
-          <Tabs
-            value={deliveryType}
-            onChange={changeDeliveryType}
-            aria-label="Opções de entrega"
-          >
-            <Tab value="delivery" label="Entrega" />
-            <Tab value="pickup" label="Retirada" />
+          <Tabs value={deliveryType} onChange={changeDeliveryType}>
+            {settings?.delivery && <Tab value="delivery" label="Entrega" />}
+            {settings?.allowStorePickup && <Tab value="pickup" label="Retirada" />}
           </Tabs>
 
-          {deliveryType === 'delivery' && (
+          {settings?.delivery && deliveryType === 'delivery' && (
             <div>
               {address ? (
-                <DeliveryComponent
-                  address={address}
-                // delivery={order.delivery}
-                // onChangeAddress={() => setAddressOpen(!addressOpen)}
-                />
+                <DeliveryComponent address={address} />
               ) : (
                 <>
                   <p>
-                    Por favor, insira seu endereço corretamente
-                    para que possamos prosseguir com o seu pedido.
+                    Por favor, insira seu endereço corretamente para que
+                    possamos prosseguir com o seu pedido.
                   </p>
                   <S.WrapperButtons>
                     <S.ButtonDefault variant="outlined" onClick={toggleFindAddress}>
@@ -165,23 +156,23 @@ const Address = () => {
             </div>
           )}
 
-          {deliveryType === 'pickup' && <PickupComponent address={store.address} />}
-
-          {
-            (address?.price || deliveryType === 'pickup') &&
-            <S.ButtonNext variant="contained" onClick={next}>
-              Continuar
-            </S.ButtonNext>
+          {(settings?.allowStorePickup && deliveryType === 'pickup') 
+            ? <PickupComponent address={store.address} />
+            : <></>
           }
+
+          {(address?.price || deliveryType === 'pickup') && (
+            <S.ButtonNext variant="contained" onClick={next}>Continuar</S.ButtonNext>
+          )}
         </section>
       </Container>
 
-      {openFindAddress &&
+      {openFindAddress && (
         <FindAddressClient
           closeModal={toggleFindAddress}
           getAddress={(data) => calculateFreight(data)}
         />
-      }
+      )}
     </div>
   );
 };

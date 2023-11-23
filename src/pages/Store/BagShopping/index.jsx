@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Container,
@@ -10,66 +10,49 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Divider,
-  Grid,
-  TextField
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { AuthContext } from 'contexts/auth';
 import { StoreContext } from 'contexts/store';
 import { ApiService } from 'services/api.service';
 import * as S from './style';
+import ModalClientContact from './ModalClientContact';
 
 const CartPage = () => {
   const apiService = new ApiService(false);
   const navigate = useNavigate();
 
-  const { setLoading, toast } = useContext(AuthContext);
-  const { getBag, setCompany } = useContext(StoreContext);
+  const { setLoading } = useContext(AuthContext);
+  const { getBag, setStore: setStoreContext } = useContext(StoreContext);
   const { id } = useParams();
 
-  const [bagItems, setBagItems] = useState([]);
-  const [order, setOrder] = useState({});
+  const [order, setOrder] = useState({ products: [] });
   const [store, setStore] = useState();
-  const [clientInfo, setClientInfo] = useState({ name: '', phoneNumber: '', email: '' });
+  const [openModalAddress, setOpenModalAddress] = useState(false);
 
   const getStore = async () => {
     const { data } = await apiService.get('/store/' + id);
     setStore(data);
-    setCompany(data)
+    setStoreContext(data);
   };
 
   const estimateValue = async () => {
     try {
       setLoading(true);
-      
-      const bag = await getBag();
-      const bagSaved = [];
-      setBagItems([]);
 
-      const data = bag.products.map((item) => ({
-        complements: item.complements || [],
-        productId: item.productId,
-        quantity: item.quantity,
-      }));
-
-      const { data: order } = await apiService.post('/store/estimateValue', data);
-
-      setOrder(order);
-
-      order.products.forEach((item) => {
-        bagSaved.push({
-          productId: item._id,
-          complements: item.complements,
-          name: item.productName,
+      const bag = await getBag(id);
+      const { data: orderData } = await apiService.post(
+        '/store/estimateValue',
+        bag.products.map((item) => ({
+          complements: item.complements || [],
+          productId: item.productId,
           quantity: item.quantity,
-          total: item.priceTotal,
-          imageUrl: item.imageUrl,
-        });
-      });
+        }))
+      );
 
-      setBagItems(bagSaved);
-      localStorage.setItem('bag', JSON.stringify({ 
-        products: bagSaved, productsToken: order.productsToken 
+      setOrder(orderData);
+      localStorage.setItem(`bag_${id}`, JSON.stringify({
+        products: orderData.products, productsToken: orderData.productsToken
       }));
     } catch (error) {
       console.log(error);
@@ -83,17 +66,14 @@ const CartPage = () => {
     return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
-  const toAddress = async () =>  {
-    if (clientInfo.email === '' || clientInfo.name === '' || clientInfo.phoneNumber === '') {
-      return toast.error('Você deve preencher todos os dados de contato');
-    }
-    
-    const bag = await getBag();
+  const toggleModalAddress = async () => setOpenModalAddress(!openModalAddress);
+  
+  const next = async (clientInfo) => {
+    const bag = await getBag(id);
     const newBag = { ...bag, ...clientInfo };
-    await localStorage.setItem('bag', JSON.stringify(newBag));
-
+    await localStorage.setItem(`bag_${id}`, JSON.stringify(newBag));
     navigate('endereco');
-  }
+  };
 
   useEffect(() => {
     getStore();
@@ -109,13 +89,12 @@ const CartPage = () => {
       <Container maxWidth="md">
         <section>
           <S.Title variant="h5">Finalize o seu pedido</S.Title>
-
           <List>
-            {bagItems.map((item, i) => (
+            {order.products.map((item, i) => (
               <div key={`id-${i}`}>
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar><Avatar alt={item.name} src={item.imageUrl} /></ListItemAvatar>
-                  <ListItemText primary={item.name} secondary={`Quant.: ${item.quantity} | Preço: ${formatPrice(item.price)}`} />
+                  <ListItemText primary={item.name} secondary={`Quant.: ${item.quantity} | Preço: ${formatPrice(item.priceTotal)}`} />
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete"><DeleteIcon /></IconButton>
                   </ListItemSecondaryAction>
@@ -125,50 +104,16 @@ const CartPage = () => {
             ))}
           </List>
 
-          <section>
-            <S.WrapperTotal>
-              <span>subtotal:</span>
-              <strong>{formatPrice(order?.total)}</strong>
-            </S.WrapperTotal>
-          </section>
+          <S.WrapperTotal>
+            <span>subtotal:</span>
+            <strong>{formatPrice(order?.total)}</strong>
+          </S.WrapperTotal>
 
-          <br /> <br />
-
-          <section>
-            <h3>Informe seus dados de contato</h3>
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField 
-                    fullWidth 
-                    label="Nome" 
-                    value={clientInfo.name}
-                    onChange={(e) => setClientInfo({ ...clientInfo, name: e.target.value })}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField 
-                    fullWidth 
-                    label="Telefone (whatsapp)" 
-                    value={clientInfo.phoneNumber}  
-                    onChange={(e) => setClientInfo({ ...clientInfo, phoneNumber: e.target.value })}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField 
-                    fullWidth 
-                    label="Email" 
-                    value={clientInfo.email}  
-                    onChange={(e) => setClientInfo({ ...clientInfo, email: e.target.value })}
-                  />
-                </Grid>
-              </Grid>
-          </section>
-
-          <S.ButtonDefault variant="contained" onClick={toAddress}>
-            Continuar
-          </S.ButtonDefault>
+          <S.ButtonDefault variant="contained" onClick={toggleModalAddress}>Continuar</S.ButtonDefault>
         </section>
       </Container>
+
+      {openModalAddress && <ModalClientContact getData={(data) => next(data)} />}
     </section>
   );
 };

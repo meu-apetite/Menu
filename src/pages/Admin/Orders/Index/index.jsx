@@ -14,12 +14,12 @@ export default function Index() {
   const getOrders = async () => {
     try {
       const { data } = await apiService.get('/admin/orders?page=1');
-      console.log(data)
+      console.log(data);
       setOrders(data.orders);
       setTotalPages(data.totalPages);
       setPage(data.page);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -94,13 +94,22 @@ export default function Index() {
         })}
       </S.ContainerProducts>
 
-      <Pagination
-        sx={{ display: 'flex', justifyContent: 'center', p: '32px' }}
-        color="primary"
-        count={totalPages}
-        page={page}
+      {orders.length ? (
+        <Pagination
+          sx={{ display: 'flex', justifyContent: 'center', p: '32px' }}
+          color="primary"
+          count={totalPages}
+          page={page}
         // onChange={changePage}
-      />
+        />
+      ) : null}
+
+
+      {!orders.length ? (
+        <div style={{ textAlign: 'center' }}>
+         Calmaria agora, agitação em breve. Seus pedidos estão a caminho, prontos para animar esta tela. Em breve, a movimentação começará!
+        </div>
+      ) : null}
     </Box>
   );
 }

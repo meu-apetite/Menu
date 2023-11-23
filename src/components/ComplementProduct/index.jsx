@@ -39,10 +39,19 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
 
   const addComplementGroup = () => setComplements([...complements, initComplement]);
 
-  const removeComplementGroup = () => {
-    setComplements([...complements, initComplement]);
-  }
-  
+  const removeComplementGroup = (index) => {
+    console.log(index);
+    // setComplements([...complements, initComplement]);
+  };
+
+  const removeOption = (complementIndex, optionIndex) => {
+    const complementsCurrent = [...complements];
+    complementsCurrent[complementIndex]['options'] = complementsCurrent[complementIndex]
+      ['options'].filter((item, i) => i !== optionIndex);
+    setComplements(complementsCurrent);
+  };
+
+
   const validateData = () => {
     const errors = [];
     let hasOptionsEmpty = 0;
@@ -93,13 +102,17 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
         return (
           <Accordion key={`complent-${index}`} sx={{ width: '100%', margin: 'auto' }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>{complements[index]['name'] || `${(index + 1)} - Grupo de complemento`}</Typography>
+              <Typography sx={{ fontSize: '1.1rem' }}>{complements[index]['name'] || `${(index + 1)} - Grupo de complemento`}</Typography>
             </AccordionSummary>
 
             <AccordionDetails>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={12} sx={{ justifiContent: 'end' }}>
-                  <Button variant="outlined" sx={{ display: 'flex', gap: 1 }}>
+                <Grid item xs={12} sm={12} sx={{ p: 0 }}>
+                  <Button
+                    variant="outlined"
+                    sx={{ display: 'flex', gap: 1 }}
+                    onClcik={() => removeComplementGroup(index)}
+                  >
                     <span className="fa fa-trash"></span> Remover grupo
                   </Button>
                 </Grid>
@@ -190,10 +203,13 @@ const ComplementProduct = ({ complementsValue, getValue }) => {
                       label="Valor adicional"
                       value={complements[index]['options'][indexOption]['priceFormat']}
                       onChange={(e) => {
-                        setValueOption(index, indexOption, 'priceFormat', maskFormat(e.target.value))
-                        setValueOption(index, indexOption, 'price', Number(e.target.value.replace('R$ ', '')))
+                        setValueOption(index, indexOption, 'priceFormat', maskFormat(e.target.value));
+                        setValueOption(index, indexOption, 'price', Number(e.target.value.replace('R$ ', '')));
                       }}
                     />
+                    <S.ButtonRemoveOption color="error" onClick={() => removeOption(index, indexOption)}>
+                      Remover
+                    </S.ButtonRemoveOption>
                   </S.WrapperOption>
                 ))}
 

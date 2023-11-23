@@ -10,21 +10,19 @@ import * as S from './style.js';
 const Address = () => {
   const apiService = new ApiService();
 
-  const { toast, setLoading } = useContext(AuthContext);
+  const { toast, setLoading, company, setCompany } = useContext(AuthContext);
   const [data, setData] = useState({
-    address: { city: '', district: '', street: '', zipCode: '' },
+    city: '', district: '', street: '', zipCode: ''
   });
   const [openEditorAddress, setOpenEditorAddress] = useState(false);
 
   const getAddress = async () => {
+    console.log(company.address)
     try {
-      setLoading('Carregando...');
-      const { data } = await apiService.get('/admin/company/address');
-      setData(data);
+      setData(company.address);
     } catch (error) {
-    } finally {
-      setLoading(null);
-    }
+      toast.error('Não foi possível recuperar os dados');
+    };
   };
 
   const updateAddress = async (address) => {
@@ -57,7 +55,7 @@ const Address = () => {
             <TextField
               disabled
               label="Cep"
-              value={data?.address?.zipCode}
+              value={data.zipCode}
               {...propsTextField}
             />
           </Grid>
@@ -66,7 +64,7 @@ const Address = () => {
             <TextField
               disabled
               label="Cidade"
-              value={data?.address?.city}
+              value={data.city}
               {...propsTextField}
             />
           </Grid>
@@ -75,7 +73,7 @@ const Address = () => {
             <TextField
               disabled
               label="Referência/complemento"
-              value={data?.address?.reference}
+              value={data.reference}
               {...propsTextField}
             />
           </Grid>
@@ -84,7 +82,7 @@ const Address = () => {
             <TextField
               disabled
               label="Bairro"
-              value={data?.address?.district}
+              value={data.district}
               {...propsTextField}
             />
           </Grid>
@@ -93,7 +91,7 @@ const Address = () => {
             <TextField
               disabled
               label="Rua"
-              value={data?.address?.street}
+              value={data.street}
               {...propsTextField}
             />
           </Grid>
@@ -102,7 +100,7 @@ const Address = () => {
             <TextField
               disabled
               label="Número"
-              value={data?.address?.number}
+              value={data.number}
               {...propsTextField}
             />
           </Grid>

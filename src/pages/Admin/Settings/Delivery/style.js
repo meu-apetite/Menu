@@ -1,5 +1,6 @@
 import { styled } from '@mui/system';
-import Button from '@mui/material/Button';
+import { Select } from '@mui/material';
+
 
 export const Title = styled('p')(({ theme }) => ({
   margin: '1.5rem 0 0',
@@ -18,12 +19,10 @@ export const Wrapper = styled('section')(({ theme }) => ({
   flexDirection: 'column',
 }));
 
-export const CategoryPayment = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'center',
-  borderBottom: '1px solid #c6c6c6',
-  padding: `${theme.spacing(3)} 0` 
+export const SelectCustom = styled(Select)(({ theme }) => ({
+  '.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select': {
+    whiteSpace: "wrap"
+  } 
 }));
 
 export const WrapperButtonSaved = styled('div')(({ theme }) => ({
@@ -32,10 +31,4 @@ export const WrapperButtonSaved = styled('div')(({ theme }) => ({
   'button': { width: '100%', maxWidth: '400px', minHeight: '48px'}
 }));
 
-export const ButtonSuport = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(1), 
-  width: '100%', 
-  display: 'flex', 
-  alignItems: 'center',
-  gap: theme.spacing(1)
-}));
+

@@ -10,16 +10,14 @@ import {
   Toolbar,
   Badge,
   AccordionSummary,
+  AppBar
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import ProductCard from 'components/ProductCard';
 import { StoreContext } from 'contexts/store';
 import { ApiService } from 'services/api.service';
-import ProductCard from 'components/ProductCard';
 import * as S from './style';
-import AppBar from '@mui/material/AppBar';
-import SearchIcon from '@mui/icons-material/Search';
-
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-
 
 
 const Store = () => {
@@ -27,18 +25,19 @@ const Store = () => {
 
   const apiService = new ApiService(false);
   const { id } = useParams();
-  const { total, quantityTotal } = useContext(StoreContext);
+  const { total, quantityTotal, setStore } = useContext(StoreContext);
 
   const [collections, setCollections] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [store, setStore] = useState();
+  const [store, setStoreCatalog] = useState();
   const [tabValue, setTabValue] = useState(0);
 
   const tabsRefs = useRef([]);
 
   const getStore = async () => {
-    const response = await apiService.get('/store/' + id);
-    setStore(response.data);
+    const { data } = await apiService.get('/store/' + id);
+    setStoreCatalog(data);
+    setStore(data);
   };
 
   const getProducts = async () => {
@@ -190,17 +189,19 @@ const Store = () => {
         </S.Container>
       </Box>
 
-      <S.ButtonCart variant="contained" onClick={toPageBagShopping}>
-        <IconButton aria-label="Cart">
-          <Badge badgeContent={quantityTotal} color="secondary">
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <ShoppingBagIcon style={{ fontSize: 28, color: 'white' }} />
-            </div>
-          </Badge>
-        </IconButton>
-        <span>Ver Sacola</span>
-        <span>{total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-      </S.ButtonCart>
+      {total > 0 && (
+        <S.ButtonCart variant="contained" onClick={toPageBagShopping}>
+          <IconButton aria-label="Cart">
+            <Badge badgeContent={quantityTotal} color="secondary">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <ShoppingBagIcon style={{ fontSize: 28, color: 'white' }} />
+              </div>
+            </Badge>
+          </IconButton>
+          <span>Ver Sacola</span>
+          <span>{total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+        </S.ButtonCart>
+      )}
     </Box>
   );
 };

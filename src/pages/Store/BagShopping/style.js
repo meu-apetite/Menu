@@ -31,5 +31,7 @@ export const ButtonDefault = styled(Button)({
 
 export const Logo = styled('img')({
   width: 60,
-  height: 60
+  height: 60,
+  borderRadius: '50%',
+  objectFit: 'cover'
 });
