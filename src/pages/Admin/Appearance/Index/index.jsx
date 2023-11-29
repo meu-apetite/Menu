@@ -161,7 +161,6 @@ const Create = () => {
               required
             />
           </Grid>
-
           <Grid item xs={12} sm={12}>
             <TextField
               label="Slogan"
@@ -173,7 +172,6 @@ const Create = () => {
               required
             />
           </Grid>
-
           <Grid item xs={12} sm={12}>
             <TextField
               label="Sobre nós"
@@ -187,23 +185,32 @@ const Create = () => {
               required
             />
           </Grid>
-
-          <Grid item xs={6} sm={6}>
-            <label>Cores</label>
-            <input type="color" style={{ width: '100%', height: '40px' }} />
-          </Grid>
-
-          <Grid item xs={6} sm={6}>
+          <>
+            <Grid item xs={12} sm={12}>
+              Escolha cuidadosamente as cores que serão aplicadas em locais estratégicos 
+              de sua loja. Recomendamos tonalidades mais escuras, pois cores claras podem 
+              tornar algumas informações menos visíveis.
+            </Grid>
+            <Grid item xs={6} sm={6}>
+              <TextField
+                type="color"
+                label="Cor tema principal"
+                sx={{ width: '100%' }}
+              />
+            </Grid>
+            <Grid item xs={6} sm={6}>
+              <TextField
+                type="color"
+                label="Cor tema secundária"
+                sx={{ width: '100%' }}
+              />
+            </Grid>
+          </>
+          <Grid item xs={12} sm={12}>
             <label>Logomarca</label>
             <Gallery data={logo ? [logo] : []} closeImage={removeLogo} />
             {!logo && <ButtonUpload text="Adicionar logo" loadFile={updateLogo} />}
           </Grid>
-
-          {/* <Grid item xs={12} sm={12}>
-            <label>Galeria de imagens</label>
-            <Gallery data={gallery} closeImage={removeImageGallery} />
-            <ButtonUpload text="Carregar imagem" loadFile={loadImageGallery} />
-          </Grid> */}
         </Grid>
       </Box>
     </>

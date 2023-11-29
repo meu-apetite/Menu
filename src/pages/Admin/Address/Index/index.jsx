@@ -17,12 +17,8 @@ const Address = () => {
   const [openEditorAddress, setOpenEditorAddress] = useState(false);
 
   const getAddress = async () => {
-    console.log(company.address)
-    try {
-      setData(company.address);
-    } catch (error) {
-      toast.error('Não foi possível recuperar os dados');
-    };
+    if (!company?.address.zipCode) return;
+    setData(company.address);
   };
 
   const updateAddress = async (address) => {
@@ -52,6 +48,9 @@ const Address = () => {
       <Box component="section" noValidate>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
+            <span>Para adicionar um novo endereço clique em "ATUALIZAR ENDEREÇO"</span>
+          </Grid>
+          <Grid item xs={12} sm={12}>
             <TextField
               disabled
               label="Cep"
@@ -59,7 +58,6 @@ const Address = () => {
               {...propsTextField}
             />
           </Grid>
-
           <Grid item xs={12} sm={12}>
             <TextField
               disabled
@@ -68,7 +66,6 @@ const Address = () => {
               {...propsTextField}
             />
           </Grid>
-
           <Grid item xs={12} sm={12}>
             <TextField
               disabled
@@ -77,7 +74,6 @@ const Address = () => {
               {...propsTextField}
             />
           </Grid>
-
           <Grid item xs={12} sm={12}>
             <TextField
               disabled
@@ -86,7 +82,6 @@ const Address = () => {
               {...propsTextField}
             />
           </Grid>
-
           <Grid item xs={9} sm={9}>
             <TextField
               disabled
@@ -95,7 +90,6 @@ const Address = () => {
               {...propsTextField}
             />
           </Grid>
-
           <Grid item xs={3} sm={3}>
             <TextField
               disabled
@@ -104,7 +98,6 @@ const Address = () => {
               {...propsTextField}
             />
           </Grid>
-
           <Grid item xs={12} sm={12}>
             <S.WrapperButtonSaved>
               <Button 

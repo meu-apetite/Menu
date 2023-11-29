@@ -3,7 +3,7 @@ import { Select } from '@mui/material';
 
 
 export const Title = styled('p')(({ theme }) => ({
-  margin: '1.5rem 0 0',
+  margin: 0,
   fontSize: theme.spacing(2.1),
   minWidth: theme.spacing(20)
 }));

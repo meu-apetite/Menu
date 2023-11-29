@@ -217,21 +217,21 @@ export default function Categories() {
           </S.ContainerCategory>
         ))}
 
-        {categories.length && (
+        {categories.length ? (
           <S.WrapperButtonSaved>
             <Button variant='contained' onClick={save} disabled={!categoryChanges.length}>
               Salvar alterações
             </Button>
           </S.WrapperButtonSaved>
-        )}
+        ) : null}
       </S.ContainerCategories>
 
-      {!categories.length && (
+      {!categories.length ? (
         <div style={{ textAlign: 'center' }}>
           Não há categorias cadastradas no momento. Para adicionar uma nova
           categoria, clique em 'Nova Categoria'.
         </div>
-      )}
+      ) : null}
     </>
   );
 }

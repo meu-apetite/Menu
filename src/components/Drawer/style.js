@@ -46,7 +46,7 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
 export const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
-  zIndex: 1,
+  zIndex: 2,
   '@media (min-width: 768px)': { zIndex: theme.zIndex.drawer + 1 },    
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,

@@ -26,7 +26,7 @@ export default function DataGridDemo() {
 
   const changePage = async (e, value) => {
     try {
-      setLoading('Carregando...')
+      setLoading('Carregando...');
       const { data } = await apiService.get(`/admin/products?page=${value}`);
 
       setProducts(data.products?.reverse());
@@ -35,8 +35,8 @@ export default function DataGridDemo() {
 
       window.scrollTo(0, 0);
     } catch (error) {
-      console.log(error)
-      toast.error('Não foi possível mudar de página')
+      console.log(error);
+      toast.error('Não foi possível mudar de página');
     } finally {
       setLoading(null);
     }
@@ -48,9 +48,7 @@ export default function DataGridDemo() {
 
       const response = await apiService.post(
         `/admin/products/delete-multiple`,
-        {
-          productIds: itemsSelect,
-        },
+        { productIds: itemsSelect }
       );
       setProducts(response.data?.reverse());
 
@@ -64,7 +62,7 @@ export default function DataGridDemo() {
 
   const toUpdate = (id) => {
     navigate('/admin/products/update/' + id);
-  }
+  };
 
   useEffect(() => {
     getProducts();
@@ -93,9 +91,9 @@ export default function DataGridDemo() {
         {products.map((item) => {
           return (
             <S.CardCustom onClick={() => { }}>
-                <S.WrapperActions>
-                <div 
-                  className='action' 
+              <S.WrapperActions>
+                <div
+                  className='action'
                   onClick={() => toUpdate(item._id)}
                 >
                   <span className='fa fa-pen'></span>
@@ -128,7 +126,6 @@ export default function DataGridDemo() {
                     <span>
                       <strong>Status:</strong> {item.isActive ? 'Ativo' : 'Desativo'}
                     </span>
-
                   </S.CardInfo>
                   <S.CardMediaCustom image={item.images.length ? item.images[0].url : 1} />
                 </S.CardContentCustom>
@@ -138,13 +135,20 @@ export default function DataGridDemo() {
         })}
       </S.ContainerProducts>
 
-      <Pagination 
-        sx={{ display: 'flex', justifyContent: 'center', p: '32px' }} 
-        color="primary" 
-        count={totalPages} 
-        page={page} 
-        onChange={changePage}
-      />    
+      {products.length ? (
+        <Pagination
+          sx={{ display: 'flex', justifyContent: 'center', p: '32px' }}
+          color="primary"
+          count={totalPages}
+          page={page}
+          onChange={changePage}
+        />
+      ) : (
+        <div style={{ textAlign: 'center' }}>
+          Não há produtos cadastradas no momento. Para adicionar uma novo
+          produto, clique em 'NOVO PRODUTO'.
+        </div>
+      )}
     </Box>
   );
 }

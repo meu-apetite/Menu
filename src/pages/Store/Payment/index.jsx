@@ -105,34 +105,27 @@ const Payment = ({ paymentOnline }) => {
   const navigate = useNavigate();
   const apiService = new ApiService(false);
 
-  const { company, getBag } = useContext(StoreContext);
+  const { store: storeSaved, getBag } = useContext(StoreContext);
   const { setLoading, toast } = useContext(AuthContext);
 
   const [paymentMethod, setPaymentMethod] = useState();
   const [paymentType, setPaymentType] = useState('online'); //indelivery
-  const [paymentOptions, setPaymentOptions] = useState('online'); //indelivery
+  const [settingsPayment, setSettingsPayment] = useState('online'); //indelivery
   const [store, setStore] = useState({});
 
-  const getPaymentOptions = async () => {
+  const getSettingsPayment = async () => {                       
     try {
-      const { data } = await apiService.post('/store/payment/' + company._id, {
-        products: await getBag()
-      });
-
-      setPaymentOptions({
-        online: data.paymentOnline,
-        delivery: {
-          activeItems: data.activeItems,
-          paymentsList: data.listPaymentMethod,
-        },
-      });
-
-      if (data.paymentOnline.credentialsMP) {
-        initMercadoPago(data.paymentOnline.credentialsMP.publicKey);
-      }
-    } catch (error) {
+      setLoading(true);
+      const bag =  await getBag();
+      console.log(storeSaved)
+      const { data } = await apiService.post('/store/payment/' + storeSaved._id, { productsToken: bag.productsToken});
+      setSettingsPayment(data);
+      initMercadoPago(data.mercadoPago.publicKey);
+      console.log(data)
+    } catch (error) { 
       console.log(error);
-    } finally {
+    } finally { 
+      setTimeout(() => setLoading(false), 2000);
     }
   };
 
@@ -143,7 +136,7 @@ const Payment = ({ paymentOnline }) => {
       delete data.products;
 
       const { data: response } = await apiService.post(
-        '/store/finishOrder/' + company._id,
+        '/store/finishOrder/' + store._id,
         { ...data, paymentType: 'indelivery', paymentMethod },
       );
       
@@ -152,27 +145,23 @@ const Payment = ({ paymentOnline }) => {
       navigate(`/${response.store._id}/meupedido/${response.order.id}`, { state: { ...response } });
     } catch(error) {
       console.log(error)
-    }   finally {
+    } finally {
       setLoading(false)
     }
   };
 
   useEffect(() => {
-    if (!company?._id) {
+    if (!storeSaved?._id) {
       navigate(`/${window.location.href.split('/').reverse()[2]}/pedido`);
     }
-
-    setStore(company);
-    getPaymentOptions();
+    setStore(storeSaved);
+    getSettingsPayment();
   }, []);
 
   return (
     <S.Main>
       <S.Header>
-        <S.Logo
-          src={store?.custom?.logo?.url}
-          alt={`Logomarca de ${store?.name}`}
-        />
+        <S.Logo src={store?.custom?.logo?.url} alt={`Logomarca de ${store?.name}`} />
       </S.Header>
 
       <Container maxWidth="md">
@@ -190,10 +179,10 @@ const Payment = ({ paymentOnline }) => {
 
         {paymentType === 'indelivery' && (
           <>
-            <PaymentMethodsComponent
+            {/* <PaymentMethodsComponent
               paymentOptions={paymentOptions.delivery} 
               getSelected={(id) => setPaymentMethod(id)}
-            />
+            /> */}
             <S.ButtonDefault
               sx={{ marginTop: '8px', textTransform: 'uppercase' }}
               variant="contained"
@@ -213,12 +202,9 @@ const Payment = ({ paymentOnline }) => {
               <strong>cartão de crédito</strong>.
             </p>
             {
-              paymentOptions?.online?.credentialsMP?.preferenceId && (
+              settingsPayment?.preferenceId && (
                 <Wallet
-                  initialization={{
-                    preferenceId: paymentOptions.online.credentialsMP.preferenceId,
-                    redirectMode: 'modal'
-                  }}
+                  initialization={{ preferenceId: settingsPayment?.preferenceId, redirectMode: 'modal' }}
                 />
               )
             }

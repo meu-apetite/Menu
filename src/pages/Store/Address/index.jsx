@@ -36,21 +36,24 @@ export const DeliveryComponent = ({ address, onChangeAddress }) => {
           <Typography variant="subtitle1" color="text.secondary">
             Cep:<strong>&#160;{`${address.zipCode}`}</strong> <br />
             Bairro:<strong>&#160;{`${address.district}`}</strong> <br />
-            Endereço:{' '}
-            <strong>{` ${address.street.trim()}${address?.number ? ', Nº ' + address.number : ''
-              }`}</strong>
-          </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
-            Taxa de entrega:
+            Endereço:
             <strong>
-              &#160;
-              {address?.price.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              })}
-              /{Number(address?.distance).toFixed(2)} KM
+              &#160;{`${address.street.trim()}${address?.number ? ', Nº ' + address.number : '' }`}
             </strong>
           </Typography>
+
+          {
+            (address.deliveryOption === 'fixed' || address.deliveryOption === 'automatic') && (
+              <Typography variant="subtitle1" color="text.secondary">
+                Taxa de entrega:
+                <strong>
+                  &#160;
+                  {address.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', })}
+                  /{Number(address?.distance).toFixed(2)} KM
+                </strong>
+              </Typography>
+            )
+          }
         </CardContent>
         <CardMedia image={iconMaps} alt="Icone mapa" />
       </Card>
@@ -94,21 +97,20 @@ const Address = () => {
   };
 
   const next = async () => {
-    if (!address && deliveryType === 'delivery') {
-      return toast.error('Adicione o seu endereço para continuar', {
-        position: 'top-center',
-      });
+    if (!addressToken) {
+      toast.error('Adicione o seu endereço para continuar', { position: 'top-center' });
+      return;
     }
 
-    const bag = localStorage.getItem(`bag_${store._id}`);
+    const bag = await getBag(store._id);
 
     if (deliveryType === 'pickup') {
-      const newBag = { ...JSON.parse(bag), deliveryType: 'pickup' };
-      localStorage.setItem(`bag_${store._id}`, JSON.stringify(newBag));
-    } else if (deliveryType === 'delivery') {
-      const newBag = { ...JSON.parse(bag), deliveryType: 'delivery', addressToken };
-      localStorage.setItem(`bag_${store._id}`, JSON.stringify(newBag));
+      localStorage.setItem(`bag_${store._id}`, JSON.stringify(bag));
+    } 
+    if (deliveryType === 'delivery') {
+      localStorage.setItem(`bag_${store._id}`, JSON.stringify({ ...bag, address, addressToken }));
     }
+
     navigate(`/${store._id}/pedido/pagamento`);
   };
 
@@ -142,10 +144,7 @@ const Address = () => {
                 <DeliveryComponent address={address} />
               ) : (
                 <>
-                  <p>
-                    Por favor, insira seu endereço corretamente para que
-                    possamos prosseguir com o seu pedido.
-                  </p>
+                  <p>Por favor, insira seu endereço corretamente para que possamos prosseguir com o seu pedido.</p>
                   <S.WrapperButtons>
                     <S.ButtonDefault variant="outlined" onClick={toggleFindAddress}>
                       Adicionar endereço
@@ -161,9 +160,7 @@ const Address = () => {
             : <></>
           }
 
-          {(address?.price || deliveryType === 'pickup') && (
-            <S.ButtonNext variant="contained" onClick={next}>Continuar</S.ButtonNext>
-          )}
+          {addressToken && <S.ButtonNext variant="contained" onClick={next}>Continuar</S.ButtonNext>}
         </section>
       </Container>
 

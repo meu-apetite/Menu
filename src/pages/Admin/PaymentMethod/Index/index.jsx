@@ -7,35 +7,28 @@ import * as S from './style';
 
 const PaymentMethod = () => {
   const apiService = new ApiService();
-  const { setLoading, toast } = useContext(AuthContext);
+  const { setLoading, toast, company } = useContext(AuthContext);
 
   const [listPaymentMethods, setListPaymentMethods] = useState([]);
   const [paymentsmethods, setPaymentsmethods] = useState([]);
   const [tabValue, setTabValue] = useState('delivery');
   const [hasUpdate, setHasUpdate] = useState(false);
-  const [dataMecardoPago, setDataMercardoPago] = useState({
-    accessToken: '',
-    publicKey: '',
-  });
+  const [dataMecardoPago, setDataMercardoPago] = useState({ accessToken: '', publicKey: '' });
   const [hasUpdateDataMP, sethasUpdateDataMP] = useState(false);
 
   const getPaymentsmethods = async () => {
     try {
       setLoading('Carregando...');
 
-      const { data: AllPayments } = await apiService.get('/admin/paymentsmethods',);
-      const { data: payments } = await apiService.get('/admin/company/payments');
-
-      setIsActive(AllPayments, payments.paymentsMethods);
+      const { data: AllPayments } = await apiService.get('/admin/all-method-in-category',);
+      setIsActive(AllPayments, company.settingsPayment.methods);
       setListPaymentMethods([...AllPayments]);
 
       setDataMercardoPago({
-        accessToken: payments?.paymentOnline?.credentialsMP?.accessToken
-          ? '*******************************************'
-          : '',
-        publicKey: payments?.paymentOnline?.credentialsMP?.publicKey
-          ? '*******************************************'
-          : '',
+        accessToken: company.settinsPayment.mercadoPago?.accessToken
+          ? '*******************************************' : '',
+        publicKey: company.settinsPayment?.mercadoPago?.publicKey
+          ? '*******************************************' : '',
       });
     } catch (error) {
       console.log(error);
@@ -50,9 +43,7 @@ const PaymentMethod = () => {
         titleCategory: item.titleCategory,
         methods: item.methods.map((m) => {
           ActivePayments.findIndex((pay) => pay.id === m.id) >= 0
-            ? (m.isActive = true)
-            : (m.isActive = false);
-
+            ? (m.isActive = true) : (m.isActive = false);
           return m;
         })
       };
@@ -107,7 +98,7 @@ const PaymentMethod = () => {
         });
       });
 
-      const response = await apiService.put('/admin/company/payments', data);
+      const response = await apiService.put('/admin/payments', data);
 
       setIsActive(listPaymentMethods, response.data);
       setHasUpdate(false);
@@ -122,19 +113,10 @@ const PaymentMethod = () => {
   const saveCredentialsMP = async () => {
     try {
       setLoading('Atualizando...');
-
-      const data = { credentials: {} };
-
-      if (dataMecardoPago.accessToken.length > 1) {
-        data.credentials.accessToken = dataMecardoPago.accessToken;
+      if (!dataMecardoPago.accessToken || !dataMecardoPago.accessToken) {
+        return toast.error('É necessário preencher os dois campos');
       }
-
-      if (dataMecardoPago.publicKey.length > 1) {
-        data.credentials.publicKey = dataMecardoPago.publicKey;
-      }
-
-      await apiService.put('/admin/company/paymentonline/mp', data);
-
+      await apiService.put('/admin/paymentonline/mp', { ...dataMecardoPago });
       setHasUpdate(false);
       toast.success('Opções de pagamento atualizadas');
     } catch (error) {

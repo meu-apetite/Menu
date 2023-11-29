@@ -12,7 +12,7 @@ const LoadingPage = (props) => (
       position: 'fixed',
       top: 0,
       opacity: 0.7,
-      zIndex: 9999,
+      zIndex: 5,
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
