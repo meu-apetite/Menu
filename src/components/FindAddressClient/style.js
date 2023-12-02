@@ -10,7 +10,7 @@ export const ModalContainer = styled('div')({
   right: 0,
   bottom: 0,
   minHeight: '100%',
-  zIndex: 2,
+  zIndex: 1202,
 });
 
 export const ModalContent = styled('div')({
@@ -55,11 +55,16 @@ export const WrapperAnimation = styled('div')({
 
 export const ButtonModalClose = styled('span')({
   position: 'absolute',
-  width: '30px',
-  height: '30px',
+  background: '#dc3545',
+  color: '#fff',
+  width: '25px',
+  height: '25px',
   borderRadius: '50px',
   fontSize: 21,
   cursor: 'pointer',
-  top: 8,
-  left: 8
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  top: 1,
+  right: 1
 });

@@ -94,7 +94,7 @@ const CartPage = () => {
               <div key={`id-${i}`}>
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar><Avatar alt={item.name} src={item.imageUrl} /></ListItemAvatar>
-                  <ListItemText primary={item.name} secondary={`Quant.: ${item.quantity} | Preço: ${formatPrice(item.priceTotal)}`} />
+                  <ListItemText primary={item.productName} secondary={`Quant.: ${item.quantity} | Preço: ${formatPrice(item.priceTotal)}`} />
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete"><DeleteIcon /></IconButton>
                   </ListItemSecondaryAction>

@@ -38,7 +38,7 @@ const Register = () => {
     email: null,
     password: null,
     passwordRepeat: null,
-    urlName: null,
+    storeUrl: null,
     fantasyName: null,
     ownerName: null,
   });
@@ -67,7 +67,7 @@ const Register = () => {
 
       if (
         !data.email || !data.password || !data.passwordRepeat ||
-        !data.fantasyName || !data.ownerName || !data.urlName
+        !data.fantasyName || !data.ownerName || !data.storeUrl
       ) {
         return toast.error('Todos os campos precisam serem preencidos!');
       }
@@ -147,7 +147,7 @@ const Register = () => {
                       {'https://meuapetite.com'}/
                     </InputAdornment>
                   }}
-                  onChange={(e) => setData({ ...data, urlName: e.target.value })}
+                  onChange={(e) => setData({ ...data, storeUrl: e.target.value })}
                 />
               </Grid>
               <Grid item xs={12}>

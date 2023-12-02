@@ -109,7 +109,13 @@ const Address = () => {
             </S.WrapperButtonSaved>
           </Grid>
 
-          {openEditorAddress && <FindAddress getAddress={(address) => updateAddress(address)} />}
+          {
+            openEditorAddress && 
+              <FindAddress 
+                getAddress={(address) => updateAddress(address)} 
+                closeModal={(address) => setOpenEditorAddress(false)} 
+              />
+          }
         </Grid>
       </Box>
     </>

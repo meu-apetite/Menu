@@ -8,11 +8,11 @@ const storeRoutes = [
   {
     path: '/',
     children: [
-      { path: ':id/cardapio', element: <Catalog /> },
-      { path: ':id/pedido', element: <BagShopping /> },
-      { path: ':id/pedido/endereco', element: <Address /> },
-      { path: ':id/pedido/pagamento', element: <Payment /> },
-      { path: ':id/meupedido/:orderId', element: <Order /> },
+      { path: 'cardapio/:storeUrl/', element: <Catalog /> },
+      { path: 'cardapio/:storeUrl/pedido', element: <BagShopping /> },
+      { path: 'cardapio/:storeUrl/pedido/endereco', element: <Address /> },
+      { path: 'cardapio/:storeUrl/pedido/pagamento', element: <Payment /> },
+      { path: 'cardapio/:storeUrl/meupedido/:orderId', element: <Order /> },
     ]
   },
 ];

@@ -24,7 +24,7 @@ const Store = () => {
   const navigate = useNavigate();
 
   const apiService = new ApiService(false);
-  const { id } = useParams();
+  const { storeUrl } = useParams();
   const { total, quantityTotal, setStore } = useContext(StoreContext);
 
   const [collections, setCollections] = useState([]);
@@ -35,13 +35,13 @@ const Store = () => {
   const tabsRefs = useRef([]);
 
   const getStore = async () => {
-    const { data } = await apiService.get('/store/' + id);
+    const { data } = await apiService.get('/store/' + storeUrl);
     setStoreCatalog(data);
     setStore(data);
   };
 
   const getProducts = async () => {
-    const response = await apiService.get('/store/products/' + id);
+    const response = await apiService.get('/store/products/' + storeUrl);
     const products = response.data;
     const categories = [];
     const categoriesTitle = [];
@@ -69,7 +69,7 @@ const Store = () => {
     }
   };
 
-  const toPageBagShopping = () => navigate(`/${id}/pedido`);
+  const toPageBagShopping = () => navigate(`/${storeUrl}/pedido`);
 
   function findVisibleElement() {
     console.log(tabsRefs);

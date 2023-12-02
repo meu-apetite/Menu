@@ -10,7 +10,7 @@ export const ModalContainer = styled('div')({
   right: 0,
   bottom: 0,
   minHeight: '100%',
-  zIndex: 2,
+  zIndex: 1202,
 });
 
 export const ModalContent = styled('div')({
@@ -46,4 +46,20 @@ export const WrapperForm = styled('div')({
   justifyContent: 'space-between',
   gap: '2rem',
   height: '100%'
+});
+
+export const ButtonModalClose = styled('span')({
+  position: 'absolute',
+  background: '#dc3545',
+  color: '#fff',
+  width: '25px',
+  height: '25px',
+  borderRadius: '50px',
+  fontSize: 21,
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  top: 1,
+  right: 1
 });

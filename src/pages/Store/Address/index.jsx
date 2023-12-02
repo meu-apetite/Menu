@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { CardMedia, CardContent, Typography, Card, Tabs, Tab, Container } from '@mui/material';
+import { CardMedia, CardContent, Typography, Card, Tabs, Tab, Container, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { StoreContext } from 'contexts/store';
 import { AuthContext } from 'contexts/auth';
@@ -10,21 +10,42 @@ import * as S from './style';
 
 export const PickupComponent = (props) => {
   return (
-    <Card sx={{ display: 'grid', gridTemplateColumns: '9fr 3fr', mt: 1.2 }}>
-      <CardContent sx={{ flex: '1 0 auto' }}>
-        <Typography variant="subtitle1" color="text.secondary">
-          Cep: {`${props?.address?.zipCode || ''}`}
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          Endereço:{' '}
-          {`${props?.address?.street || ''}, ${props?.address?.district || ''}`}
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          Nº {`${props?.address?.number || '-'}`}
-        </Typography>
-      </CardContent>
-      <CardMedia image={iconMaps} alt="Icone mapa" />
-    </Card>
+    <>
+      <p>Ao chegar no ponto de retirada, gentilmente forneça seu nome juntamente com o código do pedido que será fornecido.</p>
+
+      <Card sx={{ display: 'grid', gridTemplateColumns: '9fr 3fr', mt: 1.2 }}>
+        <CardContent sx={{ flex: '1 0 auto' }}>
+          <Typography variant="subtitle1" color="text.secondary">
+            Cep: {`${props?.address?.zipCode || ''}`}
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            Endereço:{' '}
+            {`${props?.address?.street || ''}, ${props?.address?.district || ''}`}
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            Nº {`${props?.address?.number || '-'}`}
+          </Typography>
+        </CardContent>
+        <CardMedia image={iconMaps} alt="Icone mapa" />
+      </Card>
+
+      <br />
+
+      <Button variant="text" color="secondary">
+        Copiar endereço completo
+      </Button>
+
+      <Button variant="outlined" color="info">
+        <a 
+          rel="noreferrer" 
+          href={`http://maps.google.com/?q=${props.address?.freeformAddress}`} 
+          target="_blank"
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          Abrir no google maps
+        </a>
+      </Button>
+    </>
   );
 };
 
@@ -49,7 +70,7 @@ export const DeliveryComponent = ({ address, onChangeAddress }) => {
                 <strong>
                   &#160;
                   {address.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', })}
-                  /{Number(address?.distance).toFixed(2)} KM
+                  {/* /{Number(address?.distance).toFixed(2)} KM */}
                 </strong>
               </Typography>
             )
@@ -97,18 +118,23 @@ const Address = () => {
   };
 
   const next = async () => {
-    if (!addressToken) {
+    if (deliveryType === 'delivery' && !addressToken) {
       toast.error('Adicione o seu endereço para continuar', { position: 'top-center' });
+      return;
+    }
+
+    if (deliveryType === 'pickup' && !store.address.freeformAddress) {
+      toast.error('Não foi possíver recuperar o endereço, tente novamente.', { position: 'top-center' });
       return;
     }
 
     const bag = await getBag(store._id);
 
     if (deliveryType === 'pickup') {
-      localStorage.setItem(`bag_${store._id}`, JSON.stringify(bag));
+      localStorage.setItem(`bag_${store._id}`, JSON.stringify({ ...bag, deliveryType }));
     } 
     if (deliveryType === 'delivery') {
-      localStorage.setItem(`bag_${store._id}`, JSON.stringify({ ...bag, address, addressToken }));
+      localStorage.setItem(`bag_${store._id}`, JSON.stringify({ ...bag, address, addressToken, deliveryType }));
     }
 
     navigate(`/${store._id}/pedido/pagamento`);
@@ -135,7 +161,10 @@ const Address = () => {
           <S.Title>Informações de endereço</S.Title>
           <Tabs value={deliveryType} onChange={changeDeliveryType}>
             {settings?.delivery && <Tab value="delivery" label="Entrega" />}
-            {settings?.allowStorePickup && <Tab value="pickup" label="Retirada" />}
+            {
+              (settings?.allowStorePickup && store.address?.freeformAddress) 
+                && <Tab value="pickup" label="Retirada" />
+            }
           </Tabs>
 
           {settings?.delivery && deliveryType === 'delivery' && (
@@ -155,12 +184,15 @@ const Address = () => {
             </div>
           )}
 
-          {(settings?.allowStorePickup && deliveryType === 'pickup') 
+          {(settings?.allowStorePickup && deliveryType === 'pickup' && store.address?.freeformAddress) 
             ? <PickupComponent address={store.address} />
             : <></>
           }
 
-          {addressToken && <S.ButtonNext variant="contained" onClick={next}>Continuar</S.ButtonNext>}
+          {
+            ((addressToken && deliveryType === 'delivery') || (store.address?.freeformAddress && deliveryType === 'pickup'))
+             && <S.ButtonNext variant="contained" onClick={next}>Continuar</S.ButtonNext>
+          }
         </section>
       </Container>
 

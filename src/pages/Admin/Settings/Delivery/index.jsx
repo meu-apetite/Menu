@@ -38,18 +38,19 @@ const Delivery = () => {
   const update = async () => {
     try {
       setLoading(true);
+      const form = { ...data };
 
-      console.log( {
-        fixedValue: Number(dataFormat.fixedValue?.replace('R$ ', '')),
-        kmValue: Number(dataFormat.kmValue?.replace('R$ ', '')),
-        minValue: Number(dataFormat.minValue?.replace('R$ ', '')),
-      })
-      const response = await apiService.put('/admin/company/settings-delivery', {
-        ...data,
-        fixedValue: Number(dataFormat.fixedValue?.replace('R$ ', '')),
-        kmValue: Number(dataFormat.kmValue?.replace('R$ ', '')),
-        minValue: Number(dataFormat.minValue?.replace('R$ ', ''))
-      });
+      if (dataFormat.fixedValue ) {
+        form.fixedValue = parseFloat(dataFormat.fixedValue.replace("R$", "").replace(',', '.'));
+      }
+      if (dataFormat.kmValue) {
+        form.kmValue = parseFloat(dataFormat.kmValue.replace("R$", "").replace(',', '.'));
+      }
+      if (dataFormat.minValue) {
+        form.minValue = parseFloat(dataFormat.minValue.replace("R$", "").replace(',', '.'));
+      }
+
+      const response = await apiService.put('/admin/company/settings-delivery', form);
       setCompany(response.data);
       toast.success('Atualizado!');
     } catch (error) {

@@ -21,7 +21,7 @@ const Settings = () => {
             onChange={(e, v) => setTabValue(v)}
             variant="scrollable"
             scrollButtons="auto"
-            sx={{ mr: 2 }}
+            sx={{ mr: 2, zIndex: 'auto' }}
           >
             <Tab value="orderTime" label="Horário de pedido" />
             <Tab value="delivery" label="Delivery" />

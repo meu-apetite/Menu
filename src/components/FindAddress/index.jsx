@@ -25,10 +25,10 @@ const FindAddress = (props /* { getAddress() } */) => {
       const data = response.data;
 
       setAddress({
-        zipCode: data.cep, 
-        city: data.localidade, 
-        state: data.uf, 
-        district: data.bairro, 
+        zipCode: data.cep,
+        city: data.localidade,
+        state: data.uf,
+        district: data.bairro,
         street: data.logradouro
       });
 
@@ -44,6 +44,7 @@ const FindAddress = (props /* { getAddress() } */) => {
       {openModalCep && (
         <S.ModalContainer>
           <S.ModalContent>
+            <S.ButtonModalClose onClick={props.closeModal} className='fa fa-times' />
             <S.WrapperForm>
               <S.TitleModal>Insira seu CEP corretamente</S.TitleModal>
               <Grid container spacing={2}>
@@ -73,6 +74,7 @@ const FindAddress = (props /* { getAddress() } */) => {
       {openModalAddress && (
         <S.ModalContainer>
           <S.ModalContent>
+            <S.ButtonModalClose onClick={props.closeModal} className='fa fa-times' />
             <S.WrapperForm>
               <S.TitleModal>Confira com atenção o seu endereço</S.TitleModal>
 
@@ -114,6 +116,7 @@ const FindAddress = (props /* { getAddress() } */) => {
       {openModalInfoExtra && (
         <S.ModalContainer>
           <S.ModalContent>
+            <S.ButtonModalClose onClick={props.closeModal} className='fa fa-times' />
             <S.WrapperForm>
               <S.TitleModal>Outras informações</S.TitleModal>
               <Grid container spacing={2}>

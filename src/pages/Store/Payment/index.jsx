@@ -1,14 +1,6 @@
-import {
-  Container,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-  Tab,
-  Tabs,
-} from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Container, Grid, List, ListItem, ListItemText, Tab, Tabs } from '@mui/material';
 import { ApiService } from 'services/api.service';
 import { StoreContext } from 'contexts/store';
 import { AuthContext } from 'contexts/auth';
@@ -19,6 +11,10 @@ import iconMastercard from 'assets/icons/mastercard.webp';
 import iconVisa from 'assets/icons/visa.webp';
 import iconHipercard from 'assets/icons/hipercard.png';
 import iconNugo from 'assets/icons/nugo.avif';
+import iconAmex from 'assets/icons/amex.png';
+import iconSodexo from 'assets/icons/sodexo.png';
+import iconVr from 'assets/icons/vr.avif';
+import iconTicket from 'assets/icons/ticket.png';
 import * as S from './style';
 
 const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
@@ -26,45 +22,53 @@ const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
   const [methodCurrent, setMethodCurrent] = useState();
 
   useEffect(() => {
-    if (!paymentOptions) return;
+    if (!paymentOptions || paymentOptions?.length < 1) return;
 
-    setPaymentMethods(
-      paymentOptions.paymentsList.map((item) => {
-        return {
-          titleCategory: item.titleCategory,
-          methods: item.methods.map((m) => {
-            paymentOptions.activeItems.findIndex((pay) => pay.id === m.id) >= 0
-              ? (m.isActive = true)
-              : (m.isActive = false);
+    console.log(paymentOptions)
 
-            switch (m.isActive) {
-              case m.id.indexOf('elo') >= 0:
-                m.icon = iconElo;
-                break;
-              case m.id.indexOf('dinheiro') >= 0:
-                m.icon = iconDinheiro;
-                break;
-              case m.id.indexOf('mastercard') >= 0:
-                m.icon = iconMastercard;
-                break;
-              case m.id.indexOf('hipercard') >= 0:
-                m.icon = iconHipercard;
-                break;
-              case m.id.indexOf('visa') >= 0:
-                m.icon = iconVisa;
-                break;
-              case m.id.indexOf('nugo') >= 0:
-                m.icon = iconNugo;
-                break;
-              default:
-                m.icon = iconNugo;
-                break;
-            }
-            return m;
-          }),
-        };
-      }),
-    );
+    const methods = [];
+    const methodsParent = [];
+
+    paymentOptions.forEach((item) => {
+      if (item.id.indexOf('elo') >= 0) {
+        return methods.push({ ...item, icon: iconElo });
+      } else if (item.id.indexOf('dinheiro') >= 0) {
+        return methods.push({ ...item, icon: iconDinheiro });
+      } else if (item.id.indexOf('mastercard') >= 0) {
+        return methods.push({ ...item, icon: iconMastercard });
+      } else if (item.id.indexOf('hipercard') >= 0) {
+        return methods.push({ ...item, icon: iconHipercard });
+      } else if (item.id.indexOf('visa') >= 0) {
+        return methods.push({ ...item, icon: iconVisa });
+      }  else if (item.id.indexOf('amex') >= 0) {
+        return methods.push({ ...item, icon: iconAmex });
+      } else if (item.id.indexOf('nugo') >= 0) {
+        return methods.push({ ...item, icon: iconNugo });
+      } else if (item.id.indexOf('sodexo') >= 0) {
+        return methods.push({ ...item, icon: iconSodexo });
+      } else if (item.id.indexOf('vr') >= 0) {
+        return methods.push({ ...item, icon: iconVr });
+      }else if (item.id.indexOf('ticket') >= 0) {
+        return methods.push({ ...item, icon: iconTicket });
+      } else {
+        return methods.push({ ...item, icon: iconNugo });
+      }
+
+      
+    });
+
+    methods.forEach(item => {
+      console.log(item)
+      const parent = item.parent;
+      const objCorrespondente = methodsParent.find(obj => obj.parent === parent);
+      if (objCorrespondente) {
+        objCorrespondente.options.push(item);
+      } else {
+        methodsParent.push({ parent: parent, options: [item] });
+      }
+    });
+
+    setPaymentMethods(methodsParent);
   }, []);
 
   return (
@@ -73,18 +77,18 @@ const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
       <Grid container spacing={2}>
         {paymentMethods?.map((item, i) => (
           <Grid item xs={12} sm={6} key={i}>
-            <strong>{item.titleCategory}</strong>
+            <strong>{item.parent}</strong>
             <List>
-              {item.methods.map((method) => (
+              {item.options.map((method) => (
                 <ListItem key={method.id} sx={{ display: 'flex', alignItems: 'center' }}>
-                  <input 
-                    style={{ margin: '0 1rem 0 0' }} 
+                  <input
+                    style={{ margin: '0 1rem 0 0' }}
                     type="radio"
                     checked={methodCurrent === method.id}
                     onChange={() => {
                       setMethodCurrent(method.id);
                       getSelected(method.id);
-                    }} 
+                    }}
                   />
                   <S.Icon
                     src={method?.icon}
@@ -113,25 +117,23 @@ const Payment = ({ paymentOnline }) => {
   const [settingsPayment, setSettingsPayment] = useState('online'); //indelivery
   const [store, setStore] = useState({});
 
-  const getSettingsPayment = async () => {                       
+  const getSettingsPayment = async () => {
     try {
       setLoading(true);
-      const bag =  await getBag();
-      console.log(storeSaved)
-      const { data } = await apiService.post('/store/payment/' + storeSaved._id, { productsToken: bag.productsToken});
+      const bag = await getBag();
+      const { data } = await apiService.post('/store/payment/' + storeSaved._id, { productsToken: bag.productsToken });
       setSettingsPayment(data);
       initMercadoPago(data.mercadoPago.publicKey);
-      console.log(data)
-    } catch (error) { 
+    } catch (error) {
       console.log(error);
-    } finally { 
+    } finally {
       setTimeout(() => setLoading(false), 2000);
     }
   };
 
   const finishOrder = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const data = await getBag();
       delete data.products;
 
@@ -139,14 +141,15 @@ const Payment = ({ paymentOnline }) => {
         '/store/finishOrder/' + store._id,
         { ...data, paymentType: 'indelivery', paymentMethod },
       );
-      
-      console.log(response.order)
 
-      navigate(`/${response.store._id}/meupedido/${response.order.id}`, { state: { ...response } });
-    } catch(error) {
-      console.log(error)
+      console.log(response);
+      return
+
+      navigate(`/${response.company._id}/meupedido/${response.order.id}`, { state: { ...response } });
+    } catch (error) {
+      console.log(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -179,10 +182,10 @@ const Payment = ({ paymentOnline }) => {
 
         {paymentType === 'indelivery' && (
           <>
-            {/* <PaymentMethodsComponent
-              paymentOptions={paymentOptions.delivery} 
+            <PaymentMethodsComponent
+              paymentOptions={settingsPayment?.methods}
               getSelected={(id) => setPaymentMethod(id)}
-            /> */}
+            />
             <S.ButtonDefault
               sx={{ marginTop: '8px', textTransform: 'uppercase' }}
               variant="contained"

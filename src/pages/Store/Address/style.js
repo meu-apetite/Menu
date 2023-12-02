@@ -38,7 +38,7 @@ export const ButtonNext = styled(Button)({
   marginTop: '16px',
   left: '50%', 
   transform: 'translateX(-50%)',
-  '@media (min-width: 600px)':  { width: '40%', maxWidth: '400px' }
+  maxWidth: '400px'
 });
 
 export const ButtonCustom = styled(Button)({
