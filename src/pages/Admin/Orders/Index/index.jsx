@@ -14,7 +14,6 @@ export default function Index() {
   const getOrders = async () => {
     try {
       const { data } = await apiService.get('/admin/orders?page=1');
-      console.log(data);
       setOrders(data.orders);
       setTotalPages(data.totalPages);
       setPage(data.page);

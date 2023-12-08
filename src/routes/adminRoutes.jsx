@@ -17,6 +17,7 @@ const adminRoutes = [
   {
     path: '/admin',
     element: <Layout />,
+    exact: true,
     children: [
       { path: 'address', element: <Address /> },
       { path: 'products', element: <Product /> },

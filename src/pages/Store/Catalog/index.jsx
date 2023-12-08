@@ -33,8 +33,8 @@ const Store = () => {
   const [tabValue, setTabValue] = useState(0);
 
   const tabsRefs = useRef([]);
-
   const getStore = async () => {
+
     const { data } = await apiService.get('/store/' + storeUrl);
     setStoreCatalog(data);
     setStore(data);
@@ -69,7 +69,7 @@ const Store = () => {
     }
   };
 
-  const toPageBagShopping = () => navigate(`/${storeUrl}/pedido`);
+  const toPageBagShopping = () => navigate('pedido');
 
   function findVisibleElement() {
     console.log(tabsRefs);
@@ -91,8 +91,8 @@ const Store = () => {
   }
 
   useEffect(() => {
-    getProducts();
     getStore();
+    getProducts();
 
     window.addEventListener('scroll', findVisibleElement);
 

@@ -9,7 +9,7 @@ import * as S from './style';
 export default function DataGridDemo() {
   const apiService = new ApiService();
   const navigate = useNavigate();
-  const { setLoading, toast } = useContext(AuthContext);
+  const { setLoading, toast, company } = useContext(AuthContext);
 
   const [itemsSelect, setItemsSelect] = useState([]);
   const [products, setProducts] = useState([]);
@@ -60,6 +60,22 @@ export default function DataGridDemo() {
     }
   };
 
+  const deleteProduct = async (id) => {
+    try {
+      setLoading('Aguarde...');
+
+      const { data } = await apiService.delete(`/admin/products/${id}/${company._id}`);
+      console.log(data)
+      setProducts(data?.reverse());
+
+      toast.success('Produto excluído!');
+    } catch (e) {
+      toast.error('Não foi possível excuir o produto!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const toUpdate = (id) => {
     navigate('/admin/products/update/' + id);
   };
@@ -103,7 +119,7 @@ export default function DataGridDemo() {
                   <span className='fa fa-copy'></span>
                   Duplicar
                 </div> */}
-                <div className='action'>
+                <div className='action' onClick={() => deleteProduct(item._id)}>
                   <span className='fa fa-trash'></span>
                   Excluir
                 </div>

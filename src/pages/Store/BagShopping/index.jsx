@@ -24,14 +24,14 @@ const CartPage = () => {
 
   const { setLoading } = useContext(AuthContext);
   const { getBag, setStore: setStoreContext } = useContext(StoreContext);
-  const { id } = useParams();
+  const { storeUrl } = useParams();
 
   const [order, setOrder] = useState({ products: [] });
   const [store, setStore] = useState();
   const [openModalAddress, setOpenModalAddress] = useState(false);
 
   const getStore = async () => {
-    const { data } = await apiService.get('/store/' + id);
+    const { data } = await apiService.get('/store/' + storeUrl);
     setStore(data);
     setStoreContext(data);
   };
@@ -40,7 +40,7 @@ const CartPage = () => {
     try {
       setLoading(true);
 
-      const bag = await getBag(id);
+      const bag = await getBag(storeUrl);
       const { data: orderData } = await apiService.post(
         '/store/estimateValue',
         bag.products.map((item) => ({
@@ -51,7 +51,7 @@ const CartPage = () => {
       );
 
       setOrder(orderData);
-      localStorage.setItem(`bag_${id}`, JSON.stringify({
+      localStorage.setItem(storeUrl, JSON.stringify({
         products: orderData.products, productsToken: orderData.productsToken
       }));
     } catch (error) {
@@ -69,9 +69,9 @@ const CartPage = () => {
   const toggleModalAddress = async () => setOpenModalAddress(!openModalAddress);
   
   const next = async (clientInfo) => {
-    const bag = await getBag(id);
+    const bag = await getBag(storeUrl);
     const newBag = { ...bag, ...clientInfo };
-    await localStorage.setItem(`bag_${id}`, JSON.stringify(newBag));
+    await localStorage.setItem(storeUrl, JSON.stringify(newBag));
     navigate('endereco');
   };
 

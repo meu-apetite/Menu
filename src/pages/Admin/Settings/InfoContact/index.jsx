@@ -42,18 +42,7 @@ const InfoContact = () => {
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12}>
           <TextField
-            label="Nome"
-            value={data?.name}
-            onChange={(e) => setData({ ...data, name: e.target.value })}
-            InputLabelProps={{ shrink: data.name }}
-            margin="dense"
-            fullWidth
-            required
-          />
-        </Grid>
-        <Grid item xs={12} sm={12}>
-          <TextField
-            label="Email"
+            label="Email oficial (loja)"
             value={data?.email}
             type="email"
             onChange={(e) => setData({ ...data, email: e.target.value })}
@@ -65,7 +54,7 @@ const InfoContact = () => {
         </Grid>
         <Grid item xs={12} sm={12}>
           <TextField
-            label="Telefone"
+            label="Whatsapp oficial (loja)"
             value={data?.phoneNumber}
             type="phone"
             onChange={(e) => setData({ ...data, phoneNumber: e.target.value })}

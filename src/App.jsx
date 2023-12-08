@@ -40,11 +40,11 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <GlobalStyles />
       <AuthProvider>
+        <AuthRoutes />
+        <AdminRoutes />
         <StoreProvider>
           <StoreRoutes />
         </StoreProvider>
-        <AuthRoutes />
-        <AdminRoutes />
       </AuthProvider>
     </ThemeProvider>
   );

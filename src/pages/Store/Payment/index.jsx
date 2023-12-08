@@ -24,8 +24,6 @@ const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
   useEffect(() => {
     if (!paymentOptions || paymentOptions?.length < 1) return;
 
-    console.log(paymentOptions)
-
     const methods = [];
     const methodsParent = [];
 
@@ -52,13 +50,10 @@ const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
         return methods.push({ ...item, icon: iconTicket });
       } else {
         return methods.push({ ...item, icon: iconNugo });
-      }
-
-      
+      }  
     });
 
     methods.forEach(item => {
-      console.log(item)
       const parent = item.parent;
       const objCorrespondente = methodsParent.find(obj => obj.parent === parent);
       if (objCorrespondente) {
@@ -87,7 +82,7 @@ const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
                     checked={methodCurrent === method.id}
                     onChange={() => {
                       setMethodCurrent(method.id);
-                      getSelected(method.id);
+                      getSelected(method);
                     }}
                   />
                   <S.Icon
@@ -121,7 +116,10 @@ const Payment = ({ paymentOnline }) => {
     try {
       setLoading(true);
       const bag = await getBag();
-      const { data } = await apiService.post('/store/payment/' + storeSaved._id, { productsToken: bag.productsToken });
+      const { data } = await apiService.post(
+        '/store/payment/', 
+        { companyId: storeSaved._id, productsToken: bag.productsToken }
+      );
       setSettingsPayment(data);
       initMercadoPago(data.mercadoPago.publicKey);
     } catch (error) {
@@ -139,13 +137,15 @@ const Payment = ({ paymentOnline }) => {
 
       const { data: response } = await apiService.post(
         '/store/finishOrder/' + store._id,
-        { ...data, paymentType: 'indelivery', paymentMethod },
+        { 
+          ...data, 
+          companyId: storeSaved._id, 
+          paymentType: 'indelivery', 
+          paymentMethod 
+        }
       );
 
-      console.log(response);
-      return
-
-      navigate(`/${response.company._id}/meupedido/${response.order.id}`, { state: { ...response } });
+      navigate(`/cardapio/${response.company.storeUrl}/meupedido/${response.order.id}`, { state: { ...response } });
     } catch (error) {
       console.log(error);
     } finally {
@@ -154,8 +154,8 @@ const Payment = ({ paymentOnline }) => {
   };
 
   useEffect(() => {
-    if (!storeSaved?._id) {
-      navigate(`/${window.location.href.split('/').reverse()[2]}/pedido`);
+    if (!storeSaved?.storeUrl) {
+      navigate(`/cardapio/${window.location.href.split('/').reverse()[2]}/pedido`);
     }
     setStore(storeSaved);
     getSettingsPayment();
@@ -184,7 +184,7 @@ const Payment = ({ paymentOnline }) => {
           <>
             <PaymentMethodsComponent
               paymentOptions={settingsPayment?.methods}
-              getSelected={(id) => setPaymentMethod(id)}
+              getSelected={(m) => setPaymentMethod(m)}
             />
             <S.ButtonDefault
               sx={{ marginTop: '8px', textTransform: 'uppercase' }}

@@ -1,18 +1,14 @@
 import { useEffect, useState } from 'react'
-import {
-  Typography,
-  Paper,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-} from '@mui/material'
-import { useLocation } from 'react-router-dom'
+import { Typography, Paper, Grid, List, ListItem, ListItemText } from '@mui/material'
+import { useLocation, useParams } from 'react-router-dom'
+import { ApiService } from 'services/api.service';
 
 const PedidoDetalhes = () => {
   const { state } = useLocation()
+  const { storeUrl, orderId } = useParams()
+  const apiService = new ApiService();
   const [order, setOrder] = useState({
-    id: Number,
+    id: 0,
     company: '',
     client: { name: '', email: '', phoneNumber: '' },
     status: '',
@@ -20,14 +16,23 @@ const PedidoDetalhes = () => {
     paymentType: '',
     deliveryType: '',
     address: {},
-    total: Number,
+    total: 0,
   });
   const [store, setStore] = useState({});
 
+  const getData = async () => {
+    const { data } = await apiService.get(`/store/${storeUrl}/order/${orderId}`);
+    setOrder(data.order);
+    setStore(data.company);  
+  } 
+
   useEffect(() => {
-    console.log(state)
-    setOrder(state.order);
-    setStore(state.store);
+    if (state?.order?.id && state?.store?._id) {
+      setOrder(state.order);
+      setStore(state.store);
+    } else {
+      getData();
+    }
   }, [])
 
   return (
@@ -45,7 +50,7 @@ const PedidoDetalhes = () => {
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
-          {order?.address?.freeformAddress ? (
+          {order.deliveryType === 'delivery' ? (
             <>
               <Typography variant="h6">Endereço de Entrega:</Typography>
               <Typography variant="body1">
@@ -57,8 +62,7 @@ const PedidoDetalhes = () => {
             <>
               <Typography variant="h6">Endereço de Retirada:</Typography>
               <Typography variant="body1">
-                {store?.address?.street} <br />
-                {store?.address?.city}, {store?.address?.state}, {'44400432'}
+                {store?.address?.freeformAddress} <br />
               </Typography>
             </>
           )}
@@ -78,7 +82,7 @@ const PedidoDetalhes = () => {
         ))}
       </List>
       <Typography variant="h6" style={{ marginTop: 20 }}>
-        Total: R$ {22}
+        Total: {order?.total?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
       </Typography>
     </Paper>
   )

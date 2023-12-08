@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import Box from '@mui/material/Box';
+import { Backdrop, CircularProgress, Typography, Box } from '@mui/material';
 import { AuthContext } from 'contexts/auth';
 import { ApiService } from 'services/api.service';
 import Drawer from 'components/Drawer';
-import LoadingPage from 'components/LoadingPage';
 
 
 const Create = (props) => {
@@ -50,7 +49,14 @@ const Create = (props) => {
           </Box>
         </Box>
 
-        {props.loading && <LoadingPage text={props.loading} active={props.loading} />}
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={props.loading}
+        >
+          <Box sx={{ display: 'grid', gap: 1 }}>{props.children}</Box>
+          <CircularProgress disableShrink />
+          <Typography>{props.loading}</Typography>
+        </Backdrop>
       </>
     );
   }

@@ -31,21 +31,36 @@ export class ApiService {
     return headers;
   }
 
+
+  verifyAuthetication(response) {
+    if (response.status === 401 && this.isAuth) {
+      return window.location.href = '/login'
+    }
+  }
+
   async get(route) {
-    return await axios.get(this.#baseUrl + route, { headers: this.getHeaders() });
+    const response = await axios.get(this.#baseUrl + route, { headers: this.getHeaders() });
+    this.verifyAuthetication(response);
+    return response;
   }
 
   async post(route, data, multipart = false) {
     if(!data) throw new Error('Corpo da requisição nescessário');
-    return await axios.post(this.#baseUrl + route, data, { headers: this.getHeaders(multipart) });
+    const response = await axios.post(this.#baseUrl + route, data, { headers: this.getHeaders(multipart) });
+    this.verifyAuthetication(response);
+    return response;
   }
 
   async put(route, data, multipart = false) {
     if(!data) throw new Error('Corpo da requisição nescessário');
-    return await axios.put(this.#baseUrl + route, data, { headers: this.getHeaders(multipart) });
+    const response = await axios.put(this.#baseUrl + route, data, { headers: this.getHeaders(multipart) });
+    this.verifyAuthetication(response);
+    return response;
   }
 
   async delete(route) {
-    return await axios.delete(this.#baseUrl + route, { headers: this.getHeaders() });
+    const response = await axios.delete(this.#baseUrl + route, { headers: this.getHeaders() });
+    this.verifyAuthetication(response);
+    return response;
   }
 }

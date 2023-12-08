@@ -41,6 +41,7 @@ const Register = () => {
     storeUrl: null,
     fantasyName: null,
     ownerName: null,
+    description: null
   });
 
   const toastSuport = () => {

@@ -11,7 +11,7 @@ export const Header = styled('header')(({ theme }) => ({
   margin: `${theme.spacing(1)} 0 ${theme.spacing(4)}`,
   '& h1': {
     margin: 0,
-    fontSize: '1.6rem',
+    fontSize: '1.4rem',
     fontWeight: 500
   },
 }))

@@ -128,23 +128,23 @@ const Address = () => {
       return;
     }
 
-    const bag = await getBag(store._id);
+    const bag = await getBag(store.storeUrl);
 
     if (deliveryType === 'pickup') {
-      localStorage.setItem(`bag_${store._id}`, JSON.stringify({ ...bag, deliveryType }));
+      localStorage.setItem(store.storeUrl, JSON.stringify({ ...bag, deliveryType }));
     } 
     if (deliveryType === 'delivery') {
-      localStorage.setItem(`bag_${store._id}`, JSON.stringify({ ...bag, address, addressToken, deliveryType }));
+      localStorage.setItem(store.storeUrl, JSON.stringify({ ...bag, address, addressToken, deliveryType }));
     }
 
-    navigate(`/${store._id}/pedido/pagamento`);
+    navigate(`/cardapio/${store.storeUrl}/pedido/pagamento`);
   };
 
   const changeDeliveryType = async (e, value) => setDeliveryType(value);
 
   useEffect(() => {
-    if (!storeSaved?._id) {
-      navigate(`/${window.location.href.split('/').reverse()[2]}/pedido`);
+    if (!storeSaved?.storeUrl) {
+      navigate(`/cardapio/${window.location.href.split('/').reverse()[2]}/pedido`);
     }
     setStore(storeSaved);
     setSettings(storeSaved.settingsDelivery)

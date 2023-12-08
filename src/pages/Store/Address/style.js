@@ -94,5 +94,6 @@ export const SubTitle = styled('h4')({
 
 export const Logo = styled('img')({
   width: 60,
-  height: 60
+  height: 60,
+  borderRadius: '50%'
 });

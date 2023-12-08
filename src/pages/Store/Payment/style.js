@@ -11,7 +11,8 @@ export const Header = styled('header')({
 
 export const Logo = styled('img')({
   width: 60,
-  height: 60
+  height: 60,
+  borderRadius: '50%'
 });
 
 export const Icon = styled('img')({
