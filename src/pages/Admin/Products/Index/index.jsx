@@ -1,24 +1,42 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, forwardRef } from 'react';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useNavigate } from 'react-router-dom';
-import { Button, Pagination, Box } from '@mui/material';
+import { 
+  Button, 
+  Pagination, 
+  Box, 
+  MenuItem, 
+  DialogContentText, 
+  DialogTitle, 
+  DialogContent, 
+  Dialog, 
+  DialogActions, 
+  Slide 
+} from '@mui/material';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import { ApiService } from 'services/api.service';
 import { AuthContext } from 'contexts/auth';
 import Header from 'components/Header';
+import Menu from '@mui/material/Menu';
 import * as S from './style';
 
-export default function DataGridDemo() {
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function Index() {
   const apiService = new ApiService();
   const navigate = useNavigate();
   const { setLoading, toast, company } = useContext(AuthContext);
-
   const [itemsSelect, setItemsSelect] = useState([]);
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
+  const [modalConfirm, setModalConfirm] = useState(false);
+  const [isComfirmDelete, setIsComfirmDelete] = useState(false);
 
   const getProducts = async () => {
     const { data } = await apiService.get(`/admin/products?page=1`);
-
     setProducts(data.products?.reverse());
     setTotalPages(data.totalPages);
     setPage(data.page);
@@ -32,7 +50,6 @@ export default function DataGridDemo() {
       setProducts(data.products?.reverse());
       setTotalPages(data.totalPages);
       setPage(data.page);
-
       window.scrollTo(0, 0);
     } catch (error) {
       console.log(error);
@@ -45,13 +62,10 @@ export default function DataGridDemo() {
   const removeSelect = async () => {
     try {
       setLoading('Aguarde...');
-
       const response = await apiService.post(
-        `/admin/products/delete-multiple`,
-        { productIds: itemsSelect }
+        `/admin/products/delete-multiple`, { productIds: itemsSelect }
       );
       setProducts(response.data?.reverse());
-
       toast.success('Categorias excluidas');
     } catch (e) {
       toast.error('Não foi possível excuir os itens selecionados!');
@@ -62,10 +76,11 @@ export default function DataGridDemo() {
 
   const deleteProduct = async (id) => {
     try {
-      setLoading('Aguarde...');
+      setModalConfirm(true);
+      if (!isComfirmDelete) return;
 
+      setLoading('Aguarde...');
       const { data } = await apiService.delete(`/admin/products/${id}/${company._id}`);
-      console.log(data)
       setProducts(data?.reverse());
 
       toast.success('Produto excluído!');
@@ -76,9 +91,7 @@ export default function DataGridDemo() {
     }
   };
 
-  const toUpdate = (id) => {
-    navigate('/admin/products/update/' + id);
-  };
+  const toUpdate = (id) => navigate('/admin/products/update/' + id);
 
   useEffect(() => {
     getProducts();
@@ -106,41 +119,45 @@ export default function DataGridDemo() {
       <S.ContainerProducts>
         {products.map((item) => {
           return (
-            <S.CardCustom onClick={() => { }}>
+            <S.CardCustom>
               <S.WrapperActions>
-                <div
-                  className='action'
-                  onClick={() => toUpdate(item._id)}
-                >
-                  <span className='fa fa-pen'></span>
-                  Editar
-                </div>
-                {/* <div className='action'>
-                  <span className='fa fa-copy'></span>
-                  Duplicar
-                </div> */}
-                <div className='action' onClick={() => deleteProduct(item._id)}>
-                  <span className='fa fa-trash'></span>
-                  Excluir
-                </div>
+                <PopupState variant="popover">
+                  {(popupState) => (
+                    <>
+                      <Button {...bindTrigger(popupState)}>
+                        Opções <KeyboardArrowDownIcon />
+                      </Button>
+                      <Menu {...bindMenu(popupState)}>
+                        <MenuItem onClick={() => toUpdate(item._id)}>
+                          <span className="fa fa-edit"></span> Editar
+                        </MenuItem>
+                        <MenuItem onClick={popupState.close}>
+                          <span className="fa fa-copy"></span> Duplicar
+                        </MenuItem>
+                        <MenuItem onClick={() => deleteProduct(item._id)}>
+                          <span className="fa fa-remove"></span> Excluir
+                        </MenuItem>
+                      </Menu>
+                    </>
+                  )}
+                </PopupState>
               </S.WrapperActions>
 
               <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <S.CardContentCustom sx={{ flex: '1 0 auto', pt: 0 }}>
                   <S.CardInfo>
                     <span>
-                      <strong>Nome:</strong> {item.name}
+                      <strong>Nome: </strong>{item.name}
                     </span>
                     <span>
                       <strong>Preço: </strong>
                       {item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </span>
                     <span>
-                      <strong>Categoria: </strong>
-                      {item.category.title}
+                      <strong>Categoria: </strong>{item.category.title}
                     </span>
                     <span>
-                      <strong>Status:</strong> {item.isActive ? 'Ativo' : 'Desativo'}
+                      <strong>Status: </strong>{item.isActive ? 'Ativo' : 'Desativo'}
                     </span>
                   </S.CardInfo>
                   <S.CardMediaCustom image={item.images.length ? item.images[0].url : 1} />
@@ -165,6 +182,39 @@ export default function DataGridDemo() {
           produto, clique em 'NOVO PRODUTO'.
         </div>
       )}
+
+      <Dialog
+        open={modalConfirm}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setModalConfirm(false)}
+      >
+        <DialogTitle>Tem certeza de que deseja excluir este produto?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Esta ação é irreversível e a exclusão não poderá ser desfeita, 
+            portanto, certifique-se de sua decisão antes de confirmar.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={() => {
+              setIsComfirmDelete(false);
+              setModalConfirm(false);
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={() => {
+              setIsComfirmDelete(true);
+              setModalConfirm(false);
+            }}
+          >
+            Confirmar
+          </Button> 
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

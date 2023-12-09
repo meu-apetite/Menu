@@ -1,4 +1,4 @@
-import { Card, CardContent, CardMedia } from '@mui/material';
+import { Card, CardContent, CardMedia, MenuItem, Paper } from '@mui/material';
 import { styled } from '@mui/system';
 
 export const ContainerProducts = styled('main')({
@@ -81,39 +81,37 @@ export const Description = styled('p')({
   },
 });
 
-export const WrapperActions = styled('div')(({ theme }) => ({
+export const WrapperAction = styled('div')(({ theme }) => ({
   display: 'flex',
-  justifyContent: 'flex-end',
-  paddingBottom: theme.spacing(2), 
-  gap: theme.spacing(1),
-  color: '#000',
-  '.action': {
-    display: 'flex',
-    gap: theme.spacing(0.5),
-    alignItems: 'center',
-    backgroundColor: '#3498db', 
-    color: 'white', 
-    borderRadius: '5px', 
-    padding: '4px 8px', 
-    fontSize: theme.spacing(1.8),
-    transition: 'background-color 0.3s ease', 
-    cursor: 'pointer',
-    '&:nth-child(1)': {
-      background: theme.palette.main,
-    },
-    '&:nth-child(2)': {
-      background: '#c6c6c6',
-    },
-    '&:nth-child(3)': {
-      background: theme.palette.error.main,
-    },
-    '&:hover': {
-      filter: 'brightness(0.8)'
-    },
-  }
+  justifyContent: 'flex-end',  
 }));
 
+export const MenuItemCuston = styled(MenuItem)({
+  display: 'flex',
+  gap: 8
+});
+
+export const CustomPaper = styled(Paper)({
+  padding: '20px', 
+  margin: '20px auto',
+  width: '100%',
+  maxWidth: 800
+});
 
 
-
+export const ProductInfo = styled(Paper)({
+  border: 'none', 
+  borderBottom: '1px solid #ccc', 
+  marginTop: 12,
+  marginBottom: 12,
+  display: 'grid', 
+  gridTemplateColumns: '1fr 80px',
+  justifyContent: 'space-between',
+  'img': {
+    height: '100%',
+    width: '100%',
+    maxWidth: '100px',
+    objectFit: 'cover'
+  }
+});
 

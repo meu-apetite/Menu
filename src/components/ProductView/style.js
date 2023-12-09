@@ -15,22 +15,6 @@ export const Main = styled('main')({
   `
 });
 
-export const Header = styled('header')({
-  gridArea: 'header',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '100%',
-  height: '30px',
-  background: '#fff',
-  'h1': {
-    margin: 0,
-    fontSize: '.9rem',
-    fontWeight: 500,
-    textTransform: 'uppercase',
-  }
-});
-
 export const ContainerProduct = styled('div')({
   gridArea: 'product',
   overflow: 'auto',

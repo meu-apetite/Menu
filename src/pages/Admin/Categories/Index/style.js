@@ -1,3 +1,4 @@
+import { MenuItem } from '@mui/material';
 import { styled } from '@mui/system';
 
 export const ContainerCategories = styled('section')(({ theme }) => ({
@@ -95,3 +96,8 @@ export const WrapperButtonSaved = styled('div')(({ theme }) => ({
   marginTop: theme.spacing(2),
   'button': { width: '100%', maxWidth: '400px', minHeight: '48px'}
 }));
+
+export const MenuItemCuston = styled(MenuItem)({
+  display: 'flex',
+  gap: 8
+});

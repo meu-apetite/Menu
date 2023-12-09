@@ -1,12 +1,14 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Switch, Button } from '@mui/material';
+import { Switch, Button,  Menu, Box, IconButton } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import PopupState, { bindMenu, bindTrigger } from 'material-ui-popup-state';
+import Header from 'components/Header';
 import { AuthContext } from 'contexts/auth';
 import { ApiService } from 'services/api.service';
-import Header from 'components/Header';
 import * as S from './style';
 
-export default function Categories() {
+const Index = () =>  {
   const label = { inputProps: { 'aria-label': 'Color switch demo' } };
 
   const navigate = useNavigate();
@@ -23,7 +25,6 @@ export default function Categories() {
   };
 
   const addCategorychanges = (indexs) => {
-    console.log(indexs);
     indexs.forEach((i) => {
       if (categoryChanges?.indexOf(i) === -1) {
         setCategoryChanges((prev) => [...prev, i]);
@@ -119,9 +120,25 @@ export default function Categories() {
         });
       const response = await apiService.put('/admin/categories', data);
 
+      setCategories([]);
       sortPosition(response.data);
       toast.success('Mudanças feitas com sucesso');
     } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const remove = async (id) => {
+    try {
+      setLoading('Atualizando');
+      const response = await apiService.delete('/admin/categories/' + id);
+      setCategories([]);
+      sortPosition(response.data);
+      toast.success('Categoria excluída com sucesso!');
+    } catch (error) {
+      toast.error('Erro ao excluir categoria');
       console.log(error);
     } finally {
       setLoading(false);
@@ -145,14 +162,26 @@ export default function Categories() {
         {categories.map((item, indexCat) => (
           <S.ContainerCategory key={item.title}>
             <S.HeaderCategory>
-              <h2>
-                <span
-                  onClick={() => navigate('/admin/categories/update/' + item._id)}
-                  className="fas fa-edit"
-                  style={{ opacity: 0.8, margin: 'auto 6px 0 0', cursor: 'pointer' }}
-                />
+              <Box sx={{ display: 'flex' }}>
+                <PopupState variant="popover" popupId="demo-popup-menu">
+                  {(popupState) => (
+                    <>
+                      <IconButton sx={{ p: 0, m: 0 }} {...bindTrigger(popupState)}>
+                        <MoreVertIcon sx={{ fontSize: '20px', ml: -1 }} />
+                      </IconButton>
+                      <Menu {...bindMenu(popupState)}>
+                        <S.MenuItemCuston onClick={() => navigate('/admin/categories/update/' + item._id)}>
+                          <span className="fa fa-edit"></span> Editar
+                        </S.MenuItemCuston>
+                        <S.MenuItemCuston onClick={() => remove(item._id)}>
+                          <span className="fa fa-remove"></span> Excluir
+                        </S.MenuItemCuston>
+                      </Menu>
+                    </>
+                  )}
+                </PopupState>
                 {item.title}
-              </h2>
+              </Box>
               <div className="actions">
                 <div className="move">
                   <span
@@ -235,3 +264,5 @@ export default function Categories() {
     </>
   );
 }
+
+export default Index;

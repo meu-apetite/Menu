@@ -149,10 +149,6 @@ const ProductView = (props) => {
 
   return (
     <S.Main>
-      <S.Header>
-        <S.Container><h1>{product.name}</h1></S.Container>
-      </S.Header>
-
       <S.ContainerProduct>
         <S.BackgroundImg bgImg={product.images[0]?.url} />
 
@@ -251,7 +247,6 @@ const ProductView = (props) => {
           <span className="value">{counterValue}</span>
           <span className="fa-solid fa-plus" onClick={setProductItem}></span>
         </S.CountItem>
-
         <S.ButtonAdd onClick={addToCart} disabled={!confirm}>
           <span>Adicionar</span>
           <span>{price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
