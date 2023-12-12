@@ -1,19 +1,13 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import axios from 'axios';
-import {
-  Box,
-  Button,
-  Grid,
-  InputAdornment,
-  Switch,
-  TextField,
-} from '@mui/material';
+import { Box, Button, Grid, InputAdornment, TextField } from '@mui/material';
 import { GridSearchIcon } from '@mui/x-data-grid';
-import toast from 'react-hot-toast';
 import LoadingAnimation from 'components/LoadingAnimation';
+import { AuthContext } from 'contexts/auth';
 import * as S from './style';
 
 const FindAddressClient = (props /* { getAddress() } */) => {
+  const { toast } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState({
     zipCode: null,
@@ -26,18 +20,46 @@ const FindAddressClient = (props /* { getAddress() } */) => {
     condominium: null,
   });
   const [cep, setCep] = useState(null);
-  const [iscondominium, setIsCondominium] = useState(false);
   const [openModalCep, setOpenModalCep] = useState(true);
   const [openModalAddress, setOpenModalAddress] = useState(false);
   const [openModalInfoExtra, setOpenModalInfoExtra] = useState(false);
+  const [edit, setEdit] = useState(false);
+
+  const editAddress = () => {
+    setAddress({
+      zipCode: '',
+      city: '',
+      state: '',
+      street: '',
+      district: '',
+      number: '',
+      reference: '',
+    });
+    setEdit(true);
+  };
+
+  const problemCep = () => {
+    setEdit(true);
+    setOpenModalCep(false);
+    setOpenModalAddress(true);
+  };
+
+  const nextInfoExtra = () => {
+    if (!address.street || !address.district || !address.city) {
+      return toast.error('Preencha todos os campos', { position: 'top-center' });
+    }
+
+    setOpenModalAddress(false); 
+    setOpenModalInfoExtra(true); 
+  }
 
   const findCep = async () => {
     try {
       setLoading(true);
 
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-     
-      if(response.data?.erro) return toast.error('Cep incorreto', { duration: 5000, position: 'top-center' });
+
+      if (response.data?.erro) return toast.error('Cep incorreto', { duration: 5000, position: 'top-center' });
 
       setAddress({
         zipCode: response.data.cep,
@@ -80,15 +102,19 @@ const FindAddressClient = (props /* { getAddress() } */) => {
               </Grid>
 
               {
-                !loading ? (
-                  <Button variant="contained" onClick={findCep}>Continuar</Button>
-                ) : (
-                  <S.WrapperAnimation>
-                    <LoadingAnimation />
-                  </S.WrapperAnimation>
-                ) 
+                !loading
+                  ? <div style={{ display: 'grid', gap: '16px', marginTop: '-24px' }}>
+                      <Button variant="contained" onClick={findCep}>Continuar</Button>
+                      <Button 
+                        sx={{ color: '#000', fontSize: '12px' }} 
+                        onClick={problemCep}
+                      >
+                        Problema com CEP ou sua rua não possui CEP?
+                      </Button>
+                    </div>
+                  : <S.WrapperAnimation><LoadingAnimation /></S.WrapperAnimation>
               }
-              
+
             </S.WrapperForm>
           </S.ModalContent>
         </S.ModalContainer>
@@ -98,35 +124,66 @@ const FindAddressClient = (props /* { getAddress() } */) => {
         <S.ModalContainer>
           <S.ModalContent>
             <S.WrapperForm>
-              <S.TitleModal>Confira com atenção o seu endereço</S.TitleModal>
+              <S.TitleModal>
+                {!edit ? 'Confira com atenção o seu endereço' : 'Insira corretamente seu endereço'}
+              </S.TitleModal>
 
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Cep" value={address.zipCode} disabled />
+                  {edit && <span>
+                    Problemas com o CEP? Não vamos conseguir calcular automaticamente a entrega, mas
+                    breve entraremos em contato com o valor.
+                  </span>
+                  }
+                </Grid>
+
+                {!edit && (
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Cep"
+                      value={address.zipCode}
+                      onChange={(e) => setAddress({ ...address, zipCode: e.target.value })}
+                      disabled={!edit}
+                    />
+                  </Grid>
+                )}
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Rua"
+                    value={address.street}
+                    onChange={(e) => setAddress({ ...address, street: e.target.value })}
+                    disabled={!edit}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Rua" value={address.street} disabled />
+                  <TextField
+                    fullWidth
+                    label="Bairro"
+                    value={address.district}
+                    onChange={(e) => setAddress({ ...address, district: e.target.value })}
+                    disabled={!edit}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Bairro" value={address.district} disabled />
-                </Grid>
-                <Grid item xs={8}>
-                  <TextField fullWidth label="Cidade" value={address.city} disabled />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField fullWidth label="Estado" value={address.state} disabled />
+                  <TextField
+                    fullWidth
+                    label="Cidade"
+                    value={address.city}
+                    onChange={(e) => setAddress({ ...address, city: e.target.value })}
+                    disabled={!edit}
+                  />
                 </Grid>
               </Grid>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.8 }}>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    setOpenModalAddress(false);
-                    setOpenModalInfoExtra(true);
-                  }}
-                >Continuar</Button>
-                <Button variant="outlined" color="error">Endereço errado</Button>
+                <Button variant="contained" onClick={nextInfoExtra}>Continuar</Button>
+                {!edit && 
+                  <Button variant="outlined" color="error" onClick={editAddress}>
+                    Endereço errado
+                  </Button>
+                }
               </Box>
             </S.WrapperForm>
           </S.ModalContent>
@@ -139,24 +196,6 @@ const FindAddressClient = (props /* { getAddress() } */) => {
             <S.WrapperForm>
               <S.TitleModal>Outras informações</S.TitleModal>
               <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <label>Casa em condomínio</label>
-                  <Switch
-                    checked={iscondominium}
-                    onChange={() => setIsCondominium(!iscondominium)}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                  />
-                </Grid>
-                {iscondominium && (
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Condomínio e bloco"
-                      value={address.condominium}
-                      onChange={(e) => setAddress({ ...address, condominium: e.target.value })}
-                    />
-                  </Grid>
-                )}
                 <Grid item xs={12}>
                   <TextField
                     fullWidth

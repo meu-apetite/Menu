@@ -110,7 +110,7 @@ export default function Home() {
             </Typography>
           </CardContent>
           <>
-            <QRCode value={'https://google.com'} />
+            <QRCode value={'http://192.168.0.136/cardapio/doces'} />
           </>
       </S.CardWelcome>
 

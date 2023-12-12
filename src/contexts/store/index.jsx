@@ -41,13 +41,18 @@ export const StoreProvider = (props) => {
     return bag || {};
   };
 
+  const clearBag = (id = store.storeUrl) => {
+    const storeId = id; 
+    localStorage.removeItem(storeId);    
+  };
+
   useEffect(() => {
     if (!store.storeUrl) return;
     getTotal();
   }, [store])
 
   return (
-    <StoreContext.Provider value={{ saveProduct, total, quantityTotal, getBag, store, setStore }}>
+    <StoreContext.Provider value={{ saveProduct, total, quantityTotal, getBag, store, setStore, clearBag }}>
       {props.children}
     </StoreContext.Provider>
   );

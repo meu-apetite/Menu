@@ -50,6 +50,7 @@ export const PickupComponent = (props) => {
 };
 
 export const DeliveryComponent = ({ address, onChangeAddress }) => {
+  console.log(address)
   return (
     <div>
       <Card sx={{ display: 'grid', gridTemplateColumns: '9fr 3fr', mt: 1.2 }}>
@@ -90,10 +91,8 @@ export const DeliveryComponent = ({ address, onChangeAddress }) => {
 const Address = () => {
   const navigate = useNavigate();
   const apiService = new ApiService(false);
-
   const { store: storeSaved, getBag } = useContext(StoreContext);
   const { setLoading, toast } = useContext(AuthContext);
-
   const [deliveryType, setDeliveryType] = useState('delivery'); //delivery | pickup
   const [address, setAddress] = useState(null);
   const [addressToken, setAddressToken] = useState(null);
@@ -104,6 +103,13 @@ const Address = () => {
   const toggleFindAddress = () => setOpenFindAddress(!openFindAddress);
 
   const calculateFreight = async (data) => {
+    if (!data?.street || !data?.district || !data?.city || !data.number) {
+      toast.error(
+        'Endereço incompleto, verique seu endereço. Caso o erro seja recorrente, entre em contato com nosso suporte',
+        { position: 'top-center' }  
+      )
+    }
+
     try {
       setLoading(true);
       const { data: response } = await apiService.post('/store/calculateFreight', { address: data, companyId: store._id  });

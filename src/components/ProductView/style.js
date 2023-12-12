@@ -25,7 +25,7 @@ export const ContainerProduct = styled('div')({
   },
   '.subtitle': {
     margin:' 10px 0 0',
-    fontSize: '1rem',
+    fontSize: '1.2rem',
     fontWeight: 500,
     color: '#3e3e3e',
   },
@@ -53,6 +53,7 @@ export const optionItem = styled('div')({
 export const BackgroundImg = styled('div')(({ bgImg }) => ({
   backgroundImage: `url(${bgImg})`,
   height: '35vh',
+  maxHeight: '300px',
   width: '100%',
   backgroundPosition: '50%',
   backgroundRepeat: 'no-repeat',

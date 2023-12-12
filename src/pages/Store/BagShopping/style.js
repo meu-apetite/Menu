@@ -19,6 +19,13 @@ export const WrapperTotal = styled('div')({
   justifyContent: 'end'
 });
 
+
+export const WrapperButton = styled('div')(({ theme }) => ({
+  textAlign: 'center',
+  marginTop: theme.spacing(2),
+  'button': { width: '100%', maxWidth: '400px', minHeight: '48px'}
+}));
+
 export const ButtonDefault = styled(Button)({
   fontSize: '1rem',
   gap: '16px',
@@ -26,7 +33,7 @@ export const ButtonDefault = styled(Button)({
   textTransform: 'capitalize',
   width: '100%',
   margin: 'auto',
-  marginTop: '16px'
+  marginTop: '16px',
 });
 
 export const Logo = styled('img')({

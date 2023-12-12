@@ -10,25 +10,64 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Divider,
+  Skeleton,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { AuthContext } from 'contexts/auth';
 import { StoreContext } from 'contexts/store';
 import { ApiService } from 'services/api.service';
-import * as S from './style';
 import ModalClientContact from './ModalClientContact';
+import * as S from './style';
+import { AuthContext } from 'contexts/auth';
+import CustomError from 'components/CustomError';
+
+function MediaProduct(props) {
+  const { loading = false, products } = props;
+  const itens = Array.from({ length: products });
+
+  return (
+    loading && (
+      <List>
+        {itens.map((item, i) => (
+          <div key={`id-${i}`}>
+            <ListItem alignItems="flex-start">
+              <ListItemAvatar>
+                <Skeleton animation="wave" variant="circular" width={40} height={40} />
+              </ListItemAvatar>
+              <div style={{ display: 'grid', width: '100%' }}>
+                <Skeleton
+                  animation="wave"
+                  height={20} width="32%"
+                  sx={{ marginTop: 1, minWidth: '140px' }}
+                />
+                <Skeleton
+                  animation="wave"
+                  height={15}
+                  width="24%"
+                  sx={{ minWidth: '100px' }}
+                />
+              </div>
+              <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="delete"><DeleteIcon /></IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+            <Divider />
+          </div>
+        ))}
+      </List>
+    )
+  );
+}
 
 const CartPage = () => {
   const apiService = new ApiService(false);
   const navigate = useNavigate();
-
-  const { setLoading } = useContext(AuthContext);
-  const { getBag, setStore: setStoreContext } = useContext(StoreContext);
+  const { getBag, setStore: setStoreContext, clearBag } = useContext(StoreContext);
+  const { toast } = useContext(AuthContext);
   const { storeUrl } = useParams();
-
   const [order, setOrder] = useState({ products: [] });
   const [store, setStore] = useState();
   const [openModalAddress, setOpenModalAddress] = useState(false);
+  const [error, setError] = useState(null);
 
   const getStore = async () => {
     const { data } = await apiService.get('/store/' + storeUrl);
@@ -38,9 +77,18 @@ const CartPage = () => {
 
   const estimateValue = async () => {
     try {
-      setLoading(true);
-
       const bag = await getBag(storeUrl);
+
+      if (bag?.products?.length <= 0 || bag?.products === null || bag?.products === undefined) {
+        return setError({ 
+          code: 404, 
+          title: 'Vázio!',
+          text: 'Nenhum item encontrado na sacola',
+          buttonText: 'Voltar ao cardápio',
+          buttonAction: () => document.location.href = `/cardapio/${storeUrl}`
+        })
+      }
+
       const { data: orderData } = await apiService.post(
         '/store/estimateValue',
         bag.products.map((item) => ({
@@ -55,9 +103,18 @@ const CartPage = () => {
         products: orderData.products, productsToken: orderData.productsToken
       }));
     } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+      setError({ 
+        code: error.response?.status, 
+        title: 'Não foi possível recuperar o seu pedido',
+        buttonText: 'Limpar pedido',
+        buttonAction: () => {
+          clearBag();
+          toast.success('Pedido limpo, vamos redirecionar você ao nosso cardapio para refazer o pedido');
+          setTimeout(() => document.location.href = `/cardapio/${storeUrl}`, 4000);
+        },
+        text: error.response.data?.message 
+          || 'Não conseguimos recuperar os dados do seu pedido. Atualize a página e, se o problema persistir, clique em "Limpar Pedido"'
+      });
     }
   };
 
@@ -67,7 +124,7 @@ const CartPage = () => {
   };
 
   const toggleModalAddress = async () => setOpenModalAddress(!openModalAddress);
-  
+
   const next = async (clientInfo) => {
     const bag = await getBag(storeUrl);
     const newBag = { ...bag, ...clientInfo };
@@ -83,7 +140,10 @@ const CartPage = () => {
   return (
     <section>
       <S.Header>
-        <S.Logo src={store?.custom?.logo?.url} alt={`Logomarca de ${store?.name}`} />
+        {(!store)
+          ? <Skeleton animation="wave" variant="circular" width={60} height={60} />
+          : <S.Logo src={store?.custom?.logo?.url} alt={`Logomarca de ${store?.name}`} />
+        }
       </S.Header>
 
       <Container maxWidth="md">
@@ -104,16 +164,29 @@ const CartPage = () => {
             ))}
           </List>
 
+          <MediaProduct loading={(order.products.length <= 0)} products={3} />
+
           <S.WrapperTotal>
             <span>subtotal:</span>
             <strong>{formatPrice(order?.total)}</strong>
           </S.WrapperTotal>
 
-          <S.ButtonDefault variant="contained" onClick={toggleModalAddress}>Continuar</S.ButtonDefault>
+          <S.WrapperButton>
+            <S.ButtonDefault variant="contained" onClick={toggleModalAddress}>
+              Continuar
+            </S.ButtonDefault>
+          </S.WrapperButton>
         </section>
       </Container>
 
-      {openModalAddress && <ModalClientContact getData={(data) => next(data)} />}
+      <ModalClientContact 
+        open={openModalAddress} 
+        getData={(data) => next(data)} 
+        onClose={() => setOpenModalAddress(false)}
+      />
+
+      {error && <CustomError error={error}/>}
+
     </section>
   );
 };

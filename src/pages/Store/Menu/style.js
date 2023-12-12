@@ -1,6 +1,6 @@
 import { styled } from '@mui/system';
 import { alpha } from '@mui/material/styles';
-import { Accordion, AccordionDetails, Box, Button, InputBase } from '@mui/material';
+import { Accordion, AccordionDetails, Box, Button, Card, CardContent, CardMedia, Dialog, InputBase } from '@mui/material';
 
 const headerNavHeight = '60px';
 
@@ -51,7 +51,8 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export const Intro = styled(Box)({
-  height: '200px',
+  position: 'relative',
+  height: '220px',
   background: 'url(https://files.menudino.com/cardapios/9621/capa.jpg)',
   backgroundSize: 'cover',
   backgroundPosition: '50%',
@@ -83,7 +84,7 @@ export const Logo = styled('img')({
 
 export const AccordionCustom = styled(Accordion)(({ theme }) => ({
   borderTop: `2px solid ${theme.palette.primary.main}`, 
-  marginBottom: 32
+  marginBottom: 90,
 }));
 
 export const AccordionDetailsCustom = styled(AccordionDetails)({
@@ -111,4 +112,48 @@ export const ButtonCart = styled(Button)(({ theme }) =>({
   maxWidth: '450px',
   transform: 'translateX(-50%)',
   // background: `${theme.palette.secondary.main}`
+}));
+
+export const Footer = styled('footer')(({ theme }) =>({
+  backgroundColor: theme.palette.background.paper,
+  padding: theme.spacing(6, 0),
+  marginTop: '4rem'
+}));
+
+export const CardCustom = styled(Card)({
+  backgroundColor: ' #ffffff',
+  border: '1px solid transparent',
+  boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.09)',
+  borderRadius: 4,
+  '@media (min-width: 768px)': {
+    boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.09)'
+  },
+});
+
+export const CardMediaCustom = styled(CardMedia)({
+  width: 100,
+  height: 100,
+  borderRadius: 6
+});
+
+export const CardContentCustom = styled(CardContent)({
+  display: 'grid',
+  gridTemplateColumns: '1fr 100px',
+  gap: '15px',
+  cursor: 'pointer'
+});
+
+export const CardInfo = styled('div')({
+  display: 'grid',
+  gridTemplateRows: '1fr 20px',
+  margin: 0,
+});
+
+export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
 }));

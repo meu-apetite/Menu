@@ -18,6 +18,20 @@ const FindAddress = (props /* { getAddress() } */) => {
   const [openModalCep, setOpenModalCep] = useState(true);
   const [openModalAddress, setOpenModalAddress] = useState(false);
   const [openModalInfoExtra, setOpenModalInfoExtra] = useState(false);
+  const [edit, setEdit] = useState(false);
+
+  const clearAddress = () => {
+    setAddress({
+      zipCode: null,
+      city: null,
+      state: null,
+      street: null,
+      district: null,
+      number: null,
+      reference: null,
+    });
+    setEdit(true);
+  }
 
   const findCep = async () => {
     try {
@@ -77,22 +91,51 @@ const FindAddress = (props /* { getAddress() } */) => {
             <S.ButtonModalClose onClick={props.closeModal} className='fa fa-times' />
             <S.WrapperForm>
               <S.TitleModal>Confira com atenção o seu endereço</S.TitleModal>
-
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Cep" value={address.zipCode} disabled />
+                  <TextField 
+                    fullWidth 
+                    label="Cep" 
+                    value={address.zipCode}
+                    onChange={(e) => setAddress({ ...address, zipCode: e.target.value})}
+                    disabled={edit} 
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Rua" value={address.street} disabled />
+                  <TextField 
+                    fullWidth 
+                    label="Rua" 
+                    value={address.street}
+                    onChange={(e) => setAddress({ ...address, street: e.target.value})}
+                    disabled={edit} 
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Bairro" value={address.district} disabled />
+                  <TextField 
+                    fullWidth 
+                    label="Bairro" 
+                    value={address.district}
+                    onChange={(e) => setAddress({ ...address, district: e.target.value})}
+                    disabled={edit} 
+                  />
                 </Grid>
                 <Grid item xs={8}>
-                  <TextField fullWidth label="Cidade" value={address.city} disabled />
+                  <TextField 
+                    fullWidth 
+                    label="Cidade" 
+                    value={address.city}
+                    onChange={(e) => setAddress({ ...address, city: e.target.value})}
+                    disabled={edit} 
+                  />
                 </Grid>
                 <Grid item xs={4}>
-                  <TextField fullWidth label="Estado" value={address.state} disabled />
+                  <TextField 
+                    fullWidth 
+                    label="Estado" 
+                    value={address.state} 
+                    onChange={(e) => setAddress({ ...address, state: e.target.value})}
+                    disabled={edit} 
+                  />
                 </Grid>
               </Grid>
 
@@ -106,7 +149,13 @@ const FindAddress = (props /* { getAddress() } */) => {
                 >
                   Continuar
                 </Button>
-                <Button variant="outlined" color="error">Endereço errado</Button>
+                <Button 
+                  variant="outlined" 
+                  color="error"
+                  onClick={clearAddress}
+                >
+                  Endereço errawdo
+                </Button>
               </Box>
             </S.WrapperForm>
           </S.ModalContent>

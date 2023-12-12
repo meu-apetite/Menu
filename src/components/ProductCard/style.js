@@ -1,37 +1,5 @@
-import { Card, CardContent, CardMedia } from '@mui/material';
+import { Card, CardContent, CardMedia, Dialog, DialogContent, Toolbar } from '@mui/material';
 import { styled } from '@mui/system';
-
-export const ModalContainer = styled('div')({
-  background: 'rgba(113,113,113,.4)',
-  display: 'flex',
-  flexDirection: 'column',
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  minHeight: '100%',
-  zIndex: 4,
-});
-
-export const ModalContent = styled('div')({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  borderRadius: 4,
-  boxShadow: 24,
-  padding: 4,
-  height: '100%',
-  width: '100%',
-  overflow: 'hidden',
-  background: '#fff',
-  '@media (min-width: 768px)': {
-    height: '85%',
-    maxHeight: '800px',
-    maxWidth: '700px',
-  },
-});
 
 export const CardCustom = styled(Card)({
   backgroundColor: ' #ffffff',
@@ -53,6 +21,7 @@ export const CardContentCustom = styled(CardContent)({
   display: 'grid',
   gridTemplateColumns: '1fr 100px',
   gap: '15px',
+  cursor: 'pointer'
 });
 
 export const CardInfo = styled('div')({
@@ -99,3 +68,27 @@ export const Price = styled('span')({
   fontWeight: '400',
   color: '#3e3e3e',
 });
+
+export const DialogCustom = styled(Dialog)({
+  '.css-m9glnp-MuiPaper-root-MuiDialog-paper': {
+    background: 'transparent',
+    boxShadow: 'none',
+    maxHeight: '700px',  
+  }
+});
+
+export const DialogContentCustom = styled(DialogContent)({
+  padding: 0, 
+  backgroundColor: '#ffffff', 
+  maxWidth: '700px', 
+  height: '700px',  
+  width: `700px`,
+  margin: 'auto'
+});
+
+export const ToolbarCustom = styled(Toolbar)(({ theme }) => ({
+  background: theme.palette.primary.main,
+  color: '#ffffff',
+  width: '700px',
+  margin: 'auto'    
+}));

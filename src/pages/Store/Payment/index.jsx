@@ -1,6 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Grid, List, ListItem, ListItemText, Tab, Tabs } from '@mui/material';
+import {
+  Container,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Tab,
+  Tabs,
+} from '@mui/material';
 import { ApiService } from 'services/api.service';
 import { StoreContext } from 'contexts/store';
 import { AuthContext } from 'contexts/auth';
@@ -38,7 +46,7 @@ const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
         return methods.push({ ...item, icon: iconHipercard });
       } else if (item.id.indexOf('visa') >= 0) {
         return methods.push({ ...item, icon: iconVisa });
-      }  else if (item.id.indexOf('amex') >= 0) {
+      } else if (item.id.indexOf('amex') >= 0) {
         return methods.push({ ...item, icon: iconAmex });
       } else if (item.id.indexOf('nugo') >= 0) {
         return methods.push({ ...item, icon: iconNugo });
@@ -46,16 +54,18 @@ const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
         return methods.push({ ...item, icon: iconSodexo });
       } else if (item.id.indexOf('vr') >= 0) {
         return methods.push({ ...item, icon: iconVr });
-      }else if (item.id.indexOf('ticket') >= 0) {
+      } else if (item.id.indexOf('ticket') >= 0) {
         return methods.push({ ...item, icon: iconTicket });
       } else {
         return methods.push({ ...item, icon: iconNugo });
-      }  
+      }
     });
 
-    methods.forEach(item => {
+    methods.forEach((item) => {
       const parent = item.parent;
-      const objCorrespondente = methodsParent.find(obj => obj.parent === parent);
+      const objCorrespondente = methodsParent.find(
+        (obj) => obj.parent === parent,
+      );
       if (objCorrespondente) {
         objCorrespondente.options.push(item);
       } else {
@@ -75,7 +85,10 @@ const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
             <strong>{item.parent}</strong>
             <List>
               {item.options.map((method) => (
-                <ListItem key={method.id} sx={{ display: 'flex', alignItems: 'center' }}>
+                <ListItem
+                  key={method.id}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
                   <input
                     style={{ margin: '0 1rem 0 0' }}
                     type="radio"
@@ -108,18 +121,18 @@ const Payment = ({ paymentOnline }) => {
   const { setLoading, toast } = useContext(AuthContext);
 
   const [paymentMethod, setPaymentMethod] = useState();
-  const [paymentType, setPaymentType] = useState('online'); //indelivery
-  const [settingsPayment, setSettingsPayment] = useState('online'); //indelivery
+  const [paymentType, setPaymentType] = useState('indelivery'); //indelivery | online
+  const [settingsPayment, setSettingsPayment] = useState({}); //indelivery
   const [store, setStore] = useState({});
 
   const getSettingsPayment = async () => {
     try {
       setLoading(true);
       const bag = await getBag();
-      const { data } = await apiService.post(
-        '/store/payment/', 
-        { companyId: storeSaved._id, productsToken: bag.productsToken }
-      );
+      const { data } = await apiService.post('/store/payment/', {
+        companyId: storeSaved._id,
+        productsToken: bag.productsToken,
+      });
       setSettingsPayment(data);
       initMercadoPago(data.mercadoPago.publicKey);
     } catch (error) {
@@ -137,15 +150,18 @@ const Payment = ({ paymentOnline }) => {
 
       const { data: response } = await apiService.post(
         '/store/finishOrder/' + store._id,
-        { 
-          ...data, 
-          companyId: storeSaved._id, 
-          paymentType: 'indelivery', 
-          paymentMethod 
-        }
+        {
+          ...data,
+          companyId: storeSaved._id,
+          paymentType: 'indelivery',
+          paymentMethod,
+        },
       );
 
-      navigate(`/cardapio/${response.company.storeUrl}/meupedido/${response.order.id}`, { state: { ...response } });
+      navigate(
+        `/cardapio/${response.company.storeUrl}/meupedido/${response.order.id}`,
+        { state: { ...response } },
+      );
     } catch (error) {
       console.log(error);
     } finally {
@@ -155,8 +171,17 @@ const Payment = ({ paymentOnline }) => {
 
   useEffect(() => {
     if (!storeSaved?.storeUrl) {
-      navigate(`/cardapio/${window.location.href.split('/').reverse()[2]}/pedido`);
+      navigate(
+        `/cardapio/${window.location.href.split('/').reverse()[2]}/pedido`,
+      );
     }
+
+    if (!store.settingsPayment?.mercadoPago) {
+      setPaymentType('indelivery');
+    } else {
+      setPaymentType('online');
+    }
+
     setStore(storeSaved);
     getSettingsPayment();
   }, []);
@@ -164,7 +189,10 @@ const Payment = ({ paymentOnline }) => {
   return (
     <S.Main>
       <S.Header>
-        <S.Logo src={store?.custom?.logo?.url} alt={`Logomarca de ${store?.name}`} />
+        <S.Logo
+          src={store?.custom?.logo?.url}
+          alt={`Logomarca de ${store?.name}`}
+        />
       </S.Header>
 
       <Container maxWidth="md">
@@ -175,7 +203,9 @@ const Payment = ({ paymentOnline }) => {
             onChange={(e, value) => setPaymentType(value)}
             aria-label="Opções de pagamento"
           >
-            <Tab value="online" label="Pagamento Online" />
+            {store.settingsPayment?.mercadoPago && (
+              <Tab value="online" label="Pagamento Online" />
+            )}
             <Tab value="indelivery" label="Pagamento na Retirada" />
           </Tabs>
         </section>
@@ -191,12 +221,12 @@ const Payment = ({ paymentOnline }) => {
               variant="contained"
               onClick={finishOrder}
             >
-              Concluir
+              Finalizar
             </S.ButtonDefault>
           </>
         )}
 
-        {paymentType === 'online' && (
+        {paymentType === 'online' && store.settingsPayment?.mercadoPago && (
           <div>
             <p>
               Após clicar em "PROSSEGUIR COM O PAGAMENTO", você terá acesso a
@@ -204,13 +234,14 @@ const Payment = ({ paymentOnline }) => {
               <strong>cartão de débito,</strong>e{' '}
               <strong>cartão de crédito</strong>.
             </p>
-            {
-              settingsPayment?.preferenceId && (
-                <Wallet
-                  initialization={{ preferenceId: settingsPayment?.preferenceId, redirectMode: 'modal' }}
-                />
-              )
-            }
+            {settingsPayment?.preferenceId && (
+              <Wallet
+                initialization={{
+                  preferenceId: settingsPayment?.preferenceId,
+                  redirectMode: 'modal',
+                }}
+              />
+            )}
           </div>
         )}
       </Container>
