@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 export class ApiService {
-  // #baseUrl = 'https://meuapetite.com:3000';
   #baseUrl = 'https://meuapetite.com/api';
 
   isAuth = false;
@@ -23,7 +22,7 @@ export class ApiService {
       if(!this.token || !this._id) throw new Error('Dados de autentucação ausente!');
 
       headers['Authorization'] = `Bearer ${this.token.replace(/"/g, '')}`;
-      headers['_id'] = this._id.replace(/"/g, '');
+      headers['companyid'] = this._id.replace(/"/g, '');
     }
 
     multipart ? headers['enctype'] = 'multipart/form-data' : headers['Content-Type'] = 'application/json';
