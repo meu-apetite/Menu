@@ -3,27 +3,8 @@ import axios from 'axios';
 export class ApiService {
   #baseUrl = 'https://meuapetite.com/api';
 
-  isAuth = false;
-  #token;
-  #_id;
-
-  constructor(routeAuth = true) {
-    if(routeAuth) {
-      this.isAuth = true;
-      this.token = localStorage.getItem('token')?.toString();
-      this._id = localStorage.getItem('_id')?.toString();
-    }
-  }
-
   getHeaders(multipart = false) {
     const headers = {};
-
-    if(this.isAuth) {
-      if(!this.token || !this._id) throw new Error('Dados de autentucação ausente!');
-
-      headers['Authorization'] = `Bearer ${this.token.replace(/"/g, '')}`;
-      headers['companyid'] = this._id.replace(/"/g, '');
-    }
 
     multipart ? headers['enctype'] = 'multipart/form-data' : headers['Content-Type'] = 'application/json';
 

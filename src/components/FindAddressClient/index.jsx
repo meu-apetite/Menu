@@ -1,13 +1,11 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { Box, Button, Grid, InputAdornment, TextField } from '@mui/material';
-import { GridSearchIcon } from '@mui/x-data-grid';
+import toast from 'react-hot-toast';
 import LoadingAnimation from 'components/LoadingAnimation';
-import { AuthContext } from 'contexts/auth';
 import * as S from './style';
 
 const FindAddressClient = (props /* { getAddress() } */) => {
-  const { toast } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState({
     zipCode: null,
@@ -95,7 +93,10 @@ const FindAddressClient = (props /* { getAddress() } */) => {
                     size="small"
                     onChange={(e) => setCep(e.target.value)}
                     InputProps={{
-                      endAdornment: (<InputAdornment position="start" onClick={findCep}><GridSearchIcon /></InputAdornment>)
+                      endAdornment: (
+                      <InputAdornment position="start" onClick={findCep}>
+                        <span className="fa fa-searc" />
+                      </InputAdornment>)
                     }}
                   />
                 </Grid>

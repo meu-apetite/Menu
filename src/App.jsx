@@ -1,8 +1,5 @@
 import { useRoutes } from 'react-router-dom';
-import { AuthProvider } from 'contexts/auth';
-import authRoutes from './routes/authRoutes';
-import storeRoutes from './routes/storeRoutes';
-import adminRoutes from './routes/adminRoutes';
+import routes from 'routes';
 import { StoreProvider } from 'contexts/store';
 import theme from './theme/default';
 import { ThemeProvider } from '@mui/material';
@@ -20,32 +17,19 @@ const GlobalStyles = () => (
   </style>
 );
 
-export const StoreRoutes = () => {
-  const routes = useRoutes([...storeRoutes]);
-  return <>{routes}</>;
+export const Routes = () => {
+  const appRoutes = useRoutes([...routes]);
+  return <>{appRoutes}</>;
 };
 
-export const AuthRoutes = () => {
-  const routes = useRoutes([...authRoutes]);
-  return <>{routes}</>;
-};
-
-export const AdminRoutes = () => {
-  const routes = useRoutes([...adminRoutes]);
-  return <>{routes}</>;
-};
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
-      <AuthProvider>
-        <AuthRoutes />
-        <AdminRoutes />
         <StoreProvider>
-          <StoreRoutes />
+          <Routes />
         </StoreProvider>
-      </AuthProvider>
     </ThemeProvider>
   );
 };
