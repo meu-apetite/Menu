@@ -15,18 +15,11 @@ export const Logo = styled('img')({
   borderRadius: '50%'
 });
 
-export const Icon = styled('img')({
-  width: '24px',
-  position: 'relative',
-  top: '-1px',
-  marginRight: '14px'
-});
-
 export const ButtonDefault = styled(Button)({
   fontSize: '1rem',
   gap: '16px',
   height: '48px',
-  textTransform: 'capitalize',
+  textTransform: 'uppercase',
   width: '100%',
   margin: 'auto',
   marginTop: '16px'

@@ -12,13 +12,13 @@ import {
   Divider,
   Skeleton,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import toast from 'react-hot-toast';
 import { StoreContext } from 'contexts/store';
 import { ApiService } from 'services/api.service';
 import ClientContact from './views/ClientContact';
 import CustomError from 'components/CustomError';
+import DeleteIcon from '@mui/icons-material/Delete';
 import * as S from './style';
-import toast from 'react-hot-toast';
 
 function MediaProduct(props) {
   const { loading = false, products } = props;
@@ -58,10 +58,12 @@ function MediaProduct(props) {
   );
 }
 
-const CartPage = () => {
+const BagPage = () => {
   const apiService = new ApiService(false);
   const navigate = useNavigate();
-  const { getBag, setStore: setStoreContext, clearBag } = useContext(StoreContext);
+  const { 
+    getBag, setStore: setStoreContext, clearBag, setLoading 
+  } = useContext(StoreContext);
   const { storeUrl } = useParams();
   const [order, setOrder] = useState({ products: [] });
   const [store, setStore] = useState();
@@ -117,6 +119,24 @@ const CartPage = () => {
     }
   };
 
+  const removeItem = async (index) => {
+    try{
+      setLoading('Atualizando...');
+      const bag = await getBag(storeUrl);
+      const products = bag.products.filter((p, i) => index !== i);
+      await localStorage.setItem(
+        storeUrl, JSON.stringify({ products })
+      );
+      await estimateValue();
+      toast.success('Item removido!');
+    } catch(e) {
+      console.log(e)
+      toast.error('Não foi possível remover o item da sacola');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const formatPrice = (data) => {
     if (!data) return 'R$ 0,00';
     return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -155,7 +175,9 @@ const CartPage = () => {
                   <ListItemAvatar><Avatar alt={item.name} src={item.imageUrl} /></ListItemAvatar>
                   <ListItemText primary={item.productName} secondary={`Quant.: ${item.quantity} | Preço: ${formatPrice(item.priceTotal)}`} />
                   <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="delete"><DeleteIcon /></IconButton>
+                    <IconButton onClick={() => removeItem(i)} edge="end" aria-label="delete">
+                      <DeleteIcon />
+                    </IconButton>
                   </ListItemSecondaryAction>
                 </ListItem>
                 <Divider />
@@ -185,9 +207,8 @@ const CartPage = () => {
       />
 
       {error && <CustomError error={error}/>}
-
     </section>
   );
 };
 
-export default CartPage;
+export default BagPage;

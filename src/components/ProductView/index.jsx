@@ -122,8 +122,6 @@ const ProductView = (props) => {
     setProduct(product);
     setPrice(Number(product.price));
 
-    console.log('okkk')
-
     const complementsAll = [];
     
     product.complements.forEach((item) => {
@@ -131,14 +129,13 @@ const ProductView = (props) => {
         setRequiredComplements((old) => [...old, item._id]);
       }
 
-      console.log(item)
       complementsAll.push({
         parent: item._id,
         min: item.min,
         max: item.max,
         isRequired: item.isRequired,
         count: 0,
-        options: item.options.map(option =>
+        options: item.options?.map(option =>
           ({ id: option._id, quantity: 0, price: option.price })
         )
       });
@@ -189,7 +186,7 @@ const ProductView = (props) => {
                   </div>
                 </S.ComplementHeader>
 
-                {item.options.map((option, indexOption) => {
+                {item.options?.map((option, indexOption) => {
                   const currentOption = complementOption.options.find(c => c.id === option._id);
 
                   return (

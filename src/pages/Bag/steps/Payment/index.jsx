@@ -1,128 +1,33 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Container, Grid, List, ListItem, ListItemText, Tab, Tabs } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Container, Tab, Tabs } from '@mui/material';
 import { ApiService } from 'services/api.service';
 import { StoreContext } from 'contexts/store';
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
-import iconDinheiro from 'assets/icons/dinheiro.png';
-import iconElo from 'assets/icons/elo.webp';
-import iconMastercard from 'assets/icons/mastercard.webp';
-import iconVisa from 'assets/icons/visa.webp';
-import iconHipercard from 'assets/icons/hipercard.png';
-import iconNugo from 'assets/icons/nugo.avif';
-import iconAmex from 'assets/icons/amex.png';
-import iconSodexo from 'assets/icons/sodexo.png';
-import iconVr from 'assets/icons/vr.avif';
-import iconTicket from 'assets/icons/ticket.png';
+import PaymentMethods from 'components/PaymentMethods';
 import * as S from './style';
 
-const PaymentMethodsComponent = ({ paymentOptions, getSelected }) => {
-  const [paymentMethods, setPaymentMethods] = useState([]);
-  const [methodCurrent, setMethodCurrent] = useState();
-
-  useEffect(() => {
-    if (!paymentOptions || paymentOptions?.length < 1) return;
-
-    const methods = [];
-    const methodsParent = [];
-
-    paymentOptions.forEach((item) => {
-      if (item.id.indexOf('elo') >= 0) {
-        return methods.push({ ...item, icon: iconElo });
-      } else if (item.id.indexOf('dinheiro') >= 0) {
-        return methods.push({ ...item, icon: iconDinheiro });
-      } else if (item.id.indexOf('mastercard') >= 0) {
-        return methods.push({ ...item, icon: iconMastercard });
-      } else if (item.id.indexOf('hipercard') >= 0) {
-        return methods.push({ ...item, icon: iconHipercard });
-      } else if (item.id.indexOf('visa') >= 0) {
-        return methods.push({ ...item, icon: iconVisa });
-      } else if (item.id.indexOf('amex') >= 0) {
-        return methods.push({ ...item, icon: iconAmex });
-      } else if (item.id.indexOf('nugo') >= 0) {
-        return methods.push({ ...item, icon: iconNugo });
-      } else if (item.id.indexOf('sodexo') >= 0) {
-        return methods.push({ ...item, icon: iconSodexo });
-      } else if (item.id.indexOf('vr') >= 0) {
-        return methods.push({ ...item, icon: iconVr });
-      } else if (item.id.indexOf('ticket') >= 0) {
-        return methods.push({ ...item, icon: iconTicket });
-      } else {
-        return methods.push({ ...item, icon: iconNugo });
-      }
-    });
-
-    methods.forEach((item) => {
-      const parent = item.parent;
-      const objCorrespondente = methodsParent.find(
-        (obj) => obj.parent === parent,
-      );
-      if (objCorrespondente) {
-        objCorrespondente.options.push(item);
-      } else {
-        methodsParent.push({ parent: parent, options: [item] });
-      }
-    });
-
-    setPaymentMethods(methodsParent);
-  }, []);
-
-  return (
-    <div>
-      <h4>Escolha a forma de pagamdento:</h4>
-      <Grid container spacing={2}>
-        {paymentMethods?.map((item, i) => (
-          <Grid item xs={12} sm={6} key={i}>
-            <strong>{item.parent}</strong>
-            <List>
-              {item.options.map((method) => (
-                <ListItem
-                  key={method.id}
-                  sx={{ display: 'flex', alignItems: 'center' }}
-                >
-                  <input
-                    style={{ margin: '0 1rem 0 0' }}
-                    type="radio"
-                    checked={methodCurrent === method.id}
-                    onChange={() => {
-                      setMethodCurrent(method.id);
-                      getSelected(method);
-                    }}
-                  />
-                  <S.Icon
-                    src={method?.icon}
-                    alt="logo da bandeira de cartão mastercard"
-                  />
-                  <ListItemText primary={method.title} />
-                </ListItem>
-              ))}
-            </List>
-          </Grid>
-        ))}
-      </Grid>
-    </div>
-  );
-};
-
-const Payment = ({ paymentOnline }) => {
+const Payment = () => {
   const navigate = useNavigate();
+  const { storeUrl } = useParams();
   const apiService = new ApiService(false);
-
-  const { store: storeSaved, getBag, setLoading } = useContext(StoreContext);
+  const { store: storeSaved, getBag, setLoading, clearBag } = useContext(StoreContext);
 
   const [paymentMethod, setPaymentMethod] = useState();
   const [paymentType, setPaymentType] = useState('indelivery'); //indelivery | online
-  const [settingsPayment, setSettingsPayment] = useState({}); //indelivery
+  const [settingsPayment, setSettingsPayment] = useState({});
   const [store, setStore] = useState({});
 
   const getSettingsPayment = async () => {
+    console.log('tett');
     try {
       setLoading(true);
       const bag = await getBag();
-      const { data } = await apiService.post('/store/payment/', {
+      const { data } = await apiService.post('/store/payment', {
         companyId: storeSaved._id,
         productsToken: bag.productsToken,
       });
+      console.log(data);
       setSettingsPayment(data);
       initMercadoPago(data.mercadoPago.publicKey);
     } catch (error) {
@@ -148,10 +53,11 @@ const Payment = ({ paymentOnline }) => {
         },
       );
 
-      navigate(
-        `/${response.company.storeUrl}/meupedido/${response.order.id}`,
-        { state: { ...response } },
-      );
+      clearBag();
+      
+      navigate(`/${storeUrl}/meupedido/${response.order.id}`, {
+        state: { ...response },
+      });
     } catch (error) {
       console.log(error);
     } finally {
@@ -160,11 +66,7 @@ const Payment = ({ paymentOnline }) => {
   };
 
   useEffect(() => {
-    if (!storeSaved?.storeUrl) {
-      navigate(
-        `/${window.location.href.split('/').reverse()[2]}/pedido`,
-      );
-    }
+    if (!storeSaved?.storeUrl) navigate(`/${storeUrl}/pedido`);
 
     if (!store.settingsPayment?.mercadoPago) {
       setPaymentType('indelivery');
@@ -200,21 +102,17 @@ const Payment = ({ paymentOnline }) => {
           </Tabs>
         </section>
 
-        {paymentType === 'indelivery' && (
-          <>
-            <PaymentMethodsComponent
-              paymentOptions={settingsPayment?.methods}
+        {paymentType === 'indelivery' && settingsPayment?.methods?.length ? (
+          <section>
+            <PaymentMethods
+              paymentOptions={settingsPayment.methods}
               getSelected={(m) => setPaymentMethod(m)}
             />
-            <S.ButtonDefault
-              sx={{ marginTop: '8px', textTransform: 'uppercase' }}
-              variant="contained"
-              onClick={finishOrder}
-            >
+            <S.ButtonDefault variant="contained" onClick={finishOrder}>
               Finalizar
             </S.ButtonDefault>
-          </>
-        )}
+          </section>
+        ) : null }
 
         {paymentType === 'online' && store.settingsPayment?.mercadoPago && (
           <div>

@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-import { Backdrop, Box, CircularProgress, Typography } from '@mui/material';
+import { Toaster } from 'react-hot-toast';
+import { Backdrop, Box, CircularProgress } from '@mui/material';
 
 export const StoreContext = createContext();
 
@@ -9,8 +9,6 @@ export const StoreProvider = (props) => {
   const [quantityTotal, setQuantityTotal] = useState(0);
   const [store, setStore] = useState({});
   const [bag, setBag] = useState(null);
-  const [company, setCompany] = useState({});
-  const [token, setToken] = useState('');
   const [loading, setLoading] = useState(false);
 
   const saveProduct = async (product) => {
@@ -52,18 +50,29 @@ export const StoreProvider = (props) => {
   };
 
   useEffect(() => {
-    if (!store.storeUrl) return;
+    if (!store?.storeUrl) return;
     getTotal();
   }, [store]);
 
   return (
-    <StoreContext.Provider value={{ saveProduct, total, quantityTotal, getBag, store, setStore, clearBag }}>
+    <StoreContext.Provider 
+      value={{ 
+        saveProduct, 
+        total, 
+        quantityTotal, 
+        getBag, 
+        store, 
+        setStore, 
+        clearBag,
+        setLoading
+      }}
+    >
       <Backdrop
-        sx={{ color: '#000000', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{ color: '#000000', zIndex: (theme) => theme.zIndex.drawer + 100 }}
         open={loading}
       >
         <Box sx={{ display: 'grid', justifyContent: 'center', gap: 1 }}>
-          <CircularProgress sx={{ ml: '8px' }} />
+          <CircularProgress size="4rem" sx={{ margin: 'auto' }} />
           <strong style={{ color: '#fff' }}>{loading}</strong>
         </Box>
       </Backdrop>

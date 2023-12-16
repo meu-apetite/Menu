@@ -38,9 +38,9 @@ export const TitleProduct = styled('h3')({
   marginTop: 5,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  '-webkit-box-orient': 'vertical',
+  WebkitBoxOrient: 'vertical',
   display: '-webkit-box',
-  ' -webkit-line-clamp': 2,
+  WebkitLineClamp: 2,
 });
 
 export const Description = styled('p')({
@@ -52,8 +52,8 @@ export const Description = styled('p')({
   whiteSpace: 'pre-line',
   visibility: 'visible',
   display: '-webkit-box',
-  '-webkit-line-clamp': '2',
-  '-webkit-box-orient': 'vertical',
+  wbkitLineClamp: '2',
+  wbkitboxOrient: 'vertical',
   color: '#717171',
   fontWeight: '300',
   '@media (min-width: 768px)': {

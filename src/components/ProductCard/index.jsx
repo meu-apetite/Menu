@@ -39,11 +39,14 @@ const ProductCard = (props) => {
     setOpenModal(true);
   };
 
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    
+  }
 
   return (
     <>
-      <S.CardCustom onClick={handleOpenModal}>
+      <S.CardCustom onClick={handleOpenModal} id={product._id}>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <S.CardContentCustom sx={{ flex: '1 0 auto', pt: 0 }}>
             <S.CardInfo>

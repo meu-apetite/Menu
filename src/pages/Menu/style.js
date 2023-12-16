@@ -1,8 +1,7 @@
 import { styled } from '@mui/system';
-import { alpha } from '@mui/material/styles';
-import { Accordion, AccordionDetails, Box, Button, Card, CardContent, CardMedia, Dialog, InputBase } from '@mui/material';
+import { Accordion, AccordionDetails, Box, Button, Card, CardContent, CardMedia, Dialog } from '@mui/material';
 
-const headerNavHeight = '60px';
+const headerNavHeight = '64px';
 
 export const Container = styled('div')({
   margin: 'auto',
@@ -16,49 +15,15 @@ export const WrapperNav = styled('nav')({
   zIndex: 2
 });
 
-export const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': { backgroundColor: alpha(theme.palette.common.white, 0.25) },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
-
-export const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-export const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%', [theme.breakpoints.up('md')]: { width: '20ch' }
-  },
-}));
-
 export const Intro = styled(Box)({
   position: 'relative',
-  height: '220px',
+  height: '232px',
   background: 'url(https://files.menudino.com/cardapios/9621/capa.jpg)',
   backgroundSize: 'cover',
   backgroundPosition: '50%',
   backgroundColor: '#f4f8f9',
   backgroundRepeat: 'no-repeat',
-  backgroundColor: 'rgba(0,0,0,.7)',
+  backgroundColor: 'rgba(0,0,0,0.7)',
   backgroundBlendMode: 'overlay',
   marginTop: headerNavHeight,
   display: 'flex',  
@@ -108,15 +73,16 @@ export const ButtonCart = styled(Button)(({ theme }) =>({
   width: '80%',
   display: 'flex',
   justifyContent: 'space-between',
-  padding: '4px 8px',
+  padding: '4px 12px',
   maxWidth: '450px',
   transform: 'translateX(-50%)',
-  // background: `${theme.palette.secondary.main}`
+  background: `${theme.palette.primary.main}`,
+  height: '52px'
 }));
 
 export const Footer = styled('footer')(({ theme }) =>({
   backgroundColor: theme.palette.background.paper,
-  padding: theme.spacing(6, 0),
+  padding: theme.spacing(4, 0),
   marginTop: '4rem'
 }));
 

@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
-import { Typography, Paper, Grid, List, ListItem, ListItemText } from '@mui/material'
-import { useLocation, useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react';
+import { Typography, Paper, Grid, List, ListItem, ListItemText } from '@mui/material';
+import { useLocation, useParams } from 'react-router-dom';
 import { ApiService } from 'services/api.service';
 
 const PedidoDetalhes = () => {
-  const { state } = useLocation()
-  const { storeUrl, orderId } = useParams()
+  const { state } = useLocation();
+  const { storeUrl, orderId } = useParams();
   const apiService = new ApiService();
   const [order, setOrder] = useState({
     id: 0,
@@ -23,8 +23,8 @@ const PedidoDetalhes = () => {
   const getData = async () => {
     const { data } = await apiService.get(`/store/${storeUrl}/order/${orderId}`);
     setOrder(data.order);
-    setStore(data.company);  
-  } 
+    setStore(data.company);
+  };
 
   useEffect(() => {
     if (state?.order?.id && state?.store?._id) {
@@ -33,14 +33,14 @@ const PedidoDetalhes = () => {
     } else {
       getData();
     }
-  }, [])
+  }, []);
 
   return (
-    <Paper style={{ padding: '20px', margin: '20px auto', maxWidth: '600px' }}>
+    <Paper elevation={6} style={{ padding: '20px', margin: '20px auto', maxWidth: '600px' }}>
       <Typography variant="h4" align="center" style={{ marginBottom: '16px' }}>
         Detalhes do Pedido #{order.id}
       </Typography>
-      <Grid container spacing={2}>
+      <Grid container={true} spacing={2}>
         <Grid item xs={12} sm={6}>
           <Typography variant="h6">Informações do Cliente:</Typography>
           <Typography variant="body1">
@@ -74,9 +74,8 @@ const PedidoDetalhes = () => {
           <ListItem key={i} style={{ borderBottom: '1px solid #ccc' }}>
             <ListItemText
               primary={item.productName}
-              secondary={`Quantidade: ${
-                item.quantity
-              } - R$ ${item.priceTotal.toFixed(2)}`}
+              secondary={`Quantidade: ${item.quantity
+                } - R$ ${item.priceTotal.toFixed(2)}`}
             />
           </ListItem>
         ))}
@@ -85,7 +84,7 @@ const PedidoDetalhes = () => {
         Total: {order?.total?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
       </Typography>
     </Paper>
-  )
-}
+  );
+};
 
-export default PedidoDetalhes
+export default PedidoDetalhes;
