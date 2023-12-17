@@ -41,7 +41,6 @@ const ProductCard = (props) => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    
   }
 
   return (

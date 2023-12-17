@@ -52,8 +52,10 @@ export const Description = styled('p')({
   whiteSpace: 'pre-line',
   visibility: 'visible',
   display: '-webkit-box',
-  wbkitLineClamp: '2',
-  wbkitboxOrient: 'vertical',
+  webkitLineClamp: '2',
+  webkitboxOrient: 'vertical',
+  '-webkit-line-clamp': 2,
+  '-webkit-box-orient': 'vertical',
   color: '#717171',
   fontWeight: '300',
   '@media (min-width: 768px)': {
