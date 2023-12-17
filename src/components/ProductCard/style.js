@@ -38,9 +38,9 @@ export const TitleProduct = styled('h3')({
   marginTop: 5,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  WebkitBoxOrient: 'vertical',
   display: '-webkit-box',
-  WebkitLineClamp: 2,
+  '-webkit-line-clamp': '2',
+  '-webkit-box-orient': 'vertical',
 });
 
 export const Description = styled('p')({
