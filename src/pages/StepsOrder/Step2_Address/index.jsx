@@ -142,14 +142,14 @@ const Address = () => {
       localStorage.setItem(store.storeUrl, JSON.stringify({ ...bag, address, addressToken, deliveryType }));
     }
 
-    navigate(`/${store.storeUrl}/pedido/pagamento`);
+    navigate(`/${store.storeUrl}/checkout/pay`);
   };
 
   const changeDeliveryType = async (e, value) => setDeliveryType(value);
 
   useEffect(() => {
     if (!storeSaved?.storeUrl) {
-      navigate(`/${window.location.href.split('/').reverse()[2]}/pedido`);
+      navigate(`/${window.location.href.split('/').reverse()[2]}/checkout`);
     }
     setStore(storeSaved);
     setSettings(storeSaved.settingsDelivery)

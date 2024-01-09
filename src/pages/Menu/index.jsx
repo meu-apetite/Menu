@@ -47,11 +47,11 @@ const Menu = () => {
     } catch (e) {
       setShowError(true);
       return setError({
-        code: e.response.status || 500,
-        title: e.response.status === 404
+        code: e.response?.status || 500,
+        title: e.response?.status === 404
           ? 'Não foi possível encontrar o cárdapio'
           : 'Não foi possível recuperar os dados desse cardápio',
-        text: e.response.data?.message || 'Verfique o endereço e tente novamente'
+        text: e.response?.data?.message || 'Verfique o endereço e tente novamente'
       });
     }
   };
@@ -99,7 +99,7 @@ const Menu = () => {
     });
   };
 
-  const toPageBagShopping = () => navigate('pedido');
+  const toPageBagShopping = () => navigate('checkout/bag');
 
   const toPageAbout = () => navigate('about');
 

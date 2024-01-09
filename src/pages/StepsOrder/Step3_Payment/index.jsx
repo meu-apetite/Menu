@@ -80,16 +80,8 @@ const Payment = () => {
 
   return (
     <S.Main>
-      <S.Header>
-        <S.Logo
-          src={store?.custom?.logo?.url}
-          alt={`Logomarca de ${store?.name}`}
-        />
-      </S.Header>
-
-      <Container maxWidth="md">
+  
         <section style={{ marginBottom: 2 }}>
-          <S.Title>Pagamento</S.Title>
           <Tabs
             value={paymentType}
             onChange={(e, value) => setPaymentType(value)}
@@ -132,7 +124,6 @@ const Payment = () => {
             )}
           </div>
         )}
-      </Container>
     </S.Main>
   );
 };

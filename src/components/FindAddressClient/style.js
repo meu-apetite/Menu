@@ -16,7 +16,7 @@ export const ModalContainer = styled('div')({
 export const ModalContent = styled('div')({
   position: 'absolute',
   top: '50%',
-  left: '50%',
+    left: '50%',
   transform: 'translate(-50%, -50%)',
   borderRadius: 4,
   boxShadow: 24,

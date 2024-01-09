@@ -1,8 +1,8 @@
 import { useRoutes } from 'react-router-dom';
-import routes from 'routes';
 import { StoreProvider } from 'contexts/store';
 import theme from './theme/default';
 import { ThemeProvider } from '@mui/material';
+import { finishOrderRoutes, storeRoutes } from 'routes';
 
 const GlobalStyles = () => (
   <style>
@@ -17,18 +17,23 @@ const GlobalStyles = () => (
   </style>
 );
 
-export const Routes = () => {
-  const appRoutes = useRoutes([...routes]);
+export const RoutesStore = () => {
+  const appRoutes = useRoutes([...storeRoutes]);
   return <>{appRoutes}</>;
 };
 
+export const RoutesFinishOrder = () => {
+  const appRoutes = useRoutes([...finishOrderRoutes]);
+  return <>{appRoutes}</>;
+};
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
         <StoreProvider>
-          <Routes />
+          <RoutesStore />
+          <RoutesFinishOrder />
         </StoreProvider>
     </ThemeProvider>
   );
