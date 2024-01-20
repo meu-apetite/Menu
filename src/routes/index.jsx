@@ -11,16 +11,16 @@ import Layout from 'components/Layout';
 export const finishOrderRoutes = [
   {
     path: ':storeUrl/checkout',
+    element: <Bag />,
+  },
+  {
+    path: ':storeUrl/checkout',
     element: <Layout />,
     children: [
       { path: 'contact', element: <ClientContact /> },
       { path: 'address', element: <Address /> },
       { path: 'pay', element: <Payment /> },
     ],
-  },
-  {
-    path: ':storeUrl/checkout/bag',
-    element: <Bag />,
   },
 ];
 

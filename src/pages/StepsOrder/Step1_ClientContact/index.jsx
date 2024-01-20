@@ -27,7 +27,7 @@ const ClientContact = () => {
     const bag = await getBag(storeUrl);
     const newBag = { ...bag, ...clientInfo };
     await localStorage.setItem(storeUrl, JSON.stringify(newBag));
-    navigate('/endereco');
+    navigate(`/${storeUrl}/checkout/address`);
   };
 
   return (

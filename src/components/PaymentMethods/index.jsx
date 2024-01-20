@@ -64,39 +64,36 @@ const PaymentMethods = ({ paymentOptions, getSelected }) => {
   }, []);
 
   return (
-    <div>
-      <h4>Escolha a forma de pagamdento:</h4>
-      <Grid container spacing={2}>
-        {paymentMethods?.map((item, i) => (
-          <Grid item xs={12} sm={6} key={i}>
-            <strong>{item.parent}</strong>
-            <List>
-              {item.options.map((method) => (
-                <ListItem
-                  key={method.id}
-                  sx={{ display: 'flex', alignItems: 'center' }}
-                >
-                  <input
-                    style={{ margin: '0 1rem 0 0' }}
-                    type="radio"
-                    checked={methodCurrent === method.id}
-                    onChange={() => {
-                      setMethodCurrent(method.id);
-                      getSelected(method);
-                    }}
-                  />
-                  <S.Icon
-                    src={method?.icon}
-                    alt="logo da bandeira de cartão mastercard"
-                  />
-                  <ListItemText primary={method.title} />
-                </ListItem>
-              ))}
-            </List>
-          </Grid>
-        ))}
-      </Grid>
-    </div>
+    <Grid container spacing={2}>
+      {paymentMethods?.map((item, i) => (
+        <Grid item xs={12} sm={6} key={i}>
+          <strong>{item.parent}</strong>
+          <List>
+            {item.options.map((method) => (
+              <ListItem
+                key={method.id}
+                sx={{ display: 'flex', alignItems: 'center' }}
+              >
+                <input
+                  style={{ margin: '0 1rem 0 0' }}
+                  type="radio"
+                  checked={methodCurrent === method.id}
+                  onChange={() => {
+                    setMethodCurrent(method.id);
+                    getSelected(method);
+                  }}
+                />
+                <S.Icon
+                  src={method?.icon}
+                  alt="logo da bandeira de cartão mastercard"
+                />
+                <ListItemText primary={method.title} />
+              </ListItem>
+            ))}
+          </List>
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 

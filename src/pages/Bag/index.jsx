@@ -11,14 +11,18 @@ import {
   IconButton,
   Divider,
   Skeleton,
+  Button,
+  Box,
 } from '@mui/material';
 import toast from 'react-hot-toast';
 import { StoreContext } from 'contexts/store';
 import { ApiService } from 'services/api.service';
-import ClientContact from './views/ClientContact';
 import CustomError from 'components/CustomError';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ButtonFloat from 'components/ButtonFloat';
+import animationBagEmpty from 'assets/gif/bag-empty.gif';
 import * as S from './style';
+import FindAddress from 'components/FindAddress';
 
 function MediaProduct(props) {
   const { loading = false, products } = props;
@@ -61,15 +65,16 @@ function MediaProduct(props) {
 const BagPage = () => {
   const apiService = new ApiService(false);
   const navigate = useNavigate();
-  const { 
-    getBag, setStore: setStoreContext, clearBag, setLoading 
-  } = useContext(StoreContext);
+  const { getBag, setStore: setStoreContext, clearBag, setLoading } = useContext(StoreContext);
   const { storeUrl } = useParams();
   const [order, setOrder] = useState({ products: [] });
   const [store, setStore] = useState();
-  const [openModalAddress, setOpenModalAddress] = useState(false);
   const [error, setError] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [addressToken, setAddressToken] = useState(null);
+  const [openFindAddress, setOpenFindAddress] = useState(false);
 
+  const toggleFindAddress = () => setOpenFindAddress(!openFindAddress);
   const getStore = async () => {
     const { data } = await apiService.get('/store/' + storeUrl);
     setStore(data);
@@ -81,13 +86,14 @@ const BagPage = () => {
       const bag = await getBag(storeUrl);
 
       if (bag?.products?.length <= 0 || bag?.products === null || bag?.products === undefined) {
-        return setError({ 
-          code: 404, 
+        return setError({
+          code: 404,
+          animation: animationBagEmpty,
           title: 'Vázio!',
           text: 'Nenhum item encontrado na sacola',
           buttonText: 'Voltar ao cardápio',
           buttonAction: () => document.location.href = `/${storeUrl}`
-        })
+        });
       }
 
       const { data: orderData } = await apiService.post(
@@ -104,8 +110,8 @@ const BagPage = () => {
         products: orderData.products, productsToken: orderData.productsToken
       }));
     } catch (error) {
-      setError({ 
-        code: error.response?.status, 
+      setError({
+        code: error.response?.status,
         title: 'Não foi possível recuperar o seu pedido',
         buttonText: 'Limpar pedido',
         buttonAction: () => {
@@ -113,14 +119,14 @@ const BagPage = () => {
           toast.success('Pedido limpo, vamos redirecionar você ao nosso cardapio para refazer o pedido');
           setTimeout(() => document.location.href = `/${storeUrl}`, 4000);
         },
-        text: error.response.data?.message 
+        text: error.response.data?.message
           || 'Não conseguimos recuperar os dados do seu pedido. Atualize a página e, se o problema persistir, clique em "Limpar Pedido"'
       });
     }
   };
 
   const removeItem = async (index) => {
-    try{
+    try {
       setLoading('Atualizando...');
       const bag = await getBag(storeUrl);
       const products = bag.products.filter((p, i) => index !== i);
@@ -129,8 +135,8 @@ const BagPage = () => {
       );
       await estimateValue();
       toast.success('Item removido!');
-    } catch(e) {
-      console.log(e)
+    } catch (e) {
+      console.log(e);
       toast.error('Não foi possível remover o item da sacola');
     } finally {
       setLoading(false);
@@ -142,13 +148,35 @@ const BagPage = () => {
     return data.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
-  const toggleModalAddress = async () => setOpenModalAddress(!openModalAddress);
+  const next = async () => {
+    const bag = await getBag(store.storeUrl);
+    localStorage.setItem(store.storeUrl, JSON.stringify({ ...bag, address, addressToken }));
+    navigate('contact');
+  }
 
-  const next = async (clientInfo) => {
-    const bag = await getBag(storeUrl);
-    const newBag = { ...bag, ...clientInfo };
-    await localStorage.setItem(storeUrl, JSON.stringify(newBag));
-    navigate('endereco');
+  const calculateFreight = async (data) => {
+    if (!data?.street || !data?.district || !data?.city || !data.number) {
+      toast.error(
+        'Endereço incompleto, verique seu endereço. Caso o erro seja recorrente, entre em contato com nosso suporte',
+        { position: 'top-center' }
+      );
+    }
+
+    try {
+      setLoading('Calculando taxa...');
+      const { data: response } = await apiService.post(
+        '/store/calculateFreight', 
+        { address: data, companyId: store._id }
+      );
+      console.log(response)
+      setAddress(response.address);
+      setAddressToken(response.addressToken);
+      toggleFindAddress();
+    } catch (e) {
+      toast.error(e.response.data?.message || 'Não foi possível calcular o frete');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -188,25 +216,75 @@ const BagPage = () => {
           <MediaProduct loading={(order.products.length <= 0)} products={3} />
 
           <S.WrapperTotal>
-            <span>subtotal:</span>
-            <strong>{formatPrice(order?.total)}</strong>
+            <strong>SUBTOTAL:</strong>
+            <strong className="price">{formatPrice(order?.total)}</strong>
           </S.WrapperTotal>
 
-          <S.WrapperButton>
-            <S.ButtonDefault variant="contained" onClick={toggleModalAddress}>
-              Continuar
-            </S.ButtonDefault>
-          </S.WrapperButton>
+          {store?.settingsDelivery?.deliveryOption === 'fixed' && (
+            <S.WrapperTotal>
+              <strong>TAXA DE ENTREGA:</strong>
+              <strong className="price">
+                {store?.settingsDelivery.fixedValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+              </strong>
+            </S.WrapperTotal>
+          )}
+
+          {store?.settingsDelivery?.deliveryOption === 'fixed' && (
+            <S.WrapperTotal>
+              <strong>TAXA DE ENTREGA:</strong>
+              <strong className="price">
+                {store?.settingsDelivery.fixedValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+              </strong>
+            </S.WrapperTotal>
+          )}
+
+          {store?.settingsDelivery?.deliveryOption === 'customerPickup' && (
+            <S.WrapperTotal>
+              <strong>TAXA DE ENTREGA:</strong>
+              <small>A combinar (Entraremos em contato para ajustar a entrega)</small>
+            </S.WrapperTotal>
+          )}
+
+          {store?.settingsDelivery?.deliveryOption === 'automatic' && address?.price && (
+            <S.WrapperTotal>
+              <strong>TAXA DE ENTREGA:</strong>
+              <strong className="price">
+                {address.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+              </strong>
+            </S.WrapperTotal>
+          )}
+
+          {store?.settingsDelivery?.deliveryOption === 'automatic' && !address?.price && (
+            <Box sx={{ textAlign: 'end', mt: 1 }}>
+              <Button color="success" variant="contained" onClick={toggleFindAddress}>
+                Calcular taxa de entrega
+              </Button>
+            </Box>
+          )}
+
+          <S.WrapperTotal>
+            <strong>TOTAL:</strong>
+            <strong className="price">{formatPrice(order?.total + (address?.price || 0))}</strong>
+          </S.WrapperTotal>
+
+          <br />
+
+          {store?.settingsDelivery?.deliveryOption === 'automatic' && (
+            <small>*Não é necessário calcular a taxa de entrega se o pedido for para retirada</small>
+          )}
+
+          {!error && <ButtonFloat text="Continuar" onClick={next} />}
         </section>
       </Container>
 
-      <ClientContact 
-        open={openModalAddress} 
-        getData={(data) => next(data)} 
-        onClose={() => setOpenModalAddress(false)}
-      />
+      {openFindAddress && (
+        <FindAddress
+          closeModal={toggleFindAddress}
+          getData={(data) => calculateFreight(data)}
+        />
+      )}
 
-      {error && <CustomError error={error}/>}
+      {error && <CustomError error={error} />}
     </section>
   );
 };

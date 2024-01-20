@@ -240,9 +240,9 @@ const ProductView = (props) => {
 
       <S.ContainerAction>
         <S.CountItem>
-          <span className="fa-solid fa-minus" onClick={removeProductItem}></span>
+          <span className="fa-solid fa-minus" style={{ cursor: 'pointer' }} onClick={removeProductItem}></span>
           <span className="value">{counterValue}</span>
-          <span className="fa-solid fa-plus" onClick={setProductItem}></span>
+          <span className="fa-solid fa-plus" style={{ cursor: 'pointer' }} onClick={setProductItem}></span>
         </S.CountItem>
         <S.ButtonAdd onClick={addToCart} disabled={!confirm}>
           <span>Adicionar</span>

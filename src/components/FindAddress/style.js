@@ -1,3 +1,4 @@
+import { Dialog, DialogContent } from '@mui/material';
 import { styled } from '@mui/system';
 
 export const ModalContainer = styled('div')({
@@ -16,7 +17,7 @@ export const ModalContainer = styled('div')({
 export const ModalContent = styled('div')({
   position: 'absolute',
   top: '50%',
-    left: '50%',
+  left: '50%',
   transform: 'translate(-50%, -50%)',
   borderRadius: 4,
   boxShadow: 24,
@@ -53,18 +54,20 @@ export const WrapperAnimation = styled('div')({
   justifyContent: 'center'
 });
 
-export const ButtonModalClose = styled('span')({
-  position: 'absolute',
-  background: '#dc3545',
-  color: '#fff',
-  width: '25px',
-  height: '25px',
-  borderRadius: '50px',
-  fontSize: 21,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  top: 1,
-  right: 1
-});
+
+export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}));
+
+
+
+export const CustomDialogContent = styled(DialogContent)(({ theme }) => ({
+  [theme.breakpoints.up('md')]: {
+    minWidth: '500px',
+  },
+}));

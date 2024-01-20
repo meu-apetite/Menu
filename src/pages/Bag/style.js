@@ -15,8 +15,15 @@ export const Title = styled('h2')({
 
 export const WrapperTotal = styled('div')({
   display: 'flex',
-  gap: '0.4rem',
-  justifyContent: 'end'
+  gap: '10px',
+  justifyContent: 'end',
+  textAlign: 'end',
+  marginTop: '8px',
+  '.price': {
+    textAlign: 'end', 
+    color: '#3366CC',
+    width: '70px'
+  }
 });
 
 

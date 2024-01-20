@@ -51,7 +51,8 @@ const Menu = () => {
         title: e.response?.status === 404
           ? 'Não foi possível encontrar o cárdapio'
           : 'Não foi possível recuperar os dados desse cardápio',
-        text: e.response?.data?.message || 'Verfique o endereço e tente novamente'
+        text: e.response?.data?.message || 'Verfique o endereço e tente novamente',
+        buttonText: 'Voltar ao iníco'
       });
     }
   };
@@ -99,7 +100,7 @@ const Menu = () => {
     });
   };
 
-  const toPageBagShopping = () => navigate('checkout/bag');
+  const toPageBagShopping = () => navigate('checkout');
 
   const toPageAbout = () => navigate('about');
 

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { Backdrop, Box, CircularProgress } from '@mui/material';
 
 export const StoreContext = createContext();
@@ -14,7 +14,7 @@ export const StoreProvider = (props) => {
   const saveProduct = async (product) => {
     let bagSaved = await localStorage.getItem(store.storeUrl);
     bagSaved = JSON.parse(bagSaved);
-    if (bagSaved?.products.length) {
+    if (bagSaved?.products?.length) {
       const products = bagSaved.products;
       localStorage.setItem(store.storeUrl, JSON.stringify({ products: [...products, product] }));
     } else {
@@ -64,7 +64,8 @@ export const StoreProvider = (props) => {
         store, 
         setStore, 
         clearBag,
-        setLoading
+        setLoading, 
+        toast
       }}
     >
       <Backdrop

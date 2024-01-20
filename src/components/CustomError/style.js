@@ -20,7 +20,7 @@ export const FoundContent = styled('div')`
 `;
 
 export const Found404 = styled('div')`
-  height: 190px;
+  height: auto;
 
   h1 {
     font-family: "Montserrat", sans-serif;
@@ -71,4 +71,10 @@ export const FoundLink = styled('a')`
   &:hover {
     opacity: 0.8;
   }
+`;
+
+export const Image = styled('img')`
+  height: 220px;
+  width: auto;
+  marginBottom: 1rem;
 `;

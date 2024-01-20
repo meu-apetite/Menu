@@ -5,7 +5,11 @@ const CustomError = (props) => {
     <S.FoundContainer>
       <S.FoundContent>
         <S.Found404>
-          <h1>{props.error.code}</h1>
+          {
+            props.error.animation 
+              ? <S.Image src={props.error.animation} alt="Imagem de erro ilustrativa" />
+              : <h1>{props.error.code}</h1> 
+          }          
         </S.Found404>
         <S.FoundTitle>{props.error.title}</S.FoundTitle>
         <S.FoundText>{props.error.text}</S.FoundText>

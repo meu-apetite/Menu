@@ -1,12 +1,12 @@
+import toast from 'react-hot-toast';
 import { useContext, useEffect, useState } from 'react';
-import { CardMedia, CardContent, Typography, Card, Tabs, Tab, Container, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { CardMedia, CardContent, Typography, Card, Tabs, Tab, Button } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 import { StoreContext } from 'contexts/store';
 import { ApiService } from 'services/api.service';
-import FindAddressClient from 'components/FindAddressClient';
 import iconMaps from 'assets/icons/maps.svg';
+import FindAddress from 'components/FindAddress';
 import * as S from './style';
-import toast from 'react-hot-toast';
 
 export const PickupComponent = (props) => {
   return (
@@ -31,14 +31,12 @@ export const PickupComponent = (props) => {
 
       <br />
 
-      <Button variant="text" color="secondary">
-        Copiar endereço completo
-      </Button>
+      <Button variant="text" color="secondary">Copiar endereço completo</Button>
 
       <Button variant="outlined" color="info">
-        <a 
-          rel="noreferrer" 
-          href={`http://maps.google.com/?q=${props.address?.freeformAddress}`} 
+        <a
+          rel="noreferrer"
+          href={`http://maps.google.com/?q=${props.address?.freeformAddress}`}
           target="_blank"
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
@@ -49,8 +47,7 @@ export const PickupComponent = (props) => {
   );
 };
 
-export const DeliveryComponent = ({ address, onChangeAddress }) => {
-  console.log(address)
+export const DeliveryComponent = ({ address, toggleFindAddress }) => {
   return (
     <div>
       <Card sx={{ display: 'grid', gridTemplateColumns: '9fr 3fr', mt: 1.2 }}>
@@ -60,7 +57,7 @@ export const DeliveryComponent = ({ address, onChangeAddress }) => {
             Bairro:<strong>&#160;{`${address.district}`}</strong> <br />
             Endereço:
             <strong>
-              &#160;{`${address.street.trim()}${address?.number ? ', Nº ' + address.number : '' }`}
+              &#160;{`${address.street.trim()}${address?.number ? ', Nº ' + address.number : ''}`}
             </strong>
           </Typography>
 
@@ -71,7 +68,7 @@ export const DeliveryComponent = ({ address, onChangeAddress }) => {
                 <strong>
                   &#160;
                   {address.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', })}
-                  {/* /{Number(address?.distance).toFixed(2)} KM */}
+                  /{Number(address?.distance).toFixed(2)} KM
                 </strong>
               </Typography>
             )
@@ -80,15 +77,14 @@ export const DeliveryComponent = ({ address, onChangeAddress }) => {
         <CardMedia image={iconMaps} alt="Icone mapa" />
       </Card>
       <S.WrapperButtons>
-        <S.ButtonDefault variant="outlined" onClick={onChangeAddress}>
-          Mudar endereço
-        </S.ButtonDefault>
+        <S.ButtonDefault variant="outlined" onClick={toggleFindAddress}>Mudar endereço</S.ButtonDefault>
       </S.WrapperButtons>
     </div>
   );
 };
 
 const Address = () => {
+  const { storeUrl } = useParams();
   const navigate = useNavigate();
   const apiService = new ApiService(false);
   const { store: storeSaved, getBag, setLoading } = useContext(StoreContext);
@@ -105,18 +101,20 @@ const Address = () => {
     if (!data?.street || !data?.district || !data?.city || !data.number) {
       toast.error(
         'Endereço incompleto, verique seu endereço. Caso o erro seja recorrente, entre em contato com nosso suporte',
-        { position: 'top-center' }  
-      )
+        { position: 'top-center' }
+      );
     }
 
     try {
       setLoading(true);
-      const { data: response } = await apiService.post('/store/calculateFreight', { address: data, companyId: store._id  });
+      const { data: response } = await apiService.post(
+        '/store/calculateFreight', { address: data, companyId: store._id }
+      );
       setAddress(response.address);
       setAddressToken(response.addressToken);
       toggleFindAddress();
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      toast.error(e.response.data?.message || 'Não foi possível recuperar as informações do endereço');
     } finally {
       setLoading(false);
     }
@@ -137,7 +135,7 @@ const Address = () => {
 
     if (deliveryType === 'pickup') {
       localStorage.setItem(store.storeUrl, JSON.stringify({ ...bag, deliveryType }));
-    } 
+    }
     if (deliveryType === 'delivery') {
       localStorage.setItem(store.storeUrl, JSON.stringify({ ...bag, address, addressToken, deliveryType }));
     }
@@ -148,63 +146,62 @@ const Address = () => {
   const changeDeliveryType = async (e, value) => setDeliveryType(value);
 
   useEffect(() => {
-    if (!storeSaved?.storeUrl) {
-      navigate(`/${window.location.href.split('/').reverse()[2]}/checkout`);
-    }
+    if (!storeSaved?.storeUrl) navigate(`/${storeUrl}/checkout`);
+
+    (async() => {
+      const bag = await getBag(store.storeUrl);
+      setAddress(bag?.address);
+      setAddressToken(bag?.addressToken);
+    })();
+
     setStore(storeSaved);
-    setSettings(storeSaved.settingsDelivery)
+    setSettings(storeSaved.settingsDelivery);
   }, []);
 
   return (
     <div>
-      <S.Header>
-        <S.Logo src={store?.custom?.logo?.url} alt={`Logomarca de ${store.name}`} />
-      </S.Header>
-
-      <Container maxWidth="md">
-        <section style={{ marginBottom: 2 }}>
-          <S.Title>Informações de endereço</S.Title>
-          <Tabs value={deliveryType} onChange={changeDeliveryType}>
-            {settings?.delivery && <Tab value="delivery" label="Entrega" />}
-            {
-              (settings?.allowStorePickup && store.address?.freeformAddress) 
-                && <Tab value="pickup" label="Retirada" />
-            }
-          </Tabs>
-
-          {settings?.delivery && deliveryType === 'delivery' && (
-            <div>
-              {address ? (
-                <DeliveryComponent address={address} />
-              ) : (
-                <>
-                  <p>Por favor, insira seu endereço corretamente para que possamos prosseguir com o seu pedido.</p>
-                  <S.WrapperButtons>
-                    <S.ButtonDefault variant="outlined" onClick={toggleFindAddress}>
-                      Adicionar endereço
-                    </S.ButtonDefault>
-                  </S.WrapperButtons>
-                </>
-              )}
-            </div>
-          )}
-
-          {(settings?.allowStorePickup && deliveryType === 'pickup' && store.address?.freeformAddress) 
-            ? <PickupComponent address={store.address} />
-            : <></>
-          }
-
+      <section style={{ marginBottom: 2 }}>
+        <h2>Informações de endereço</h2>
+        <Tabs value={deliveryType} onChange={changeDeliveryType}>
+          {settings?.delivery && <Tab value="delivery" label="Entrega" />}
           {
-            ((addressToken && deliveryType === 'delivery') || (store.address?.freeformAddress && deliveryType === 'pickup'))
-             && <S.ButtonNext variant="contained" onClick={next}>Continuar</S.ButtonNext>
+            (settings?.allowStorePickup && store.address?.freeformAddress)
+            && <Tab value="pickup" label="Retirada" />
           }
-        </section>
-      </Container>
+        </Tabs>
+
+        {settings?.delivery && deliveryType === 'delivery' && (
+          <div>
+            {address ? (
+              <DeliveryComponent address={address} toggleFindAddress={toggleFindAddress} />
+            ) : (
+              <>
+                <p>Por favor, insira seu endereço corretamente para que possamos prosseguir com o seu pedido.</p>
+                <S.WrapperButtons>
+                  <S.ButtonDefault variant="outlined" onClick={toggleFindAddress}>
+                    Adicionar endereço
+                  </S.ButtonDefault>
+                </S.WrapperButtons>
+              </>
+            )}
+          </div>
+        )}
+
+        {(settings?.allowStorePickup && deliveryType === 'pickup' && store.address?.freeformAddress)
+          ? <PickupComponent address={store.address} />
+          : <></>
+        }
+
+        {
+          ((addressToken && deliveryType === 'delivery') || (store.address?.freeformAddress && deliveryType === 'pickup'))
+          && <S.ButtonNext variant="contained" onClick={next}>Continuar</S.ButtonNext>
+        }
+      </section>
 
       {openFindAddress && (
-        <FindAddressClient
+        <FindAddress
           closeModal={toggleFindAddress}
-          getAddress={(data) => calculateFreight(data)}
+          getData={(data) => calculateFreight(data)}
         />
       )}
     </div>

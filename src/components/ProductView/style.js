@@ -141,6 +141,7 @@ export const ButtonAdd = styled('button')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  cursor: 'pointer',
   padding: '0 1.2rem',
   '&:disabled': {
     background: '#ccc',

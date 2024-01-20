@@ -1,44 +1,48 @@
+import { StepConnector, stepConnectorClasses } from '@mui/material';
 import { styled } from '@mui/system';
-import Button from '@mui/material/Button';
 
-export const Header = styled('header')({
-  position: 'relative',
-  border: '1px solid #dcdcdc',
+export const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
+  zIndex: 1,
+  color: '#fff',
+  width: 50,
+  height: 50,
   display: 'flex',
+  borderRadius: '50%',
   justifyContent: 'center',
-  padding: '0.6rem 0'
-});
-
-export const Title = styled('h2')({
-  marginTop: '1rem'
-});
-
-export const WrapperTotal = styled('div')({
-  display: 'flex',
-  gap: '0.4rem',
-  justifyContent: 'end'
-});
-
-
-export const WrapperButton = styled('div')(({ theme }) => ({
-  textAlign: 'center',
-  marginTop: theme.spacing(2),
-  'button': { width: '100%', maxWidth: '400px', minHeight: '48px'}
+  alignItems: 'center',
+  ...(ownerState.active && {
+    backgroundImage:
+      'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+    boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
+  }),
+  ...(ownerState.completed && {
+    backgroundImage:
+      'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+  }),
 }));
 
-export const ButtonDefault = styled(Button)({
-  fontSize: '1rem',
-  gap: '16px',
-  height: '48px',
-  textTransform: 'capitalize',
-  width: '100%',
-  margin: 'auto',
-  marginTop: '16px',
-});
-
-export const Logo = styled('img')({
-  width: 60,
-  height: 60,
-  borderRadius: '50%',
-  objectFit: 'cover'
-});
+export const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+  [`&.${stepConnectorClasses.alternativeLabel}`]: {
+    top: 22,
+  },
+  [`&.${stepConnectorClasses.active}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      backgroundImage:
+        'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+    },
+  },
+  [`&.${stepConnectorClasses.completed}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      backgroundImage:
+        'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+    },
+  },
+  [`& .${stepConnectorClasses.line}`]: {
+    height: 3,
+    border: 0,
+    backgroundColor:
+      theme.palette.mode === 'dark' ? theme.palette.grey[800] : '#eaeaf0',
+    borderRadius: 1,
+  },
+}));
