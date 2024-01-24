@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export class ApiService {
   // #baseUrl = 'https://meuapetite.com/api';
-  #baseUrl = 'http://127.0.1:3000/api';
+  #baseUrl = 'http://127.0.0.1:3000/api';
 
   getHeaders(multipart = false) {
     const headers = {};
