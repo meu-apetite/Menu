@@ -1,8 +1,6 @@
 import { useRoutes } from 'react-router-dom';
-import { StoreProvider } from 'contexts/store';
-import theme from './theme/default';
-import { ThemeProvider } from '@mui/material';
-import { finishOrderRoutes, storeRoutes } from 'routes';
+import { GlobalProvider } from 'contexts/global';
+import { checkoutRoutes, menuRoutes } from 'routes';
 
 const GlobalStyles = () => (
   <style>
@@ -17,25 +15,23 @@ const GlobalStyles = () => (
   </style>
 );
 
-export const RoutesStore = () => {
-  const appRoutes = useRoutes([...storeRoutes]);
+export const MenuRoutes = () => {
+  const appRoutes = useRoutes([...menuRoutes]);
   return <>{appRoutes}</>;
 };
 
-export const RoutesFinishOrder = () => {
-  const appRoutes = useRoutes([...finishOrderRoutes]);
+export const CheckoutRoutes = () => {
+  const appRoutes = useRoutes([...checkoutRoutes]);
   return <>{appRoutes}</>;
 };
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
+    <GlobalProvider>
       <GlobalStyles />
-        <StoreProvider>
-          <RoutesStore />
-          <RoutesFinishOrder />
-        </StoreProvider>
-    </ThemeProvider>
+      <MenuRoutes />
+      <CheckoutRoutes />
+    </GlobalProvider>
   );
 };
 

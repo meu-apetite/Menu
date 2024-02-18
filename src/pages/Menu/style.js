@@ -15,23 +15,27 @@ export const WrapperNav = styled('nav')({
   zIndex: 2
 });
 
-export const Intro = styled(Box)({
+export const Intro = styled(Box)(({ theme, backgroundimage }) => ({
   position: 'relative',
-  height: '232px',
-  background: 'url(https://files.menudino.com/cardapios/9621/capa.jpg)',
+  height: '340px',
+  background: `url(${backgroundimage})`,
   backgroundSize: 'cover',
   backgroundPosition: '50%',
   backgroundColor: '#f4f8f9',
   backgroundRepeat: 'no-repeat',
-  backgroundColor: 'rgba(0,0,0,0.7)',
+  backgroundColor: 'rgba(0,0,0,0.6)',
   backgroundBlendMode: 'overlay',
   marginTop: headerNavHeight,
   display: 'flex',  
   alignItems: 'center',
   flexDirection: 'column',
   justifyContent: 'center',
-  '@media (min-width: 768px)': { height: '250px' },
-});
+}));
+
+export const WrapperBagShopping = styled(Box)(({ theme }) =>({
+  display: { md: 'flex' }, 
+  [theme.breakpoints.down(700)]: { display: 'none' } 
+}));
 
 export const WrapperTabs = styled('div')({
   position: 'sticky',
@@ -43,8 +47,23 @@ export const WrapperTabs = styled('div')({
 });
 
 export const Logo = styled('img')({
-  height: 42,
-  width: 'auto'
+  height: 100,
+  width: 100,
+  borderRadius: '50%',
+  // marginTop: -56
+});
+
+export const TitleCompany = styled('h2')({
+  fontSize: '2rem', 
+  fontWeight: 'bold', 
+  color: '#fff', 
+  textTransform: 'uppercase',
+  marginTop: '1rem'
+});
+
+export const TextAddress = styled('span')({
+  fontSize: '0.8rem', 
+  color: '#fff', 
 });
 
 export const AccordionCustom = styled(Accordion)(({ theme }) => ({

@@ -12,48 +12,40 @@ import {
   AccordionSummary,
   AppBar,
   Chip,
-  Container,
   Button,
 } from '@mui/material';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import ProductCard from 'components/ProductCard';
 import SpinnerProduct from 'components/SpinnerProduct';
 import CustomError from 'components/CustomError';
-import { StoreContext } from 'contexts/store';
+import { GlobalContext } from 'contexts/global';
 import { ApiService } from 'services/api.service';
-import theme from 'theme/default';
 import SearchProduct from 'components/SearchProduct';
 import * as S from './style';
+import { ErrorUtils } from 'utils/ErrorUtils';
 
 const Menu = () => {
   const navigate = useNavigate();
   const apiService = new ApiService(false);
   const boxRef = useRef();
   const { storeUrl } = useParams();
-  const { total, quantityTotal, setStore } = useContext(StoreContext);
+  const { total, quantityTotal, setCompany } = useContext(GlobalContext);
   const [collections, setCollections] = useState([]);
   const [categories, setCategories] = useState([]);
   const [productAll, setProductAll] = useState([]);
-  const [store, setStoreCatalog] = useState();
+  const [company, setCompanyCatalog] = useState();
   const [tabValue, setTabValue] = useState(0);
   const [error, setError] = useState({});
   const [showError, setShowError] = useState(false);
 
-  const getStore = async () => {
+  const getCompany = async () => {
     try {
       const response = await apiService.get('/store/' + storeUrl);
-      setStoreCatalog(response.data);
-      setStore(response.data);
+      setCompanyCatalog(response.data);
+      setCompany(response.data);
     } catch (e) {
       setShowError(true);
-      return setError({
-        code: e.response?.status || 500,
-        title: e.response?.status === 404
-          ? 'Não foi possível encontrar o cárdapio'
-          : 'Não foi possível recuperar os dados desse cardápio',
-        text: e.response?.data?.message || 'Verfique o endereço e tente novamente',
-        buttonText: 'Voltar ao iníco'
-      });
+      return setError(ErrorUtils.notFoundMenu());
     }
   };
 
@@ -110,7 +102,7 @@ const Menu = () => {
 
       collections.forEach((item) => {
         const collectionCurrent = document.getElementById(item.title);
-        if (!collectionCurrent) return
+        if (!collectionCurrent) return;
 
         const accordionRect = collectionCurrent.getBoundingClientRect();
         if (
@@ -134,33 +126,34 @@ const Menu = () => {
   }, [collections]);
 
   useEffect(() => {
-    getStore();
+    getCompany();
     getProducts();
   }, []);
 
   return (
     <>
-      {store ? (
+      {company ? (
         <Box sx={{ background: '#f5f7fa' }}>
           <S.WrapperNav>
             <Box sx={{ flexGrow: 1 }}>
               <AppBar position="static">
                 <Toolbar sx={{ height: '64px' }}>
-                  <IconButton size="large edge=" color="inherit" sx={{ mr: 2 }}>
-                    <Avatar 
-                      alt={`Logomarca ${store?.fantasyName}`} 
-                      src={store?.custom?.logo?.url} 
-                      onClick={toPageAbout}
-                    />
-                  </IconButton>
+                  <div onClick={toPageAbout}>
+                    <IconButton size="large edge=" color="inherit" sx={{ mr: 2 }}>
+                      <Avatar 
+                        alt={`Logomarca ${company.fantasyName}`} 
+                        src={company.custom.logo?.url} 
+                      />
+                    </IconButton>
+                  </div>
 
-                  <Typography 
+                  <Typography
                     variant="h6"
                     noWrap
-                    component="div" 
+                    component="div"
                     sx={{ display: { xs: 'none', sm: 'block' } }}
                   >
-                    {store?.fantasyName}
+                    {company.fantasyName}
                   </Typography>
 
                   <SearchProduct
@@ -172,10 +165,7 @@ const Menu = () => {
 
                   <Box sx={{ flexGrow: 1 }} />
 
-                  <Box
-                    sx={{ display: { md: 'flex' }, [theme.breakpoints.down(700)]: { display: 'none' } }}
-                    onClick={toPageBagShopping}
-                  >
+                  <S.WrapperBagShopping onClick={toPageBagShopping}>
                     <IconButton aria-label="Cart">
                       <Badge badgeContent={quantityTotal} color="secondary">
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -186,31 +176,36 @@ const Menu = () => {
                         </div>
                       </Badge>
                     </IconButton>
-                  </Box>
+                  </S.WrapperBagShopping>
                 </Toolbar>
               </AppBar>
             </Box>
           </S.WrapperNav>
 
           <header>
-            <S.Intro>
-              <Avatar sx={{ width: 90, height: 90 }} alt={`Logomarca ${store?.fantasyName}`} src={store?.custom?.logo?.url} />
-              <Typography variant="h2" sx={{ fontSize: '2rem', fontWeight: 'bold', color: '#fff' }}>
-                {store?.fantasyName}
-              </Typography>
-              <Chip 
-                label={store.isOpen ? 'ABERTO' : 'FECHADO PARA PEDIDO'} 
-                variant="filled" 
-                color={store.isOpen ? 'success' : 'error'}
-                sx={{ mt: '16px' }} 
-              />
-              <Button
-                component="label"
-                sx={{ color: '#fff', position: 'absolute', right: '20px', bottom: 1 }}
-                onClick={toPageAbout}
-              >
-                Ver mais
-              </Button>
+            <S.Intro backgroundimage={company.custom.backgroundImage?.url}>
+              <S.Logo alt={`Logomarca ${company.fantasyName}`} src={company.custom?.logo?.url} />
+
+              <S.TitleCompany>{company.fantasyName}</S.TitleCompany>
+
+              <Box sx={{ color: '#fff', position: 'absolute', bottom: 8, width: '100%', padding: '0 10px', display: 'flex', justifyContent: 'space-between' }}>
+
+                {!company.isOpen
+                  ? (<Chip label="FECHADO" color="error" />)
+                  : (
+                    <Chip
+                      label={`
+                          Entrega:
+                          ${company.settingsDelivery?.deliveryOption === 'fixed' ? company.settingsDelivery.fixedValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : ''}
+                          ${company.settingsDelivery?.deliveryOption === 'customerPickup' ? 'a combinar' : ''}
+                          ${company.settingsDelivery?.deliveryOption === 'automatic' ? 'a calcular' : ''}
+                        `}
+                      color="primary"
+                    />
+                  )
+                }
+                <Button component="label" onClick={toPageAbout} sx={{ color: '#fff' }}>Ver mais</Button>
+              </Box>
             </S.Intro>
           </header>
 
@@ -230,36 +225,6 @@ const Menu = () => {
 
           <Box component="main" sx={{ mt: 2 }}>
             <S.Container>
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'end', m: 2 }}>
-                {
-                  store ? (
-                    <Chip
-                      label={`
-                        Entrega:
-                        ${store?.settingsDelivery?.deliveryOption === 'fixed'
-                          ? store?.settingsDelivery.fixedValue.toLocaleString(
-                            'pt-BR', { style: 'currency', currency: 'BRL' },
-                          ) : ''
-                        }
-                        ${store?.settingsDelivery?.deliveryOption === 'customerPickup'
-                          ? 'a combinar' : ''}
-                        ${store?.settingsDelivery?.deliveryOption === 'automatic'
-                          ? 'a calcular' : ''}
-                      `}
-                      variant="outlined"
-                      color="success"
-                    />
-                  ) : null
-                }
-
-                <Chip
-                  label="50-70min"
-                  variant="outlined"
-                  color="warning"
-                  icon={<span className="fa fa-clock"></span>}
-                />
-              </Box>
-
               <Box ref={boxRef} component="section" sx={{ m: 2, display: 'grid', gap: 0.5 }}>
                 {
                   collections?.length <= 0 ? (
@@ -295,16 +260,11 @@ const Menu = () => {
             </S.ButtonCart>
           ) : null}
 
-          <S.Footer>
-            <Container maxWidth="lg" sx={{ marginBottom: 1 }}>
-              <Typography variant="body2" color="text.secondary" align="center">
-                © {new Date().getFullYear()} Meu apetite.
-              </Typography>
-              <Typography variant="body2" color="text.secondary" align="center">
-                <a color="inherit" href="/terms">Termos de Serviço | Política de Privacidade</a>
-              </Typography>
-            </Container>
-          </S.Footer>
+          <Box sx={{ padding: '16px', dislplay: 'grid' }}>
+            <Typography color="text.secondary" align="center">
+              © {new Date().getFullYear()} Meu apetite.
+            </Typography>
+          </Box>
         </Box>
       ) : null}
 

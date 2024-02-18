@@ -1,21 +1,21 @@
 import Menu from 'pages/Menu';
-import Bag from 'pages/Bag';
 import Order from 'pages/Order';
 import About from 'pages/About';
 import Landing from 'pages/Landing';
+import CartPage from 'pages/Cart';
 import ClientContact from 'pages/StepsOrder/Step1_ClientContact';
 import Address from 'pages/StepsOrder/Step2_Address';
 import Payment from 'pages/StepsOrder/Step3_Payment';
-import Layout from 'components/Layout';
+import Checkout from 'layouts/Checkout';
 
-export const finishOrderRoutes = [
+export const checkoutRoutes = [
   {
     path: ':storeUrl/checkout',
-    element: <Bag />,
+    element: <CartPage />,
   },
   {
     path: ':storeUrl/checkout',
-    element: <Layout />,
+    element: <Checkout />,
     children: [
       { path: 'contact', element: <ClientContact /> },
       { path: 'address', element: <Address /> },
@@ -24,7 +24,7 @@ export const finishOrderRoutes = [
   },
 ];
 
-export const storeRoutes = [
+export const menuRoutes = [
   {
     path: '/',
     children: [

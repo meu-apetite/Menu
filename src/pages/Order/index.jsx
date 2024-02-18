@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Paper, Grid, List, ListItem, ListItemText, AppBar, Box, Toolbar, Button, Chip } from '@mui/material';
+import { Typography, Paper, Box, AppBar, Toolbar, Button, Chip, List, ListItem, ListItemText } from '@mui/material';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ApiService } from 'services/api.service';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PayPix from 'components/PayPix';
 
 const PedidoDetalhes = () => {
   const navigate = useNavigate();
@@ -22,43 +21,37 @@ const PedidoDetalhes = () => {
     address: {},
     total: 0,
   });
-  const [store, setStore] = useState({});
+  const [company, setCompany] = useState({});
 
   const getData = async () => {
     const { data } = await apiService.get(`/store/${storeUrl}/order/${orderId}`);
     setOrder(data.order);
-    setStore(data.company);
+    setCompany(data.company);
   };
 
   useEffect(() => {
     if (state?.order?.id && state?.store?._id) {
       setOrder(state.order);
-      setStore(state.store);
+      setCompany(state.store);
     } else {
       getData();
     }
   }, []);
 
-  const openWhatsapp = () => {
-    const message = `Olá! Gostaria de falar sobre o pedido #${order.id}. Poderia me fornecer mais informações ou esclarecer algumas dúvidas?`;
-    const linkWhatsapp = `https://api.whatsapp.com/send?phone=${store.whatsapp}&text=${encodeURIComponent(message)}`;
-    window.open(linkWhatsapp, '_blank');
-  };
-
   const getStatusColor = (status) => {
     switch (status) {
       case 'OrderReceived':
-        return 'primary'; 
+        return 'primary';
       case 'Processing':
-        return 'info'; 
+        return 'info';
       case 'WaitingForPaymentConfirmation':
-        return 'warning'; 
+        return 'warning';
       case 'Shipped':
         return 'success';
       case 'Concluded':
-        return 'success'; 
+        return 'success';
       case 'Cancelled':
-        return 'error'; 
+        return 'error';
       case 'WaitingForPickup':
         return 'info';
       default:
@@ -78,7 +71,7 @@ const PedidoDetalhes = () => {
         <Box style={{ marginBottom: '16px', textAlign: 'center' }}>
           <Chip
             label={order?.status?.label}
-            color={getStatusColor(order?.status?.name)}  
+            color={getStatusColor(order?.status?.name)}
             variant="outlined"
           />
         </Box>
@@ -86,11 +79,6 @@ const PedidoDetalhes = () => {
         <Typography variant="h5" style={{ marginBottom: '16px' }}>
           Número do pedido: #{order.id}
         </Typography>
-
-        <Grid container={true} spacing={2}>
-          {/* Restante do código... */}
-
-        </Grid>
 
         <Typography variant="h6" style={{ marginTop: 20 }}>Itens:</Typography>
         <List>
@@ -105,8 +93,62 @@ const PedidoDetalhes = () => {
         </List>
 
         <Typography variant="h6" style={{ marginTop: 20 }}>
-          Total: {order?.total?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          Subtotal: R$
         </Typography>
+
+        {
+          order?.address?.price &&
+          <Typography variant="h6">
+            Taxa de entrega: R$ {order.address.price.toFixed(2)}
+          </Typography>
+        }
+
+        <Typography variant="h6">Total: R$ {order.total.toFixed(2)}</Typography>
+
+        <Typography variant="h6" style={{ marginTop: 20 }}>
+          Cliente: {order.client.name}
+        </Typography>
+
+        <Typography variant="body1">
+          Email: {order.client.email}
+        </Typography>
+
+        <Typography variant="body1">
+          Telefone: {order.client.phoneNumber}
+        </Typography>
+
+        {order.address ?
+          <>
+            <Typography variant="h6" style={{ marginTop: 20 }}>
+              Endereço de Entrega:
+            </Typography>
+
+            <Typography variant="body1">
+              Rua: {order.address.street}, {order.address.number}
+            </Typography>
+
+            <Typography variant="body1">
+              Bairro: {order.address.district}
+            </Typography>
+
+            <Typography variant="body1">
+              Cidade: {order.address.city}
+            </Typography>
+
+            <Typography variant="body1">
+              CEP: {order.address.zipCode}
+            </Typography>
+
+            <Typography variant="body1">
+              Preço da entrega: R$ {order.address?.price?.toFixed(2)}
+            </Typography>
+
+            <Typography variant="body1">
+              Distância: {order.address.distance}
+            </Typography>
+          </>
+          : <Typography variant="h6" style={{ marginTop: 20 }}>Pedido para retirada</Typography>
+        }
       </Paper>
 
       <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
@@ -123,14 +165,16 @@ const PedidoDetalhes = () => {
         <Button
           variant="contained"
           color="success"
-          onClick={openWhatsapp}
+          onClick={() => {
+            const message = `Olá! Gostaria de falar sobre o pedido #${order.id}. Poderia me fornecer mais informações ou esclarecer algumas dúvidas?`;
+            const linkWhatsapp = `https://api.whatsapp.com/send?phone=${company.whatsapp}&text=${encodeURIComponent(message)}`;
+            window.open(linkWhatsapp, '_blank');
+          }}
           startIcon={<WhatsAppIcon />}
         >
           Entrar em Contato
         </Button>
       </Box>
-
-      {store.pixCode && <PayPix active={!!store?.pixCode || false} code={store?.pixCode} />}
     </Box>
   );
 };

@@ -26,7 +26,7 @@ import iconVr from 'assets/icons/vr.avif';
 import iconTicket from 'assets/icons/ticket.png';
 import CloseIcon from '@mui/icons-material/Close';
 import * as S from './style';
-import { StoreContext } from 'contexts/store';
+import { GlobalContext } from 'contexts/global';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ApiService } from 'services/api.service';
 
@@ -161,7 +161,7 @@ const About = () => {
   const navigate = useNavigate();
   const { storeUrl } = useParams();
   const apiService = new ApiService(false);
-  const { store: storeSaved } = useContext(StoreContext);
+  const { store: storeSaved } = useContext(GlobalContext);
   const [tab, setTab] = useState('about');
   const [store, setStore] = useState({});
 

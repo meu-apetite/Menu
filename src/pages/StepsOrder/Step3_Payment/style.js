@@ -1,5 +1,4 @@
 import { styled } from '@mui/system';
-import { Button } from '@mui/material';
 
 export const Header = styled('header')({
   position: 'relative',
@@ -15,20 +14,10 @@ export const Logo = styled('img')({
   borderRadius: '50%'
 });
 
-export const ButtonDefault = styled(Button)({
-  fontSize: '1rem',
-  gap: '16px',
-  height: '48px',
-  textTransform: 'uppercase',
-  width: '100%',
-  margin: 'auto',
-  marginTop: '16px'
-});
-
 export const Title = styled('h2')({
   marginTop: '1rem'
 });
 
 export const Main = styled('div')({
-  marginBottom: '1rem'
+  marginBottom: '80px'
 });

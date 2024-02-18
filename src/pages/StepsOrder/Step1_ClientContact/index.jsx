@@ -2,12 +2,12 @@ import { useContext, useState } from 'react';
 import { Grid, TextField } from '@mui/material';
 import toast from 'react-hot-toast';
 import ButtonFloat from 'components/ButtonFloat';
-import { StoreContext } from 'contexts/store';
+import { GlobalContext } from 'contexts/global';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const ClientContact = () => {
   const navigate = useNavigate();
-  const { getBag } = useContext(StoreContext);
+  const { getBag } = useContext(GlobalContext);
   const { storeUrl } = useParams();
   const [clientInfo, setClientInfo] = useState({ name: '', phoneNumber: '', email: '' });
 

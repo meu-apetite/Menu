@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { TextField } from '@mui/material';
-import { StoreContext } from 'contexts/store';
+import { GlobalContext } from 'contexts/global';
 import * as S from './style';
 
 const ProductView = (props) => {
   const { state } = useLocation();
-  const { saveProduct } = useContext(StoreContext);
+  const { saveProduct } = useContext(GlobalContext);
 
   const [product, setProduct] = useState({
     name: '',

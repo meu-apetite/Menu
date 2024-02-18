@@ -2,7 +2,7 @@ import toast from 'react-hot-toast';
 import { useContext, useEffect, useState } from 'react';
 import { CardMedia, CardContent, Typography, Card, Tabs, Tab, Button } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { StoreContext } from 'contexts/store';
+import { GlobalContext } from 'contexts/global';
 import { ApiService } from 'services/api.service';
 import iconMaps from 'assets/icons/maps.svg';
 import FindAddress from 'components/FindAddress';
@@ -87,7 +87,7 @@ const Address = () => {
   const { storeUrl } = useParams();
   const navigate = useNavigate();
   const apiService = new ApiService(false);
-  const { store: storeSaved, getBag, setLoading } = useContext(StoreContext);
+  const { store: storeSaved, getBag, setLoading } = useContext(GlobalContext);
   const [deliveryType, setDeliveryType] = useState('delivery'); //delivery | pickup
   const [address, setAddress] = useState(null);
   const [addressToken, setAddressToken] = useState(null);
@@ -146,8 +146,6 @@ const Address = () => {
   const changeDeliveryType = async (e, value) => setDeliveryType(value);
 
   useEffect(() => {
-    if (!storeSaved?.storeUrl) navigate(`/${storeUrl}/checkout`);
-
     (async() => {
       const bag = await getBag(store.storeUrl);
       setAddress(bag?.address);

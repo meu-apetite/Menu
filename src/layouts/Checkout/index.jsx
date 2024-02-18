@@ -1,21 +1,21 @@
 import { useContext, useEffect } from 'react';
-import { Outlet, useParams, useLocation } from 'react-router-dom';
+import { Outlet, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Container, Divider } from '@mui/material';
-import { StoreContext } from 'contexts/store';
+import { GlobalContext } from 'contexts/global';
 import { ApiService } from 'services/api.service';
 import Stack from '@mui/material/Stack';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import PhoneIcon from '@mui/icons-material/Phone';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import RoomIcon from '@mui/icons-material/Room';
 import PaymentIcon from '@mui/icons-material/Payment';
 import * as S from './style';
 
 function ColorlibStepIcon(props) {
   const { active, completed, className } = props;
 
-  const icons = { 1: <PhoneIcon />, 2: <LocalShippingIcon />, 3: <PaymentIcon /> };
+  const icons = { 1: <PhoneIcon />, 2: <RoomIcon />, 3: <PaymentIcon /> };
 
   return (
     <S.ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
@@ -24,10 +24,11 @@ function ColorlibStepIcon(props) {
   );
 }
 
-const Layout = (props) => {
+const Checkout = (props) => {
+  const navigate = useNavigate();
   const apiService = new ApiService(false);
   const { storeUrl } = useParams();
-  const { setStore } = useContext(StoreContext);
+  const { setStore, store } = useContext(GlobalContext);
   const location = useLocation();
 
   const getStore = async () => {
@@ -36,7 +37,14 @@ const Layout = (props) => {
   };
 
   useEffect(() => {
-    getStore();
+    console.log(!store?.storeUrl)
+    if (!store?.storeUrl) {
+      navigate(`/${storeUrl}/checkout`);
+      return;
+    } else {
+      getStore();
+    }
+
   }, []);
 
   const getStepFromPath = () => {
@@ -45,13 +53,13 @@ const Layout = (props) => {
 
     switch (lastSegment) {
       case 'contact':
-        return 0; // Ativar etapa de Contato
+        return 0; 
       case 'address':
-        return 1; // Ativar etapa de Entrega
+        return 1; 
       case 'pay':
-        return 2; // Ativar etapa de Pagamento
+        return 2; 
       default:
-        return 0; // Padrão: Contato
+        return 0;
     }
   };
 
@@ -82,4 +90,4 @@ const Layout = (props) => {
   );
 };
 
-export default Layout;
+export default Checkout;

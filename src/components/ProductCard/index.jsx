@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import Box from '@mui/material/Box';
 import ProductView from 'components/ProductView';
-import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,9 +8,11 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material';
 import * as S from './style';
 
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
@@ -28,6 +29,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
  */
 
 const ProductCard = (props) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
   const product = props.product;
   const images = product?.images;
 
@@ -39,9 +43,7 @@ const ProductCard = (props) => {
     setOpenModal(true);
   };
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  }
+  const handleCloseModal = () => setOpenModal(false);
 
   return (
     <>
@@ -54,7 +56,6 @@ const ProductCard = (props) => {
                 <S.Description>{product.description}</S.Description>
               </div>
               <S.Price>
-                {/* A partir de{' '} */}
                 {product.price.toLocaleString('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',

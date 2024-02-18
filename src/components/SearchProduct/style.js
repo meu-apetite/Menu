@@ -22,7 +22,6 @@ export const TextFieldCustom = styled(TextField)(({ theme }) => ({
 }));
 
 export const Search = styled('div')(({ theme }) => ({
-  heght: '40px',
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: 'rgba(255,255,255,0.15)',
@@ -33,6 +32,9 @@ export const Search = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
   },
+  '.MuiOutlinedInput-notchedOutline': {
+    borderWidth: 0
+  }
 }));
 
 export const SearchIconWrapper = styled('div')(({ theme }) => ({

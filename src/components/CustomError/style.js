@@ -58,6 +58,7 @@ export const FoundText = styled('p')`
 `;
 
 export const FoundLink = styled('a')`
+  cursor: pointer;
   font-family: "Montserrat", sans-serif;
   display: inline-block;
   padding: 12px 30px;
@@ -69,7 +70,7 @@ export const FoundLink = styled('a')`
   transition: 0.2s all;
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.9;
   }
 `;
 

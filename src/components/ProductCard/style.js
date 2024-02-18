@@ -12,14 +12,14 @@ export const CardCustom = styled(Card)({
 });
 
 export const CardMediaCustom = styled(CardMedia)({
-  width: 100,
-  height: 100,
+  width: 120,
+  height: 120,
   borderRadius: 6
 });
 
 export const CardContentCustom = styled(CardContent)({
   display: 'grid',
-  gridTemplateColumns: '1fr 100px',
+  gridTemplateColumns: '1fr 120px',
   gap: '15px',
   cursor: 'pointer'
 });
@@ -35,6 +35,7 @@ export const TitleProduct = styled('h3')({
   fontWeight: 400,
   fontSize: '1rem',
   lineHeight: '1.25rem',
+  margin: 0,
   marginTop: 5,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -43,25 +44,23 @@ export const TitleProduct = styled('h3')({
   '-webkit-box-orient': 'vertical',
 });
 
-export const Description = styled('p')({
-  textOverflow: 'ellipsis',
+export const Description = styled('div')({
   fontSize: '.9rem',
   lineHeight: '1.25rem',
   wordWrap: 'break-word',
-  overflow: 'hidden',
-  whiteSpace: 'pre-line',
-  visibility: 'visible',
-  display: '-webkit-box',
-  webkitLineClamp: '2',
-  webkitboxOrient: 'vertical',
-  '-webkit-line-clamp': 2,
-  '-webkit-box-orient': 'vertical',
   color: '#717171',
-  fontWeight: '300',
+  margin: '16px 0',
+  fontWeight: 300,
+  maxHeight: '2.5rem',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  overflow: 'hidden',
+  '-webkit-line-clamp': '2',
+  '-webkit-box-orient': 'vertical',
   '@media (min-width: 768px)': {
     fontSize: '.877rem',
-    lineHeight: '1.25rem'
-  },
+    lineHeight: '1.25rem',
+  }
 });
 
 export const Price = styled('span')({
@@ -73,7 +72,7 @@ export const Price = styled('span')({
 
 export const DialogCustom = styled(Dialog)({
   '.css-m9glnp-MuiPaper-root-MuiDialog-paper': {
-    background: 'transparent',
+    background: 'transparent !important',
     boxShadow: 'none',
     maxHeight: '700px',  
   }
