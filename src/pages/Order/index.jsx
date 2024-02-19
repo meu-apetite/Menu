@@ -24,7 +24,7 @@ const PedidoDetalhes = () => {
   const [company, setCompany] = useState({});
 
   const getData = async () => {
-    const { data } = await apiService.get(`/store/${storeUrl}/order/${orderId}`);
+    const { data } = await apiService.get(`/${storeUrl}/order/${orderId}`);
     setOrder(data.order);
     setCompany(data.company);
   };

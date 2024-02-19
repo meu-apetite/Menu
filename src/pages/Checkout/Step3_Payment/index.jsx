@@ -9,28 +9,32 @@ import ButtonFloat from 'components/ButtonFloat';
 import pixIcon from 'assets/icons/pix.png';
 import PayPix from 'components/PayPix';
 import * as S from './style';
+import { ApplicationUtils } from 'utils/ApplicationUtils';
 
 const Payment = () => {
   const navigate = useNavigate();
   const { storeUrl } = useParams();
   const apiService = new ApiService(false);
-  const { store: storeSaved, getBag, setLoading, clearBag, toast } = useContext(GlobalContext);
+  const { company, setLoading, toast } = useContext(GlobalContext);
 
   const [paymentMethod, setPaymentMethod] = useState();
   const [paymentType, setPaymentType] = useState('indelivery'); //indelivery | online | pix
   const [settingsPayment, setSettingsPayment] = useState({});
   const [data, setData] = useState(null);
-  const [store] = useState({});
+  const [cart, setCart] = useState({});
 
   const getSettingsPayment = async () => {
     try {
       setLoading(true);
-      const bag = await getBag();
-      const { data } = await apiService.post('/store/payment', {
-        companyId: storeSaved._id,
-        productsToken: bag.productsToken,
+
+      const { data } = await apiService.post('/payment', {
+        companyId: company._id,
+        products: cart.products,
+        address: cart.address
       });
+
       console.log(data.inDelivery.methods);
+
       setData(data);
     } catch (error) {
       console.log(error);
@@ -39,21 +43,31 @@ const Payment = () => {
     }
   };
 
+  const getCart = async () => {
+    const cart = await ApplicationUtils.getCartInLocalStorage(storeUrl);
+    setCart(cart);
+  }
+
   const finishOrder = async () => {
     try {
       setLoading(true);
-      const data = await getBag();
-      delete data.products;
-      const form = { ...data, companyId: storeSaved._id, paymentType, paymentMethod };
+
+      delete cart.products;
+      const form = { ...cart, companyId: company._id, paymentType, paymentMethod };
 
       if (paymentType === 'pix') {
         form.paymentMethod = { icon: pixIcon, id: null, title: 'Pix', _id: null };
       }
 
-      const { data: response } = await apiService.post('/store/finishOrder/' + store._id, form);
+      const { data } = await apiService.post(
+        '/finishOrder/' + company._id, 
+        form
+      );
 
-      clearBag();
-      navigate(`/${storeUrl}/meupedido/${response.order.id}`, { state: { ...response } });
+      navigate(
+        `/${storeUrl}/meupedido/${data.order.id}`, 
+        { state: { ...data } }
+      );
     } catch (e) {
       toast.error(
         e.response.data?.message
@@ -66,6 +80,7 @@ const Payment = () => {
 
   useEffect(() => {
     getSettingsPayment();
+    getCart()
   }, []);
 
   return (
@@ -84,10 +99,6 @@ const Payment = () => {
 
       {(data && data.pix.active && paymentType === 'pix') && (
         <Box>
-          <Typography paragraph>
-            Assim que concluir a transação, por favor, envie o comprovante para o nosso número
-            no WhatsApp, para que possamos aprovar o seu pedido. <br />
-          </Typography>
           <PayPix active={true} code={data.pix.code} />
           <ButtonFloat text="Finalizar pedido" onClick={finishOrder} />
         </Box>

@@ -40,7 +40,7 @@ const Menu = () => {
 
   const getCompany = async () => {
     try {
-      const response = await apiService.get('/store/' + storeUrl);
+      const response = await apiService.get('/' + storeUrl);
       setCompanyCatalog(response.data);
       setCompany(response.data);
     } catch (e) {
@@ -50,7 +50,7 @@ const Menu = () => {
   };
 
   const getProducts = async () => {
-    const response = await apiService.get('/store/products/' + storeUrl);
+    const response = await apiService.get('/products/' + storeUrl);
     const productsWithCategories = response.data;
     const listProducts = [];
     const categories = [];

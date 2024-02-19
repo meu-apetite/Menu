@@ -1,5 +1,5 @@
-import { Grid, List, ListItem, ListItemText } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { Grid, List, ListItem, ListItemText } from '@mui/material';
 import * as S from './style';
 
 const PaymentMethods = ({ paymentOptions, getSelected }) => {
@@ -7,7 +7,6 @@ const PaymentMethods = ({ paymentOptions, getSelected }) => {
   const [methodCurrent, setMethodCurrent] = useState();
 
   useEffect(() => {
-    console.log(paymentOptions)
     if (!paymentOptions || paymentOptions?.length < 1) return;
 
     const methodsParent = [];
@@ -15,14 +14,14 @@ const PaymentMethods = ({ paymentOptions, getSelected }) => {
     paymentOptions.forEach((item) => {
       const parent = item.parent;
       const objCorrespondente = methodsParent.find((obj) => obj.parent === parent);
+
       if (objCorrespondente) {
         objCorrespondente.options.push(item);
-      } else {
-        methodsParent.push({ parent: parent, options: [item] });
-      }
+        return;
+      } 
+      
+      methodsParent.push({ parent: parent, options: [item] });
     });
-
-    console.log(methodsParent)
 
     setPaymentMethods(methodsParent);
   }, []);

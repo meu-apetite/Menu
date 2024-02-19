@@ -21,6 +21,7 @@ const ProductView = (props) => {
   const [selectedComplements, setSelectedComplements] = useState([]);
   const [requiredComplements, setRequiredComplements] = useState([]);
   const [confirm, setConfirm] = useState(false);
+  const [comment, setComment] = useState('');
 
   const productCalculation = () => {
     const totalComplement = selectedComplements.reduce((acc, current) => acc + (current.price * current.quantity), 0);
@@ -100,9 +101,11 @@ const ProductView = (props) => {
     if (!confirm) return;
 
     saveProduct({
+      comment,
       productId: product._id,
       complements: selectedComplements,
       total: price,
+      unitPrice: product.price,
       quantity: counterValue
     });
 
@@ -228,11 +231,12 @@ const ProductView = (props) => {
           <S.Comment>
             <label className="label">Algum comentário?</label>
             <TextField
+              sx={{ mt: 0.4 }}
               multiline
               rows={3}
               fullWidth={true}
               placeholder="Ex: tirar a cebola, maionese à parte etc."
-            // onChange={(e) => setData({ ...data, description: e.target.value })}
+              onChange={(e) => setComment(e.target.value)}
             />
           </S.Comment>
         </S.Container>

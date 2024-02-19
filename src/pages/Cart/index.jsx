@@ -33,39 +33,28 @@ const CartPage = () => {
   const [order, setOrder] = useState({ products: [] });
   const [store, setStore] = useState();
   const [error, setError] = useState(null);
-  const [address, setAddress] = useState(null);
-  const [addressToken, setAddressToken] = useState(null);
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
  
   const getCompany = async () => {
-    const { data } = await apiService.get('/store/' + storeUrl);
+    const { data } = await apiService.get('/' + storeUrl);
     setStore(data);
     setStoreContext(data);
   };
 
   const estimateValue = async () => {
     try {
-      const products = await ApplicationUtils.getProductsInLocalStorage(storeUrl);
+      const cart = await ApplicationUtils.getCartInLocalStorage(storeUrl);
 
-      if (products.length === 0) {
+      if (cart?.products?.length === 0 || !cart) {
         setError(ErrorUtils.emptyCart(storeUrl));
         return;
       }
 
-      const { data: orderData } = await apiService.post(
-        '/store/estimateValue',
-        products.map((item) => ({
-          complements: item.complements || [],
-          productId: item.productId,
-          quantity: item.quantity,
-        })),
-      );
+      const { data } = await apiService.post('/estimateValue', cart);
 
-      setOrder(orderData);
+      setOrder(data);
 
-      await ApplicationUtils.setDataInLocalStorage(storeUrl, {
-        products: orderData.products,
-        productsToken: orderData.productsToken
-      });
+      await ApplicationUtils.setDataInLocalStorage(storeUrl, data);
     } catch (error) {
       setError(setError(ErrorUtils.retrieveOrder(storeUrl)));
     }
@@ -91,12 +80,9 @@ const CartPage = () => {
 
   const next = async () => {
     const cart = await ApplicationUtils.getCartInLocalStorage(storeUrl);
+    const address = deliveryInfo?.address || {};
 
-    ApplicationUtils.setDataInLocalStorage(
-      storeUrl, 
-      { ...cart, address, addressToken }
-    );
-
+    ApplicationUtils.setDataInLocalStorage(storeUrl, {...cart, ...address});
     navigate('contact');
   };
 
@@ -114,7 +100,7 @@ const CartPage = () => {
         }
       </S.Header>
 
-      <Container maxWidth="md">
+      <Container maxWidth="md" sx={{ mb: '64px' }}>
         <section>
           <S.Title variant="h5">Finalize o seu pedido</S.Title>
           <List>
@@ -149,6 +135,7 @@ const CartPage = () => {
           {store?.settingsDelivery && (
             <DeliveryInfo 
               settingsDelivery={store.settingsDelivery}
+              getDeliveryInfo={(data) => ApplicationUtils.setDataInLocalStorage(storeUrl, data)}
               order={order}
             />
           )}

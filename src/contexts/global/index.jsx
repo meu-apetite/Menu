@@ -19,9 +19,12 @@ export const GlobalProvider = (props) => {
   const [loading, setLoading] = useState(false);
 
   const saveProduct = async (product) => {
-    const products = await ApplicationUtils.getProductsInLocalStorage(company.storeUrl);
+    const cart = await ApplicationUtils.getCartInLocalStorage(company.storeUrl);
+
+    const products = cart?.products ?? [];
 
     localStorage.setItem(company.storeUrl, JSON.stringify({ 
+      ...cart,
       products: [...products, product] 
     }));
 
@@ -76,7 +79,7 @@ export const GlobalProvider = (props) => {
       >
         <Backdrop
           sx={{ color: '#000000', zIndex: (theme) => theme.zIndex.drawer + 100 }}
-          open={loading}
+          open={loading ? true : false}
         >
           <Box sx={{ display: 'grid', justifyContent: 'center', gap: 1 }}>
             <CircularProgress size="4rem" sx={{ margin: 'auto' }} />

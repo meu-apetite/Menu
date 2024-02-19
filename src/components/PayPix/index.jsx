@@ -41,6 +41,11 @@ const PayPix = (props) => {
         Instruções para pagamento PIX
       </Typography>
 
+      <Typography paragraph>
+        Assim que concluir a transação, por favor, envie o comprovante para o
+        no WhatsApp, para que possamos aprovar o seu pedido. <br />
+      </Typography>
+
       <Box sx={{ display: 'grid', mt: 1 }}>
         <QRCode value={props.code} style={useStyles.qrCode} />
 

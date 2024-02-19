@@ -166,7 +166,7 @@ const About = () => {
   const [store, setStore] = useState({});
 
   const getStore = async () => {
-    const { data } = await apiService.get('/store/' + storeUrl);
+    const { data } = await apiService.get('/' + storeUrl);
     setStore(data);
   };
 

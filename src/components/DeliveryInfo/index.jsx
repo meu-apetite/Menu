@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import { GlobalContext } from 'contexts/global';
 import { ApiService } from 'services/api.service';
@@ -7,19 +7,18 @@ import { ApplicationUtils } from 'utils/ApplicationUtils';
 import FindAddress from 'components/FindAddress';
 import * as S from './style';
 
-const DeliveryInfo = ({ settingsDelivery, order }) => {
+const DeliveryInfo = ({ settingsDelivery, order, getDeliveryInfo }) => {
   const apiService = new ApiService(false);
   const { company, setLoading } = useContext(GlobalContext);
   const [openFindAddress, setOpenFindAddress] = useState(false);
   const [address, setAddress] = useState(null);
-  const [addressToken, setAddressToken] = useState(null);
 
   const handleCloseFindAddress = () => setOpenFindAddress(false);
 
   const HandleOpenFindAddress = () => setOpenFindAddress(true);
 
   const calculateFreight = async (data) => {
-    if (!data?.street || !data?.district || !data?.city || !data.number) {
+    if (!data.street || !data.district || !data.city || !data.number) {
       toast.error(
         'Endereço incompleto, verique seu endereço. Caso o erro seja recorrente, entre em contato com nosso suporte',
         { position: 'top-center' },
@@ -29,14 +28,19 @@ const DeliveryInfo = ({ settingsDelivery, order }) => {
     try {
       setLoading('Calculando taxa...');
 
-      const response = await apiService.post('/store/calculateFreight', {
+      const cart = await ApplicationUtils.getCartInLocalStorage(company.storeUrl);
+
+      const response = await apiService.post('/calculateFreight', {
         address: data,
         companyId: company._id,
+        cartId: cart._id
       });
 
       setAddress(response.data.address);
-      setAddressToken(response.data.addressToken);
-      HandleOpenFindAddress();
+
+      getDeliveryInfo(response.data);
+
+      handleCloseFindAddress();
     } catch (e) {
       toast.error(
         e.response.data?.message 
@@ -46,6 +50,10 @@ const DeliveryInfo = ({ settingsDelivery, order }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (order?.address) setAddress(order.address);
+  }, [])
 
   return (
     <Box>
@@ -111,7 +119,7 @@ const DeliveryInfo = ({ settingsDelivery, order }) => {
 
       <br /> <br />
 
-      {settingsDelivery?.deliveryOption === 'automatic' && (
+      {(settingsDelivery.deliveryOption === 'automatic' && !address?.price) && (
         <Box sx={{ display: 'grid' }}>
           <strong>*Pedido para entrega?</strong>
           <Button 
@@ -136,7 +144,7 @@ const DeliveryInfo = ({ settingsDelivery, order }) => {
       {openFindAddress && (
         <FindAddress
           closeModal={handleCloseFindAddress}
-          getData={(data) => calculateFreight(data)}
+          getDeliveryInfo={(data) => calculateFreight(data)}
         />
       )}
     </Box>

@@ -3,9 +3,9 @@ import Order from 'pages/Order';
 import About from 'pages/About';
 import Landing from 'pages/Landing';
 import CartPage from 'pages/Cart';
-import ClientContact from 'pages/StepsOrder/Step1_ClientContact';
-import Address from 'pages/StepsOrder/Step2_Address';
-import Payment from 'pages/StepsOrder/Step3_Payment';
+import ClientContact from 'pages/Checkout/Step1_ClientContact';
+import Address from 'pages/Checkout/Step2_Address';
+import Payment from 'pages/Checkout/Step3_Payment';
 import Checkout from 'layouts/Checkout';
 
 export const checkoutRoutes = [

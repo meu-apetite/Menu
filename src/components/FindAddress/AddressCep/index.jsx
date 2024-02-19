@@ -47,6 +47,7 @@ const AddressCep = (props /* { getAddress() } */) => {
 
       {
         loading ? <LoadingAnimation /> : (
+          <>
           <Button
             sx={{ mt: 1, pt: 1, pb: 1 }}
             variant="contained"
@@ -55,6 +56,15 @@ const AddressCep = (props /* { getAddress() } */) => {
           >
             Buscar
           </Button>
+          <Button
+            sx={{ mt: 1, pt: 1, pb: 1 }}
+            fullWidth
+            onClick={findCep}
+            color="info"
+          >
+            Buscar
+          </Button>
+          </>
         )
       }
     </Box>
