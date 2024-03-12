@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import { GlobalContext } from 'contexts/global';
 import { ApiService } from 'services/api.service';
@@ -7,11 +7,10 @@ import { ApplicationUtils } from 'utils/ApplicationUtils';
 import FindAddress from 'components/FindAddress';
 import * as S from './style';
 
-const DeliveryInfo = ({ settingsDelivery, order, getDeliveryInfo }) => {
+const DeliveryInfo = ({ settingsDelivery, cart, getDeliveryInfo }) => {
   const apiService = new ApiService(false);
   const { company, setLoading } = useContext(GlobalContext);
   const [openFindAddress, setOpenFindAddress] = useState(false);
-  const [address, setAddress] = useState(null);
 
   const handleCloseFindAddress = () => setOpenFindAddress(false);
 
@@ -28,15 +27,11 @@ const DeliveryInfo = ({ settingsDelivery, order, getDeliveryInfo }) => {
     try {
       setLoading('Calculando taxa...');
 
-      const cart = await ApplicationUtils.getCartInLocalStorage(company.storeUrl);
-
       const response = await apiService.post('/calculateFreight', {
         address: data,
         companyId: company._id,
         cartId: cart._id
       });
-
-      setAddress(response.data.address);
 
       getDeliveryInfo(response.data);
 
@@ -50,10 +45,6 @@ const DeliveryInfo = ({ settingsDelivery, order, getDeliveryInfo }) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (order?.address) setAddress(order.address);
-  }, [])
 
   return (
     <Box>
@@ -84,12 +75,12 @@ const DeliveryInfo = ({ settingsDelivery, order, getDeliveryInfo }) => {
       {
         settingsDelivery.delivery 
         && settingsDelivery.deliveryOption === 'automatic' 
-        && address?.price 
+        && cart?.address?.price
         && (
           <S.WrapperContent>
             <strong>TAXA DE ENTREGA:</strong>
             <strong className="price">
-              {ApplicationUtils.formatPrice(address?.price)}
+              {ApplicationUtils.formatPrice(cart?.address?.price)}
             </strong>
           </S.WrapperContent>
         )
@@ -98,28 +89,20 @@ const DeliveryInfo = ({ settingsDelivery, order, getDeliveryInfo }) => {
       <S.WrapperContent>
         <strong>SUBTOTAL:</strong>
         <strong className="price">
-          {ApplicationUtils.formatPrice(order.total)}
+          {ApplicationUtils.formatPrice(cart.subtotal)}
         </strong>
       </S.WrapperContent>
 
       <S.WrapperContent>
         <strong>TOTAL:</strong>
         <strong className="price">
-          {ApplicationUtils.formatPrice(
-            order.total +
-            (settingsDelivery.delivery && address?.price ? address.price : 0)
-            + (
-              settingsDelivery?.delivery
-                && settingsDelivery?.deliveryOption === 'fixed'
-                ? settingsDelivery.fixedValue : 0
-            )
-          )}
+          {ApplicationUtils.formatPrice(cart.total)}
         </strong>
       </S.WrapperContent>
 
       <br /> <br />
 
-      {(settingsDelivery.deliveryOption === 'automatic' && !address?.price) && (
+      {(settingsDelivery.deliveryOption === 'automatic' && !cart?.address?.price) && (
         <Box sx={{ display: 'grid' }}>
           <strong>*Pedido para entrega?</strong>
           <Button 
@@ -144,7 +127,7 @@ const DeliveryInfo = ({ settingsDelivery, order, getDeliveryInfo }) => {
       {openFindAddress && (
         <FindAddress
           closeModal={handleCloseFindAddress}
-          getDeliveryInfo={(data) => calculateFreight(data)}
+          getData={(data) => calculateFreight(data)}
         />
       )}
     </Box>

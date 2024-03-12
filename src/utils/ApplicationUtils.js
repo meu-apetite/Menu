@@ -1,3 +1,5 @@
+import { createTheme } from "@mui/material";
+
 export class ApplicationUtils {
   static async getCartInLocalStorage(companyName) {
     const cart = localStorage.getItem(companyName);
@@ -21,6 +23,27 @@ export class ApplicationUtils {
     if (companyName) localStorage.removeItem(companyName);
   };
 
+  static getStatusColor(status) {
+    switch (status) {
+      case 'OrderReceived':
+        return 'primary';
+      case 'Processing':
+        return 'info';
+      case 'WaitingForPaymentConfirmation':
+        return 'warning';
+      case 'Shipped':
+        return 'success';
+      case 'Concluded':
+        return 'success';
+      case 'Cancelled':
+        return 'error';
+      case 'WaitingForPickup':
+        return 'info';
+      default:
+        return 'default';
+    }
+  };
+
   static formatPrice(price) {
     if (!price) return;
 
@@ -29,4 +52,15 @@ export class ApplicationUtils {
       { style: 'currency', currency: 'BRL' }
     ) || 'R$ 0,00';
   }
+
+  static createCustomTheme(colorPrimary, colorSecondary) {
+    return createTheme({
+      palette: {
+        primary: { main: colorPrimary || '#800080' },
+        secondary: { main: colorSecondary || '#CD5C5C' },
+      },
+      typography: { fontFamily: 'Roboto, sans-serif' },
+      spacing: (factor) => `${0.5 * factor}rem`,
+    });
+  };
 }

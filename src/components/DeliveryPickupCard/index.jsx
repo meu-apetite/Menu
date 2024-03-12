@@ -25,7 +25,7 @@ const DeliveryPickupCard = (props) => {
 
       <br />
 
-      <Button variant="text" color="secondary">Copiar endereço completo</Button>
+      <Button variant="outlined" color="secondary" sx={{ mr: 1 }}>Copiar endereço completo</Button>
 
       <Button variant="outlined" color="info">
         <a

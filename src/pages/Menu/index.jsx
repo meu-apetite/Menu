@@ -17,40 +17,24 @@ import {
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import ProductCard from 'components/ProductCard';
 import SpinnerProduct from 'components/SpinnerProduct';
-import CustomError from 'components/CustomError';
 import { GlobalContext } from 'contexts/global';
 import { ApiService } from 'services/api.service';
 import SearchProduct from 'components/SearchProduct';
 import * as S from './style';
-import { ErrorUtils } from 'utils/ErrorUtils';
 
 const Menu = () => {
   const navigate = useNavigate();
   const apiService = new ApiService(false);
   const boxRef = useRef();
-  const { storeUrl } = useParams();
-  const { total, quantityTotal, setCompany } = useContext(GlobalContext);
+  const { menuUrl } = useParams();
+  const { total, quantityTotal, getTotal, company } = useContext(GlobalContext);
   const [collections, setCollections] = useState([]);
   const [categories, setCategories] = useState([]);
   const [productAll, setProductAll] = useState([]);
-  const [company, setCompanyCatalog] = useState();
   const [tabValue, setTabValue] = useState(0);
-  const [error, setError] = useState({});
-  const [showError, setShowError] = useState(false);
-
-  const getCompany = async () => {
-    try {
-      const response = await apiService.get('/' + storeUrl);
-      setCompanyCatalog(response.data);
-      setCompany(response.data);
-    } catch (e) {
-      setShowError(true);
-      return setError(ErrorUtils.notFoundMenu());
-    }
-  };
 
   const getProducts = async () => {
-    const response = await apiService.get('/products/' + storeUrl);
+    const response = await apiService.get('/products/' + menuUrl);
     const productsWithCategories = response.data;
     const listProducts = [];
     const categories = [];
@@ -76,6 +60,7 @@ const Menu = () => {
     setCollections(categories);
     setCategories(categoriesTitle);
     setProductAll(listProducts);
+    getTotal();
   };
 
   const changeTab = (e, value) => {
@@ -85,10 +70,10 @@ const Menu = () => {
     const boundingBox = targetElement.getBoundingClientRect();
     const offset = 124;
 
-    window.scroll({
-      behavior: 'smooth',
-      left: 0,
-      top: boundingBox.top + window.scrollY - offset
+    window.scroll({ 
+      top: boundingBox.top + window.scrollY - offset,
+      behavior: 'smooth', 
+      left: 0, 
     });
   };
 
@@ -126,7 +111,6 @@ const Menu = () => {
   }, [collections]);
 
   useEffect(() => {
-    getCompany();
     getProducts();
   }, []);
 
@@ -268,7 +252,6 @@ const Menu = () => {
         </Box>
       ) : null}
 
-      {showError ? <CustomError error={error} /> : null}
     </>
   );
 };

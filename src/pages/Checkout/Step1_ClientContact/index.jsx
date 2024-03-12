@@ -9,12 +9,12 @@ import { ApiService } from 'services/api.service';
 const ClientContact = () => {
   const apiService = new ApiService(false);
   const navigate = useNavigate();
-  const { storeUrl } = useParams();
+  const { menuUrl } = useParams();
   const [client, setClient] = useState({ name: '', phoneNumber: '', email: '' });
   const [cart, setCart] = useState({});
 
   const getCart = async () => {
-    const cart = await ApplicationUtils.getCartInLocalStorage(storeUrl);
+    const cart = await ApplicationUtils.getCartInLocalStorage(menuUrl);
     setCart(cart);
     if (cart?.client) setClient(cart.client);
   } 
@@ -55,8 +55,8 @@ const ClientContact = () => {
   };
 
   const next = async (data) => {
-    await ApplicationUtils.setDataInLocalStorage(storeUrl, data);
-    navigate(`/${storeUrl}/checkout/address`);
+    await ApplicationUtils.setDataInLocalStorage(menuUrl, data);
+    navigate(`/${menuUrl}/checkout/address`);
   };
 
   useEffect(() => {

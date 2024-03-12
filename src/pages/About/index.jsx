@@ -1,4 +1,5 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Tab,
   Tabs,
@@ -10,25 +11,13 @@ import {
   Box,
   Button,
 } from '@mui/material';
+import { GlobalContext } from 'contexts/global';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import DescriptionIcon from '@mui/icons-material/Description';
 import BusinessIcon from '@mui/icons-material/Business';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import iconDinheiro from 'assets/icons/dinheiro.png';
-import iconElo from 'assets/icons/elo.webp';
-import iconMastercard from 'assets/icons/mastercard.webp';
-import iconVisa from 'assets/icons/visa.webp';
-import iconHipercard from 'assets/icons/hipercard.png';
-import iconNugo from 'assets/icons/nugo.avif';
-import iconAmex from 'assets/icons/amex.png';
-import iconSodexo from 'assets/icons/sodexo.png';
-import iconVr from 'assets/icons/vr.avif';
-import iconTicket from 'assets/icons/ticket.png';
 import CloseIcon from '@mui/icons-material/Close';
 import * as S from './style';
-import { GlobalContext } from 'contexts/global';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ApiService } from 'services/api.service';
 
 const AboutWeComponent = ({ description, address }) => (
   <S.StyledPaper elevation={3}>
@@ -100,30 +89,26 @@ const TimeComponent = ({ hours }) => {
 };
 
 const PaymentComponent = ({ methods }) => {
-  const [paymentCategory, setPaymentCategory] = useState({});
+  const [paymentMethods, setPaymentMethods] = useState([]);
 
   useEffect(() => {
-    const list = {};
-    methods.map((item) => {
-      if (item.id.indexOf('elo') >= 0) item.icon = iconElo;
-      if (item.id.indexOf('dinheiro') >= 0) item.icon = iconDinheiro;
-      if (item.id.indexOf('mastercard') >= 0) item.icon = iconMastercard;
-      if (item.id.indexOf('hipercard') >= 0) item.icon = iconHipercard;
-      if (item.id.indexOf('visa') >= 0) item.icon = iconVisa;
-      if (item.id.indexOf('amex') >= 0) item.icon = iconAmex;
-      if (item.id.indexOf('nugo') >= 0) item.icon = iconNugo;
-      if (item.id.indexOf('vr') >= 0) item.icon = iconVr;
-      if (item.id.indexOf('ticket') >= 0) item.icon = iconTicket;
-      if (item.id.indexOf('sodexo') >= 0) item.icon = iconSodexo;
+    if (!methods || methods?.length < 1) return;
 
-      if (list[item.parent]?.length >= 1) {
-        list[item.parent].push(item);
-      } else {
-        list[item.parent] = [item];
+    const methodsParent = [];
+
+    methods.forEach((item) => {
+      const parent = item.parent;
+      const objCorrespondente = methodsParent.find((obj) => obj.parent === parent);
+
+      if (objCorrespondente) {
+        objCorrespondente.options.push(item);
+        return;
       }
+
+      methodsParent.push({ parent: parent, options: [item] });
     });
 
-    setPaymentCategory(list);
+    setPaymentMethods(methodsParent);
   }, []);
 
   return (
@@ -133,15 +118,15 @@ const PaymentComponent = ({ methods }) => {
       </Typography>
       <Divider /> <br />
       <S.Section sx={{ display: 'grid', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-        {Object.keys(paymentCategory).map((key) => {
+        {paymentMethods.map((method) => {
           return (
-            <Box key={key} sx={{ mb: 3 }}>
-              <Typography variant="h6" align="left">{key}</Typography>
-              {paymentCategory[key].map((item) => {
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" align="left">{method.parent}</Typography>
+              {method.options.map((item) => {
                 return (
                   <Box key={item.title} sx={{ display: 'flex', mb: 1 }}>
                     <img
-                      src={item.icon}
+                      src={item.image}
                       style={{ width: '24px', objectFit: 'contain' }}
                       alt=""
                     />
@@ -159,31 +144,19 @@ const PaymentComponent = ({ methods }) => {
 
 const About = () => {
   const navigate = useNavigate();
-  const { storeUrl } = useParams();
-  const apiService = new ApiService(false);
-  const { store: storeSaved } = useContext(GlobalContext);
+  const { menuUrl } = useParams();
+  const { company } = useContext(GlobalContext);
   const [tab, setTab] = useState('about');
-  const [store, setStore] = useState({});
-
-  const getStore = async () => {
-    const { data } = await apiService.get('/' + storeUrl);
-    setStore(data);
-  };
-
-  useEffect(() => {
-    (!storeSaved.storeUrl) 
-      ? getStore() : setStore(storeSaved);
-  }, []);
 
   return (
     <>
       <AppBar sx={{ position: 'relative' }}>
         <Toolbar>
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             sx={{ color: '#fff' }}
             startIcon={<CloseIcon />}
-            onClick={() => navigate(`/${storeUrl}`)}
+            onClick={() => navigate(`/${menuUrl}`)}
           >Voltar</Button>
         </Toolbar>
       </AppBar>
@@ -197,16 +170,12 @@ const About = () => {
 
         {tab === 'about' && (
           <AboutWeComponent
-            description={store?.description}
-            address={store?.address?.freeformAddress}
+            description={company.description}
+            address={company.address?.freeformAddress}
           />
         )}
-        {tab === 'hours' && (
-          <TimeComponent hours={store?.settings?.openingHours} />
-        )}
-        {tab === 'payment' && (
-          <PaymentComponent methods={store?.settingsPayment?.methods} />
-        )}
+        {tab === 'hours' && <TimeComponent hours={company.settings.openingHours} />}
+        {tab === 'payment' && <PaymentComponent methods={company.settingsPayment?.methods} />}
       </Container>
     </>
   );

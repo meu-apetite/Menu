@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Typography, Paper, Box, AppBar, Toolbar, Button, Chip, List, ListItem, ListItemText } from '@mui/material';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ApiService } from 'services/api.service';
+import { GlobalContext } from 'contexts/global';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { ApplicationUtils } from 'utils/ApplicationUtils';
 
 const PedidoDetalhes = () => {
   const navigate = useNavigate();
+  const { toast } = useContext(GlobalContext);
   const { state } = useLocation();
-  const { storeUrl, orderId } = useParams();
+  const { menuUrl, orderId } = useParams();
   const apiService = new ApiService();
   const [order, setOrder] = useState({
     id: 0,
@@ -20,14 +23,44 @@ const PedidoDetalhes = () => {
     deliveryType: '',
     address: {},
     total: 0,
+    subtotal: 0
   });
   const [company, setCompany] = useState({});
 
   const getData = async () => {
-    const { data } = await apiService.get(`/${storeUrl}/order/${orderId}`);
+    const { data } = await apiService.get(`/${menuUrl}/order/${orderId}`);
     setOrder(data.order);
     setCompany(data.company);
   };
+
+  const messageAlert = () => {
+    toast((t) => (
+      <span>
+        Iremos enviar a confirmação e atualizações do seu pedido pelo WhatsApp 
+        fornecido no momento da compra. Se não receber, entre em contato pelo 
+        botão de WhatsApp abaixo.
+        <Box sx={{ display: 'flex', justifyContent: 'end', mt: 1 }}>
+          <Button 
+            color="primary"
+            variant="contained" 
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Tudo certo
+          </Button>
+        </Box>
+      </span>
+    ), { 
+      duration: 30000,
+      style: {
+        border: '1px solid #004085',
+      }
+    });
+
+    toast.success(
+      'Pedido enviado! Todos os detalhes do pedido foram enviados para o seu e-mail',
+      { duration: 6000 }
+    );
+  }
 
   useEffect(() => {
     if (state?.order?.id && state?.store?._id) {
@@ -36,28 +69,9 @@ const PedidoDetalhes = () => {
     } else {
       getData();
     }
-  }, []);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'OrderReceived':
-        return 'primary';
-      case 'Processing':
-        return 'info';
-      case 'WaitingForPaymentConfirmation':
-        return 'warning';
-      case 'Shipped':
-        return 'success';
-      case 'Concluded':
-        return 'success';
-      case 'Cancelled':
-        return 'error';
-      case 'WaitingForPickup':
-        return 'info';
-      default:
-        return 'default';
-    }
-  };
+    messageAlert()
+  }, []);
 
   return (
     <Box>
@@ -70,8 +84,8 @@ const PedidoDetalhes = () => {
       <Paper elevation={2} style={{ padding: '20px', margin: '20px auto', maxWidth: '600px' }}>
         <Box style={{ marginBottom: '16px', textAlign: 'center' }}>
           <Chip
-            label={order?.status?.label}
-            color={getStatusColor(order?.status?.name)}
+            label={order.status.label}
+            color={ApplicationUtils.getStatusColor(order.status.name)}
             variant="outlined"
           />
         </Box>
@@ -79,31 +93,6 @@ const PedidoDetalhes = () => {
         <Typography variant="h5" style={{ marginBottom: '16px' }}>
           Número do pedido: #{order.id}
         </Typography>
-
-        <Typography variant="h6" style={{ marginTop: 20 }}>Itens:</Typography>
-        <List>
-          {order.products?.map((item, i) => (
-            <ListItem key={i} style={{ borderBottom: '1px solid #ccc' }}>
-              <ListItemText
-                primary={item.productName}
-                secondary={`Quantidade: ${item.quantity} | R$ ${item.priceTotal.toFixed(2)}`}
-              />
-            </ListItem>
-          ))}
-        </List>
-
-        <Typography variant="h6" style={{ marginTop: 20 }}>
-          Subtotal: R$
-        </Typography>
-
-        {
-          order?.address?.price &&
-          <Typography variant="h6">
-            Taxa de entrega: R$ {order.address.price.toFixed(2)}
-          </Typography>
-        }
-
-        <Typography variant="h6">Total: R$ {order.total.toFixed(2)}</Typography>
 
         <Typography variant="h6" style={{ marginTop: 20 }}>
           Cliente: {order.client.name}
@@ -149,6 +138,31 @@ const PedidoDetalhes = () => {
           </>
           : <Typography variant="h6" style={{ marginTop: 20 }}>Pedido para retirada</Typography>
         }
+
+        <Typography variant="h6" style={{ marginTop: 20 }}>Itens:</Typography>
+        <List>
+          {order.products?.map((item, i) => (
+            <ListItem key={i} style={{ borderBottom: '1px solid #ccc' }}>
+              <ListItemText
+                primary={item.productName}
+                secondary={`Quantidade: ${item.quantity} | R$ ${item.priceTotal.toFixed(2)}`}
+              />
+            </ListItem>
+          ))}
+        </List>
+
+        <Box sx={{ display: 'flex', alignItems: 'end', flexDirection: 'column', gap: 0.3 }}>
+          <strong>Subtotal: R$ {order.subtotal.toFixed(2)}</strong> 
+          {order.deliveryType === 'delivery' && (
+            order.address.deliveryOtpion  === 'customerPickup' 
+              ? <span>A combinar</span>  
+              : <strong>
+                  Taxa de entrega: R$ {order.address.price.toFixed(2)}
+                </strong>
+            )
+          }
+          <strong>Total: R$ {order.total.toFixed(2)}</strong>       
+        </Box>
       </Paper>
 
       <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
@@ -156,7 +170,7 @@ const PedidoDetalhes = () => {
           variant="contained"
           color="secondary"
           style={{ marginRight: 16 }}
-          onClick={() => navigate(`/${storeUrl}`)}
+          onClick={() => navigate(`/${menuUrl}`)}
           startIcon={<ArrowBackIcon />}
         >
           Voltar para o Cardápio

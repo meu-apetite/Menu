@@ -11,14 +11,12 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Divider,
-  Skeleton,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { GlobalContext } from 'contexts/global';
 import { ApiService } from 'services/api.service';
 import { ApplicationUtils } from 'utils/ApplicationUtils';
 import { ErrorUtils } from 'utils/ErrorUtils';
-import CustomError from 'components/CustomError';
 import ButtonFloat from 'components/ButtonFloat';
 import DeliveryInfo from 'components/DeliveryInfo';
 import SkeletonProducts from './SkeletonProducts';
@@ -26,37 +24,36 @@ import * as S from './style';
 
 
 const CartPage = () => {
-  const navigate = useNavigate();
   const apiService = new ApiService(false);
-  const { setCompany: setStoreContext, setLoading } = useContext(GlobalContext);
-  const { storeUrl } = useParams();
+  const navigate = useNavigate();
+  const { menuUrl } = useParams();
+  const { company, setLoading } = useContext(GlobalContext);
   const [order, setOrder] = useState({ products: [] });
-  const [store, setStore] = useState();
   const [error, setError] = useState(null);
-  const [deliveryInfo, setDeliveryInfo] = useState(null);
- 
-  const getCompany = async () => {
-    const { data } = await apiService.get('/' + storeUrl);
-    setStore(data);
-    setStoreContext(data);
-  };
 
   const estimateValue = async () => {
     try {
-      const cart = await ApplicationUtils.getCartInLocalStorage(storeUrl);
+      const cart = await ApplicationUtils.getCartInLocalStorage(menuUrl);
+      cart.companyId = company._id;
 
       if (cart?.products?.length === 0 || !cart) {
-        setError(ErrorUtils.emptyCart(storeUrl));
+        setError(ErrorUtils.emptyCart(menuUrl));
         return;
       }
 
       const { data } = await apiService.post('/estimateValue', cart);
 
+
+      if (data?.products?.length === 0 || !data) {
+        setError(ErrorUtils.emptyCart(menuUrl));
+        return;
+      }
+
       setOrder(data);
 
-      await ApplicationUtils.setDataInLocalStorage(storeUrl, data);
+      await ApplicationUtils.setDataInLocalStorage(menuUrl, data);
     } catch (error) {
-      setError(setError(ErrorUtils.retrieveOrder(storeUrl)));
+      setError(setError(ErrorUtils.retrieveOrder(menuUrl)));
     }
   };
 
@@ -64,9 +61,9 @@ const CartPage = () => {
     try {
       setLoading('Atualizando...');
 
-      const cart = await ApplicationUtils.getCartInLocalStorage(storeUrl);
+      const cart = await ApplicationUtils.getCartInLocalStorage(menuUrl);
       const products = cart.products.filter((p, i) => index !== i);
-      ApplicationUtils.setDataInLocalStorage(storeUrl, { products });
+      ApplicationUtils.setDataInLocalStorage(menuUrl, { ...cart, products });
 
       await estimateValue();
 
@@ -78,28 +75,14 @@ const CartPage = () => {
     }
   };
 
-  const next = async () => {
-    const cart = await ApplicationUtils.getCartInLocalStorage(storeUrl);
-    const address = deliveryInfo?.address || {};
-
-    ApplicationUtils.setDataInLocalStorage(storeUrl, {...cart, ...address});
-    navigate('contact');
-  };
+  const next = async () => navigate('contact');
 
   useEffect(() => {
-    getCompany();
     estimateValue();
   }, []);
 
   return (
     <section>
-      <S.Header>
-        {!store 
-          ? <Skeleton animation="wave" variant="circular" width={60} height={60} />
-          : <S.Logo src={store.custom.logo?.url} alt={`Logomarca ${store?.name}`} />
-        }
-      </S.Header>
-
       <Container maxWidth="md" sx={{ mb: '64px' }}>
         <section>
           <S.Title variant="h5">Finalize o seu pedido</S.Title>
@@ -132,19 +115,20 @@ const CartPage = () => {
 
           {order.products.length <= 0 && <SkeletonProducts products={3} />}
 
-          {store?.settingsDelivery && (
-            <DeliveryInfo 
-              settingsDelivery={store.settingsDelivery}
-              getDeliveryInfo={(data) => ApplicationUtils.setDataInLocalStorage(storeUrl, data)}
-              order={order}
+          {order && (
+            <DeliveryInfo
+              settingsDelivery={company.settingsDelivery}
+              getDeliveryInfo={(data) => {
+                ApplicationUtils.setDataInLocalStorage(menuUrl, data);
+                setOrder(data);
+              }}
+              cart={order}
             />
           )}
-          
+
           {!error && <ButtonFloat text="Continuar" onClick={next} />}
         </section>
       </Container>
-
-      {error && <CustomError error={error} />}
     </section>
   );
 };

@@ -43,7 +43,7 @@ const PaymentMethods = ({ paymentOptions, getSelected }) => {
                   checked={methodCurrent === method.id}
                   onChange={() => {
                     setMethodCurrent(method.id);
-                    getSelected(method);
+                    getSelected(method.id);
                   }}
                 />
                 <S.Icon

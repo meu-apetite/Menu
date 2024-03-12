@@ -5,7 +5,7 @@ import * as S from './style';
 const DeliveryInformationCard = ({ address, findAddress }) => {
   return (
     <>
-      {address ? (
+      {address?.street ? (
         <div>
           <Card sx={{ display: 'grid', gridTemplateColumns: '9fr 3fr', mt: 1.2 }}>
             <CardContent sx={{ flex: '1 0 auto' }}>
@@ -38,7 +38,7 @@ const DeliveryInformationCard = ({ address, findAddress }) => {
 
           <S.WrapperButtons>
             <S.ButtonDefault variant="outlined" onClick={findAddress}>
-              Mudar endereço
+              MUDAR ENDEREÇO
             </S.ButtonDefault>
           </S.WrapperButtons>
         </div>

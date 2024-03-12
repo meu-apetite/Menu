@@ -10,9 +10,8 @@ import DeliveryInformationCard from 'components/DeliveryInformationCard';
 import DeliveryPickupCard from 'components/DeliveryPickupCard';
 import ButtonFloat from 'components/ButtonFloat';
 
-
 const Address = () => {
-  const { storeUrl } = useParams();
+  const { menuUrl } = useParams();
   const navigate = useNavigate();
   const apiService = new ApiService(false);
   const { company, setLoading } = useContext(GlobalContext);
@@ -42,9 +41,10 @@ const Address = () => {
       });
 
       setAddress(response.address);
+
       setCart(response);
 
-      await ApplicationUtils.setDataInLocalStorage(storeUrl, response);
+      await ApplicationUtils.setDataInLocalStorage(menuUrl, response);
 
       toggleFindAddress();
     } catch (e) {
@@ -65,26 +65,19 @@ const Address = () => {
       return;
     }
 
-    if (deliveryType === 'pickup' && !company.address.freeformAddress) {
-      toast.error('Não foi possíver recuperar o endereço, tente novamente.', {
-        position: 'top-center',
-      });
-      return;
-    }
-
-    await ApplicationUtils.setDataInLocalStorage(storeUrl, {
+    await ApplicationUtils.setDataInLocalStorage(menuUrl, {
       ...cart,
       deliveryType,
     });
 
-    navigate(`/${storeUrl}/checkout/pay`);
+    navigate(`/${menuUrl}/checkout/pay`);
   };
 
   const changeDeliveryType = async (e, value) => setDeliveryType(value);
 
   useEffect(() => {
     (async () => {
-      const cart = await ApplicationUtils.getCartInLocalStorage(storeUrl);
+      const cart = await ApplicationUtils.getCartInLocalStorage(menuUrl);
       setAddress(cart.address);
       setCart(cart);
     })();
@@ -131,8 +124,8 @@ const Address = () => {
 
       {openFindAddress && (
         <FindAddress 
-          closeModal={toggleFindAddress} 
-          getData={calculateFreight}
+          closeModal={toggleFindAddress}
+          getData={(data) => calculateFreight(data)}
         />
       )}
     </>

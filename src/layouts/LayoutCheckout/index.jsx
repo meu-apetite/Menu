@@ -1,9 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Outlet, useParams, useLocation } from 'react-router-dom';
-import { Box, Container, Divider } from '@mui/material';
+import { Box, Container, Divider, ThemeProvider } from '@mui/material';
 import { GlobalContext } from 'contexts/global';
 import { ApiService } from 'services/api.service';
 import { ErrorUtils } from 'utils/ErrorUtils';
+import { ApplicationUtils } from 'utils/ApplicationUtils';
 import Stack from '@mui/material/Stack';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -11,48 +12,56 @@ import StepLabel from '@mui/material/StepLabel';
 import PhoneIcon from '@mui/icons-material/Phone';
 import RoomIcon from '@mui/icons-material/Room';
 import PaymentIcon from '@mui/icons-material/Payment';
-import CustomError from 'components/CustomError'; 
+import BagIcon from '@mui/icons-material/ShoppingBag';
 import * as S from './style';
 
-function ColorlibStepIcon(props) {
-  const { active, completed, className } = props;
 
-  const icons = { 1: <PhoneIcon />, 2: <RoomIcon />, 3: <PaymentIcon /> };
+const ColorlibStepIcon = (props) => {
+  const { active, completed, className, icon } = props;
+  const icons = { 
+    1: <BagIcon />, 
+    2: <PhoneIcon />, 
+    3: <RoomIcon />, 
+    4: <PaymentIcon /> 
+  };
 
   return (
     <S.ColorlibStepIconRoot
       ownerState={{ completed, active }}
       className={className}
     >
-      {icons[String(props.icon)]}
+      {icons[String(icon)]}
     </S.ColorlibStepIconRoot>
   );
-}
+};
 
-const Checkout = (props) => {
-  const apiService = new ApiService(false);
-  const { storeUrl } = useParams();
-  const { setCompany, company, setLoading } = useContext(GlobalContext);
-  const [error, setError] = useState(null);
+const LayoutCheckout = () => {
   const location = useLocation();
+  const { menuUrl } = useParams();
+  const apiService = new ApiService(false);
+  const { setCompany, company, setLoading, setGlobalError } = useContext(GlobalContext);
 
   const getCompany = async () => {
     try {
       setLoading('Carregando...');
 
-      const { data } = await apiService.get('/' + storeUrl);
+      const cart = await ApplicationUtils.getCartInLocalStorage(menuUrl);
+
+      if (!cart?._id) {
+        setGlobalError(ErrorUtils.emptyCart(menuUrl));
+        return;
+      }
+      const { data } = await apiService.get('/' + menuUrl);
       setCompany(data);
     } catch (error) {
-      return setError(ErrorUtils.notFoundMenu());
+      setGlobalError(ErrorUtils.notFoundMenu());
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (Object.keys(company).length === 0 || !company) {
-      getCompany();
-    }
+    if (!company) getCompany();
   }, []);
 
   const getStepFromPath = () => {
@@ -60,12 +69,14 @@ const Checkout = (props) => {
     const lastSegment = pathSegments[pathSegments.length - 1];
 
     switch (lastSegment) {
+      case 'Cart':
+        return 0;     
       case 'contact':
-        return 0;
-      case 'address':
         return 1;
-      case 'pay':
+      case 'address':
         return 2;
+        case 'pay':
+          return 3;
       default:
         return 0;
     }
@@ -73,8 +84,13 @@ const Checkout = (props) => {
 
   return (
     <Box>
-      {Object.keys(company).length > 0 && (
-        <>
+      {company && (
+        <ThemeProvider
+          theme={ApplicationUtils.createCustomTheme(
+            company.custom.colorPrimary,
+            company.custom.colorSecondary,
+          )}
+        >
           <Container maxWidth="md">
             <Stack sx={{ width: '100%', mt: 2, mb: 2 }} spacing={4}>
               <Stepper
@@ -82,20 +98,17 @@ const Checkout = (props) => {
                 activeStep={getStepFromPath()}
                 connector={<S.ColorlibConnector />}
               >
+                <Step key="Sacola">
+                  <StepLabel StepIconComponent={ColorlibStepIcon}>Sacola</StepLabel>
+                </Step>
                 <Step key="Contato">
-                  <StepLabel StepIconComponent={ColorlibStepIcon}>
-                    Contato
-                  </StepLabel>
+                  <StepLabel StepIconComponent={ColorlibStepIcon}>Contato</StepLabel>
                 </Step>
                 <Step key="Entrega">
-                  <StepLabel StepIconComponent={ColorlibStepIcon}>
-                    Entrega
-                  </StepLabel>
+                  <StepLabel StepIconComponent={ColorlibStepIcon}>Entrega</StepLabel>
                 </Step>
                 <Step key="Pagamento">
-                  <StepLabel StepIconComponent={ColorlibStepIcon}>
-                    Pagamento
-                  </StepLabel>
+                  <StepLabel StepIconComponent={ColorlibStepIcon}>Pagamento</StepLabel>
                 </Step>
               </Stepper>
             </Stack>
@@ -103,15 +116,11 @@ const Checkout = (props) => {
 
           <Divider light />
 
-          <Container maxWidth="md">
-            <Outlet />
-          </Container>
-        </>
+          <Container maxWidth="md">{company && <Outlet />}</Container>
+        </ThemeProvider>
       )}
-
-      {error && <CustomError error={error} />}
     </Box>
   );
 };
 
-export default Checkout;
+export default LayoutCheckout;

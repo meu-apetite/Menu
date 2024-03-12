@@ -1,25 +1,24 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Tab, Tabs } from '@mui/material';
 import { ApiService } from 'services/api.service';
 import { GlobalContext } from 'contexts/global';
-import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+import { ApplicationUtils } from 'utils/ApplicationUtils';
+import { ErrorUtils } from 'utils/ErrorUtils';
 import PaymentMethods from 'components/PaymentMethods';
 import ButtonFloat from 'components/ButtonFloat';
-import pixIcon from 'assets/icons/pix.png';
 import PayPix from 'components/PayPix';
 import * as S from './style';
-import { ApplicationUtils } from 'utils/ApplicationUtils';
 
 const Payment = () => {
-  const navigate = useNavigate();
-  const { storeUrl } = useParams();
   const apiService = new ApiService(false);
-  const { company, setLoading, toast } = useContext(GlobalContext);
+  const navigate = useNavigate();
+  const { menuUrl } = useParams();
+  const { company, setLoading, toast, clearCart, setErrorCustom } = useContext(GlobalContext);
 
-  const [paymentMethod, setPaymentMethod] = useState();
-  const [paymentType, setPaymentType] = useState('indelivery'); //indelivery | online | pix
-  const [settingsPayment, setSettingsPayment] = useState({});
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [paymentType, setPaymentType] = useState('inDelivery');
+  const [tabActive, setTabActive] = useState('inDelivery');
   const [data, setData] = useState(null);
   const [cart, setCart] = useState({});
 
@@ -27,48 +26,54 @@ const Payment = () => {
     try {
       setLoading(true);
 
+      const cart = await ApplicationUtils.getCartInLocalStorage(menuUrl);
+      setCart(cart);
+
       const { data } = await apiService.post('/payment', {
         companyId: company._id,
-        products: cart.products,
-        address: cart.address
+        cartId: cart._id,
       });
 
-      console.log(data.inDelivery.methods);
-
       setData(data);
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      if (e.response.status === 404) {
+        setErrorCustom(ErrorUtils.notFoundMenu());
+        return;
+      }
+
+      toast.error(
+        e.response.data?.message 
+        ?? 'Não foi buscar as formas de pagamento'
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const getCart = async () => {
-    const cart = await ApplicationUtils.getCartInLocalStorage(storeUrl);
-    setCart(cart);
-  }
-
   const finishOrder = async () => {
     try {
       setLoading(true);
 
-      delete cart.products;
-      const form = { ...cart, companyId: company._id, paymentType, paymentMethod };
-
-      if (paymentType === 'pix') {
-        form.paymentMethod = { icon: pixIcon, id: null, title: 'Pix', _id: null };
+      if (!paymentMethod) {
+        toast.error('Selecione o método de pagamento');
+        return;
       }
 
-      const { data } = await apiService.post(
-        '/finishOrder/' + company._id, 
-        form
-      );
+      const body = { 
+        companyId: company._id, 
+        cartId: cart._id,
+        deliveryType: cart.deliveryType,
+        paymentType,
+        paymentMethod
+      };
 
-      navigate(
-        `/${storeUrl}/meupedido/${data.order.id}`, 
-        { state: { ...data } }
-      );
+      const { data } = await apiService.post('/finish', body);
+
+      clearCart();
+
+      navigate(`/${menuUrl}/order/${data.id}`, { state: { ...data } });
     } catch (e) {
+      console.log(e)
       toast.error(
         e.response.data?.message
         || 'Não foi possível finalizar o pedido, caso o erro persista fale com o suporte'
@@ -78,9 +83,27 @@ const Payment = () => {
     }
   };
 
+  const setPayment = (value) => {
+    if (value === 'pix') {
+      setPaymentMethod('pix');
+      setPaymentType('online');
+      return;
+    }
+
+    if (value === 'inDelivery') {
+      setPaymentType('inDelivery');
+      setPaymentMethod(null);
+      return;
+    }
+  }
+
+  const changeTab = (event, value) => {
+    setTabActive(value);
+    setPayment(value);
+  }
+
   useEffect(() => {
     getSettingsPayment();
-    getCart()
   }, []);
 
   return (
@@ -89,22 +112,22 @@ const Payment = () => {
 
       {data && (
         <section style={{ marginBottom: 16 }}>
-          <Tabs value={paymentType} onChange={(e, v) => setPaymentType(v)}>
-            {data.mercadoPago.active && <Tab value="online" label="Pagamento Online" />}
-            {data.inDelivery.active && <Tab value="indelivery" label="Pagamento na Retirada" />}
+          <Tabs value={tabActive} onChange={changeTab}>
+            {data.mercadoPago.active && <Tab value="mp" label="Pagamento Online" />}
+            {data.inDelivery.active && <Tab value="inDelivery" label="Pagamento na Retirada" />}
             {data.pix.active && <Tab value="pix" label="Pix" />}
           </Tabs>
         </section>
       )}
 
-      {(data && data.pix.active && paymentType === 'pix') && (
+      {(data && data.pix.active && tabActive === 'pix') && (
         <Box>
           <PayPix active={true} code={data.pix.code} />
           <ButtonFloat text="Finalizar pedido" onClick={finishOrder} />
         </Box>
       )}
 
-      {(data && data.inDelivery.active && paymentType === 'indelivery') && (
+      {(data && data.inDelivery.active && tabActive === 'inDelivery') && (
         <section>
           <PaymentMethods
             paymentOptions={data.inDelivery.methods}

@@ -1,14 +1,6 @@
 import { styled } from '@mui/system';
 import Button from '@mui/material/Button';
 
-export const Header = styled('header')({
-  position: 'relative',
-  border: '1px solid #dcdcdc',
-  display: 'flex',
-  justifyContent: 'center',
-  padding: '0.6rem 0'
-});
-
 export const Title = styled('h2')({
   marginTop: '1rem'
 });

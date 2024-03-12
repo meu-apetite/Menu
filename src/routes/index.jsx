@@ -1,22 +1,20 @@
+import LayoutMenu from 'layouts/LayoutMenu';
+import LayoutCheckout from 'layouts/LayoutCheckout';
 import Menu from 'pages/Menu';
 import Order from 'pages/Order';
 import About from 'pages/About';
 import Landing from 'pages/Landing';
-import CartPage from 'pages/Cart';
 import ClientContact from 'pages/Checkout/Step1_ClientContact';
 import Address from 'pages/Checkout/Step2_Address';
 import Payment from 'pages/Checkout/Step3_Payment';
-import Checkout from 'layouts/Checkout';
+import CartPage from 'pages/Checkout/Cart';
 
 export const checkoutRoutes = [
   {
-    path: ':storeUrl/checkout',
-    element: <CartPage />,
-  },
-  {
-    path: ':storeUrl/checkout',
-    element: <Checkout />,
+    path: ':menuUrl/checkout',
+    element: <LayoutCheckout />,
     children: [
+      { path: '', element: <CartPage /> },
       { path: 'contact', element: <ClientContact /> },
       { path: 'address', element: <Address /> },
       { path: 'pay', element: <Payment /> },
@@ -27,11 +25,12 @@ export const checkoutRoutes = [
 export const menuRoutes = [
   {
     path: '/',
+    element: <LayoutMenu />,
     children: [
       { path: '', element: <Landing /> },
-      { path: ':storeUrl/', element: <Menu /> },
-      { path: ':storeUrl/about', element: <About /> },
-      { path: ':storeUrl/meupedido/:orderId', element: <Order /> },
+      { path: ':menuUrl/', element: <Menu /> },
+      { path: ':menuUrl/about', element: <About /> },
+      { path: ':menuUrl/order/:orderId', element: <Order /> },
     ],
   },
 ];

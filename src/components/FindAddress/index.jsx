@@ -28,7 +28,6 @@ const FindAddress = (props /* { getData() } */) => {
   };
 
   const getAddressEdit = (data) => {
-    console.log(data)
     setAddress(data);
     props.getData(data);
   };
