@@ -6,6 +6,7 @@ export const FoundContainer = styled('div')`
   height: 100vh;
   width: 100vw;
   background: #fff;
+  z-index: 9999;
 `;
 
 export const FoundContent = styled('div')`

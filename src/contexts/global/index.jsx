@@ -1,6 +1,5 @@
 import { createContext, useState } from 'react';
 import { Backdrop, Box, CircularProgress } from '@mui/material';
-import CustomError from 'components/CustomError';
 import toast, { Toaster } from 'react-hot-toast';
 import { ApplicationUtils } from 'utils/ApplicationUtils';
 
@@ -11,7 +10,6 @@ export const GlobalProvider = (props) => {
   const [quantityTotal, setQuantityTotal] = useState(0);
   const [company, setCompany] = useState(null);
   const [cart, setCart] = useState(null);
-  const [globalError, setGlobalError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const saveProduct = async (product) => {
@@ -51,7 +49,6 @@ export const GlobalProvider = (props) => {
         setCompany,
         clearCart,
         setLoading,
-        setGlobalError,
         loading,
         toast
       }}
@@ -68,8 +65,6 @@ export const GlobalProvider = (props) => {
       <Toaster position="top-center" reverseOrder={false} />
 
       {props.children}
-
-      {globalError && <CustomError error={globalError} />}
     </GlobalContext.Provider>
   );
 };

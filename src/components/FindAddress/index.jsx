@@ -21,8 +21,13 @@ const FindAddress = (props /* { getData() } */) => {
     condominium: null,
   });
   const [openEdit, setOpenEdit] = useState('cep');
+  const [edit, setEdit] = useState(false);
 
   const getAddressCep = (data) => {
+    if (data?.edit) {
+      setEdit(true);
+      delete data.edit;
+    }
     setAddress(data);
     setOpenEdit('address');
   };
@@ -51,8 +56,9 @@ const FindAddress = (props /* { getData() } */) => {
         {openEdit === 'cep' && (
           <AddressCep getAddress={(data) => getAddressCep(data)} />
         )}
+
         {openEdit === 'address' && (
-          <AddressEdit address={address} getAddress={getAddressEdit} />
+          <AddressEdit address={address} getAddress={getAddressEdit} edit={edit} />
         )}
       </S.CustomDialogContent>
     </S.BootstrapDialog>

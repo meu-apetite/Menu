@@ -21,6 +21,7 @@ import ButtonFloat from 'components/ButtonFloat';
 import DeliveryInfo from 'components/DeliveryInfo';
 import SkeletonProducts from './SkeletonProducts';
 import * as S from './style';
+import CustomError from 'components/CustomError';
 
 
 const CartPage = () => {
@@ -29,23 +30,23 @@ const CartPage = () => {
   const { menuUrl } = useParams();
   const { company, setLoading } = useContext(GlobalContext);
   const [order, setOrder] = useState({ products: [] });
-  const [error, setError] = useState(null);
+  const [globalError, setGlobalError] = useState(null);
 
   const estimateValue = async () => {
     try {
       const cart = await ApplicationUtils.getCartInLocalStorage(menuUrl);
-      cart.companyId = company._id;
+      cart.companyId = company?._id;
 
       if (cart?.products?.length === 0 || !cart) {
-        setError(ErrorUtils.emptyCart(menuUrl));
+        ApplicationUtils.clearCart(menuUrl);
+        setGlobalError(ErrorUtils.emptyCart(menuUrl));
         return;
       }
 
       const { data } = await apiService.post('/estimateValue', cart);
 
-
       if (data?.products?.length === 0 || !data) {
-        setError(ErrorUtils.emptyCart(menuUrl));
+        setGlobalError(ErrorUtils.emptyCart(menuUrl));
         return;
       }
 
@@ -53,7 +54,8 @@ const CartPage = () => {
 
       await ApplicationUtils.setDataInLocalStorage(menuUrl, data);
     } catch (error) {
-      setError(setError(ErrorUtils.retrieveOrder(menuUrl)));
+      console.log(error)
+      setGlobalError(ErrorUtils.retrieveOrder(menuUrl));
     }
   };
 
@@ -126,9 +128,11 @@ const CartPage = () => {
             />
           )}
 
-          {!error && <ButtonFloat text="Continuar" onClick={next} />}
+          <ButtonFloat text="Continuar" onClick={next} />
         </section>
       </Container>
+
+      {globalError && <CustomError error={globalError} />}
     </section>
   );
 };

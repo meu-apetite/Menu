@@ -32,6 +32,8 @@ const AddressEdit = (props /* { getAddress(), address } */) => {
 
   useEffect(() => {
     setAddress({ ...address, ...props.address });
+    console.log(props)
+    setEdit(props.edit);
   }, []);
 
   return (

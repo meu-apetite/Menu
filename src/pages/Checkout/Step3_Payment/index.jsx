@@ -68,7 +68,7 @@ const Payment = () => {
       };
 
       const { data } = await apiService.post('/finish', body);
-
+return
       clearCart();
 
       navigate(`/${menuUrl}/order/${data.id}`, { state: { ...data } });
