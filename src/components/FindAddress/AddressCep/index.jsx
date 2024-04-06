@@ -13,9 +13,11 @@ const AddressCep = (props /* { getAddress() } */) => {
     try {
       setLoading(true);
 
-      const cepRegex = /^[0-9]{8}$/;
-      if (!cepRegex.test(cep)) return toast.error('Cep incorreto');
-      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+      const numberCep = cep?.replace(/\D/g, "");
+
+      if (numberCep.toString().length !== 8) return toast.error('Cep incorreto');
+
+      const response = await axios.get(`https://viacep.com.br/ws/${numberCep}/json/`);
 
       if (response.data?.erro) return toast.error('Cep incorreto');
 
@@ -27,12 +29,22 @@ const AddressCep = (props /* { getAddress() } */) => {
         street: response.data.logradouro,
       });
     } catch (error) {
-      console.log(error)
       toast.error('Não foi possível encontrar o cep');
     } finally {
       setLoading(false);
     }
   };
+
+  const withoutZipCode = () => {
+    props.getAddress({
+      zipCode: '',
+      city: '',
+      state: '',
+      district: '',
+      street: '',
+      edit: true
+    });
+  }
 
   return (
     <Box >
@@ -56,13 +68,14 @@ const AddressCep = (props /* { getAddress() } */) => {
           >
             Buscar
           </Button>
+
           <Button
             sx={{ mt: 1, pt: 1, pb: 1 }}
             fullWidth
-            onClick={findCep}
+            onClick={withoutZipCode}
             color="info"
           >
-            Buscar
+            Não sei o CEP
           </Button>
           </>
         )
