@@ -73,17 +73,18 @@ const DeliveryInfo = ({ settingsDelivery, cart, getDeliveryInfo }) => {
       }
 
       {
-        settingsDelivery.delivery 
-        && settingsDelivery.deliveryOption === 'automatic' 
-        && cart?.address?.price
-        && (
+        (
+          settingsDelivery.delivery 
+          && settingsDelivery.deliveryOption === 'automatic' 
+          && cart?.address?.price
+        ) ? (
           <S.WrapperContent>
             <strong>TAXA DE ENTREGA:</strong>
             <strong className="price">
               {ApplicationUtils.formatPrice(cart?.address?.price)}
             </strong>
           </S.WrapperContent>
-        )
+        ) : null
       }
 
       <S.WrapperContent>
@@ -107,7 +108,7 @@ const DeliveryInfo = ({ settingsDelivery, cart, getDeliveryInfo }) => {
           <strong>*Pedido para entrega?</strong>
           <Button 
             sx={{ width: 'fit-content', mt: 1 }}
-            color="success" 
+            color="secondary" 
             variant="contained" 
             onClick={HandleOpenFindAddress}
           >

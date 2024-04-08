@@ -11,7 +11,7 @@ const LayoutMenu = (props) => {
   const apiService = new ApiService(false);
   const { menuUrl } = useParams();
   const { company, setCompany, setLoading } = useContext(GlobalContext);
-  const [globalError, setGlobalError] = useState(null);
+  const [error, setError] = useState(false);
 
   const getCompany = async () => {
     try {
@@ -19,7 +19,7 @@ const LayoutMenu = (props) => {
       const { data } = await apiService.get('/' + menuUrl);
       setCompany(data);
     } catch (error) {
-      setGlobalError(ErrorUtils.notFoundMenu());
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -29,19 +29,17 @@ const LayoutMenu = (props) => {
     getCompany();
   }, []);
 
-  return (
-    company && (
-      <ThemeProvider
-        theme={ApplicationUtils.createCustomTheme(
-          company.custom.colorPrimary,
-          company.custom.colorSecondary,
-        )}
-      >
-        <Outlet />
-
-        {globalError && <CustomError error={globalError} />}
-      </ThemeProvider>
-    )
+  return company ? (
+    <ThemeProvider
+      theme={ApplicationUtils.createCustomTheme(
+        company.custom.colorPrimary,
+        company.custom.colorSecondary,
+      )}
+    >
+      <Outlet />
+    </ThemeProvider>
+  ) : (
+    error && <CustomError error={ErrorUtils.notFoundMenu()} />
   );
 };
 
