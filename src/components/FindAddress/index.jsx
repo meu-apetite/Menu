@@ -22,7 +22,7 @@ const FindAddress = (props /* { getData() } */) => {
   });
   const [openEdit, setOpenEdit] = useState('cep');
   const [edit, setEdit] = useState(false);
-
+  
   const getAddressCep = (data) => {
     if (data?.edit) {
       setEdit(true);
@@ -42,6 +42,7 @@ const FindAddress = (props /* { getData() } */) => {
       <DialogTitle sx={{ m: 0, p: 2, fontSize: '1.4rem' }} id="customized-dialog-title">
         Cadastro de endereço
       </DialogTitle>
+
       <IconButton
         onClick={props.closeModal}
         sx={{
@@ -58,7 +59,12 @@ const FindAddress = (props /* { getData() } */) => {
         )}
 
         {openEdit === 'address' && (
-          <AddressEdit address={address} getAddress={getAddressEdit} edit={edit} />
+          <AddressEdit 
+            address={address} 
+            edit={edit} 
+            getAddress={getAddressEdit} 
+            deliveryOption={props.deliveryOption}
+          />
         )}
       </S.CustomDialogContent>
     </S.BootstrapDialog>

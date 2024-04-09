@@ -42,7 +42,8 @@ const AddressCep = (props /* { getAddress() } */) => {
       state: '',
       district: '',
       street: '',
-      edit: true
+      edit: true,
+      searchMethod: 'manual'
     });
   }
 

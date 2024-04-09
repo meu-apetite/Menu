@@ -19,26 +19,40 @@ const AddressEdit = (props /* { getAddress(), address } */) => {
 
   const confirmAddress = () => {
     const errors = [];
-    if (!address.zipCode) errors.push('Cep deve ser preenchido');
+
+    // if (!address.zipCode) errors.push('Cep deve ser preenchido');
     if (!address.city) errors.push('Cidade deve ser preenchido');
-    if (!address.street) errors.push('Cidade deve ser preenchido');
+    if (!address.street) errors.push('Rua deve ser preenchido');
     if (!address.district) errors.push('Bairro deve ser preenchido');
     if (!address.number) errors.push('Número deve ser preenchido');
 
-    console.log(errors)
-    if(errors <= 0) return props.getAddress(address)
+    if (errors <= 0) return props.getAddress(address);
+
     toast.error(errors.map(e => `• ${e}.`).join('\n'));
   };
 
   useEffect(() => {
     setAddress({ ...address, ...props.address });
-    console.log(props)
     setEdit(props.edit);
   }, []);
 
   return (
     <>
       <S.Title>Verifique seu enderço com atenção!</S.Title>
+
+      {
+        (props.deliveryOption === 'automatic' 
+          && address.searchMethod === 'manual') ? (
+          <p>
+            <span style={{ color: 'red' }}>*</span>
+            Ao inserir o endereço manualmente,
+            não conseguiremos calcular a taxa de entrega
+            neste momento. Não se preocupe, entraremos
+            em contato em breve para informar a taxa de
+            entrega.
+          </p>
+        ) : null
+      }
 
       <TextField
         fullWidth
@@ -48,6 +62,7 @@ const AddressEdit = (props /* { getAddress(), address } */) => {
         onChange={(e) => setAddress({ ...address, zipCode: e.target.value })}
         margin="normal"
       />
+
       <TextField
         fullWidth
         label="Rua"
@@ -56,6 +71,7 @@ const AddressEdit = (props /* { getAddress(), address } */) => {
         onChange={(e) => setAddress({ ...address, street: e.target.value })}
         margin="normal"
       />
+
       <TextField
         fullWidth
         label="Bairro"
@@ -64,10 +80,10 @@ const AddressEdit = (props /* { getAddress(), address } */) => {
         onChange={(e) => setAddress({ ...address, district: e.target.value })}
         margin="normal"
       />
+
       <TextField
         fullWidth
         label="Cidade"
-
         value={address?.city}
         disabled={!edit}
         onChange={(e) => setAddress({ ...address, city: e.target.value })}
@@ -108,11 +124,17 @@ const AddressEdit = (props /* { getAddress(), address } */) => {
         sx={{ mt: '16px' }}
         onClick={() => {
           toast.error('Se você está enfrentando dificuldades ao buscar o endereço pelo CEP, experimente inserir o endereço completo.');
-          setAddress({ zipCode: '', city: '', street: '', district: '', number: '' });
-          setEdit(true)
+          setAddress({ 
+            zipCode: '', 
+            city: '', 
+            street: '', 
+            district: '', 
+            number: '',
+            searchMethod: 'manual'
+          });
+          setEdit(true);
         }}
-
->
+      >
         Endereço errado? Clique aqui!
       </Button>
     </>

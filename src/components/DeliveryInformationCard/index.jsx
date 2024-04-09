@@ -10,7 +10,7 @@ const DeliveryInformationCard = ({ address, findAddress }) => {
           <Card sx={{ display: 'grid', gridTemplateColumns: '9fr 3fr', mt: 1.2 }}>
             <CardContent sx={{ flex: '1 0 auto' }}>
               <Typography variant="subtitle1" color="text.secondary">
-                Cep:<strong>&#160;{`${address.zipCode}`}</strong> <br />
+                Cep:<strong>&#160;{`${address.zipCode || 'Não informado'}`}</strong> <br />
                 Bairro:<strong>&#160;{`${address.district}`}</strong> <br />
                 Endereço:
                 <strong>
@@ -28,7 +28,10 @@ const DeliveryInformationCard = ({ address, findAddress }) => {
                       style: 'currency',
                       currency: 'BRL',
                     })}
-                    /{Number(address?.distance).toFixed(2)} KM
+                    {address?.distance >= 0 
+                      ? `/${Number(address?.distance).toFixed(2)} KM` 
+                      : null
+                    }
                   </strong>
                 </Typography>
               )}

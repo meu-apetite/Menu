@@ -124,6 +124,7 @@ const Address = () => {
 
       {openFindAddress && (
         <FindAddress 
+          deliveryOption={settings.deliveryOption}
           closeModal={toggleFindAddress}
           getData={(data) => calculateFreight(data)}
         />

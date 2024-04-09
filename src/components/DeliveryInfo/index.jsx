@@ -125,8 +125,16 @@ const DeliveryInfo = ({ settingsDelivery, cart, getDeliveryInfo }) => {
         && <strong>*Apenas retirada</strong>
       }
 
+      {settingsDelivery.delivery && settingsDelivery.deliveryOption === 'fixed'
+        && <small>
+            <span style={{ color: 'red' }}>*</span>
+            Taxa de entrega não se aplica a pedidos de retirada
+          </small>
+      }
+
       {openFindAddress && (
         <FindAddress
+          deliveryOption={settingsDelivery.deliveryOption}
           closeModal={handleCloseFindAddress}
           getData={(data) => calculateFreight(data)}
         />

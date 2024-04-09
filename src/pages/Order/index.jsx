@@ -49,12 +49,9 @@ const PedidoDetalhes = () => {
           </Button>
         </Box>
       </span>
-    ), { 
-      duration: 30000,
-      style: {
-        border: '1px solid #004085',
-      }
-    });
+    ), 
+    { duration: 30000 }
+  );
 
     toast.success(
       'Pedido enviado! Todos os detalhes do pedido foram enviados para o seu e-mail',

@@ -16,15 +16,9 @@ import BagIcon from '@mui/icons-material/ShoppingBag';
 import CustomError from 'components/CustomError';
 import * as S from './style';
 
-
 const ColorlibStepIcon = (props) => {
   const { active, completed, icon } = props;
-  console.log(props);
-  const icons = {
-    1: <PhoneIcon />,
-    2: <RoomIcon />,
-    3: <PaymentIcon />
-  };
+  const icons = { 1: <PhoneIcon />, 2: <RoomIcon />, 3: <PaymentIcon /> };
 
   return (
     <S.ColorlibStepIconRoot ownerState={{ completed, active }}>
@@ -39,12 +33,10 @@ const ColorlibStepBagIcon = (props) => (
   </S.ColorlibStepIconRoot>
 );
 
-
-
 const LayoutCheckout = () => {
+  const apiService = new ApiService(false);
   const location = useLocation();
   const { menuUrl } = useParams();
-  const apiService = new ApiService(false);
   const { setCompany, company, setLoading } = useContext(GlobalContext);
   const [globalError, setGlobalError] = useState(null);
 
@@ -54,11 +46,13 @@ const LayoutCheckout = () => {
 
       const cart = await ApplicationUtils.getCartInLocalStorage(menuUrl);
 
-      if (!cart?._id) {
+      if (cart?.products?.length < 1) {
         setGlobalError(ErrorUtils.emptyCart(menuUrl));
         return;
       }
+
       const { data } = await apiService.get('/' + menuUrl);
+
       setCompany(data);
     } catch (error) {
       setGlobalError(ErrorUtils.notFoundMenu());
@@ -104,9 +98,7 @@ const LayoutCheckout = () => {
                 getStepFromPath() === 0 ? (
                   <Stepper alternativeLabel activeStep={0} connector={<S.ColorlibConnector />}>
                     <Step key="Sacola">
-                      <StepLabel StepIconComponent={ColorlibStepBagIcon}>
-                        Sacola
-                      </StepLabel>
+                      <StepLabel StepIconComponent={ColorlibStepBagIcon} />
                     </Step>
                   </Stepper>
                 ) : (
