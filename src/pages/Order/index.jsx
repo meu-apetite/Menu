@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Typography, Paper, Box, AppBar, Toolbar, Button, Chip, List, ListItem, ListItemText } from '@mui/material';
+import { Typography, Paper, Box, AppBar, Toolbar, Button, Chip, List, ListItem, ListItemText, Modal } from '@mui/material';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ApiService } from 'services/api.service';
 import { GlobalContext } from 'contexts/global';
@@ -26,49 +26,44 @@ const PedidoDetalhes = () => {
     subtotal: 0
   });
   const [company, setCompany] = useState({});
+  const [openModal, setOpenModal] = useState(false);
 
   const getData = async () => {
     const { data } = await apiService.get(`/${menuUrl}/order/${orderId}`);
+    console.log(data);
     setOrder(data.order);
     setCompany(data.company);
   };
 
-  const messageAlert = () => {
+  const confirmOrder = () => {
     toast((t) => (
       <span>
-        Iremos enviar a confirmação e atualizações do seu pedido pelo WhatsApp 
-        fornecido no momento da compra. Se não receber, entre em contato pelo 
-        botão de WhatsApp abaixo.
+        Confirme seu pedido através do nosso WhatsApp.
         <Box sx={{ display: 'flex', justifyContent: 'end', mt: 1 }}>
-          <Button 
-            color="primary"
-            variant="contained" 
-            onClick={() => toast.dismiss(t.id)}
-          >
-            Tudo certo
+          <Button color="primary" variant="contained" onClick={handleConfirmation}>
+            Confirmar pedido
           </Button>
         </Box>
       </span>
-    ), 
-    { duration: 30000 }
-  );
+    ), { duration: Infinity });
+  };
 
-    toast.success(
-      'Pedido enviado! Todos os detalhes do pedido foram enviados para o seu e-mail',
-      { duration: 6000 }
-    );
-  }
+  const handleConfirmation = () => {
+    const phoneNumber = company.whatsapp;
+    const confirmationText = `Olá! Gostaria de confirmar o pedido número #${order.id}, feito em ${ApplicationUtils.formatDate(order.date)}.`;
+    const message = encodeURIComponent(confirmationText);
+    window.open(`https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`);
+    setOpenModal(false);
+  };
+
 
   useEffect(() => {
-    if (state?.order?.id && state?.store?._id) {
-      setOrder(state.order);
-      setCompany(state.store);
-    } else {
-      getData();
-    }
-
-    messageAlert()
+    getData();
   }, []);
+
+  useEffect(() => {
+    if (company?.whatsapp) setOpenModal(true);
+  }, [company]);
 
   return (
     <Box>
@@ -149,18 +144,47 @@ const PedidoDetalhes = () => {
         </List>
 
         <Box sx={{ display: 'flex', alignItems: 'end', flexDirection: 'column', gap: 0.3 }}>
-          <strong>Subtotal: R$ {order.subtotal.toFixed(2)}</strong> 
+          <strong>Subtotal: R$ {order.subtotal.toFixed(2)}</strong>
           {order.deliveryType === 'delivery' && (
-            order.address.deliveryOtpion  === 'customerPickup' 
-              ? <span>A combinar</span>  
+            order.address.deliveryOtpion === 'customerPickup'
+              ? <span>A combinar</span>
               : <strong>
-                  Taxa de entrega: R$ {order.address.price.toFixed(2)}
-                </strong>
-            )
+                Taxa de entrega: R$ {order.address.price.toFixed(2)}
+              </strong>
+          )
           }
-          <strong>Total: R$ {order.total.toFixed(2)}</strong>       
+          <strong>Total: R$ {order.total.toFixed(2)}</strong>
         </Box>
       </Paper>
+
+      <Modal open={openModal} aria-labelledby="modal-title" aia-describedby="modal-description">
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            maxWidth: 400,
+            width: '95%',
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 3,
+          }}
+        >
+          <Typography id="modal-title" variant="h6" component="h2">
+            Confirme seu pedido
+          </Typography>
+          <Typography id="modal-description" sx={{ mt: 2 }}>
+            Confirme seu pedido através do nosso WhatsApp.
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'end', mt: 2 }}>
+            <Button color="primary" variant="contained" onClick={handleConfirmation}>
+              Confirmar pedido
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
 
       <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
         <Button

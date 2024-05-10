@@ -53,6 +53,19 @@ export class ApplicationUtils {
     ) || 'R$ 0,00';
   }
 
+  static formatDate(dateString) {
+    const options = { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit' 
+    };
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR', options);
+  }
+
   static createCustomTheme(colorPrimary, colorSecondary) {
     return createTheme({
       palette: {

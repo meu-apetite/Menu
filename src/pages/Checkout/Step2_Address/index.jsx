@@ -58,19 +58,29 @@ const Address = () => {
   };
 
   const next = async () => {
-    if (deliveryType === 'delivery' && !address) {
-      toast.error('Adicione o seu endereço para continuar', {
-        position: 'top-center',
+    try {
+      setLoading(true);
+
+      if (deliveryType === 'delivery' && !address) {
+        toast.error('Adicione o seu endereço para continuar');
+        return;
+      }
+  
+      const { data } = await apiService.post('/delivery-type', {
+        deliveryType,
+        cartId: cart._id,
       });
-      return;
+  
+      console.log(data)
+  
+      await ApplicationUtils.setDataInLocalStorage(menuUrl, data);
+  
+      navigate(`/${menuUrl}/checkout/pay`);
+    } catch(e) {
+      toast.error(e.response.data?.message ||'Erro ao selecionar tipo de entrega');
+    } finally {
+      setLoading(false);
     }
-
-    await ApplicationUtils.setDataInLocalStorage(menuUrl, {
-      ...cart,
-      deliveryType,
-    });
-
-    navigate(`/${menuUrl}/checkout/pay`);
   };
 
   const changeDeliveryType = async (e, value) => setDeliveryType(value);

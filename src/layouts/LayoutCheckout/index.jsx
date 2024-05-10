@@ -44,14 +44,14 @@ const LayoutCheckout = () => {
     try {
       setLoading('Carregando...');
 
+      const { data } = await apiService.get('/' + menuUrl);
+
       const cart = await ApplicationUtils.getCartInLocalStorage(menuUrl);
 
-      if (cart?.products?.length < 1) {
+      if (cart?.products?.length < 1 || cart === null || !cart) {
         setGlobalError(ErrorUtils.emptyCart(menuUrl));
         return;
       }
-
-      const { data } = await apiService.get('/' + menuUrl);
 
       setCompany(data);
     } catch (error) {
